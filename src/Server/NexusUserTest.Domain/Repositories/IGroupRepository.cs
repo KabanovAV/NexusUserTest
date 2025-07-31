@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using System.Text.RegularExpressions;
+﻿using NexusUserTest.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Repositories
 {

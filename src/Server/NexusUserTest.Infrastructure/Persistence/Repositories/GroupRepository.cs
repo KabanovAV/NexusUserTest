@@ -1,6 +1,6 @@
-﻿using NexusUserTest.Domain.Repositories;
+﻿using NexusUserTest.Domain.Entities;
+using NexusUserTest.Domain.Repositories;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
 namespace NexusUserTest.Infrastructure.Persistence
 {
