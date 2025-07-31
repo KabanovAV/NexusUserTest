@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="NexusUserTest.Domain">
+      <HintPath>..\NexusUserTest.Domain\bin\Debug\net9.0\NexusUserTest.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="NexusUserTest.Infrastructure">
+      <HintPath>..\NexusUserTest.Infrastructure\bin\Debug\net9.0\NexusUserTest.Infrastructure.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
