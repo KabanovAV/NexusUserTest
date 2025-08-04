@@ -17,12 +17,13 @@ namespace NexusUserTest.WebApi
             services.AddSerilog();
             services.ConfigurateCors();
             services.ConfigurateSwaggerGen();
-            services.ConfigurateAutoMapper(typeof(Startup).Assembly);
+            services.ConfigurateAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var connection = _configuration.GetConnectionString("PostgreConnection");
             services.AddDbContext<DbDataContext>(options => options.UseNpgsql(connection));
 
-            services.AddScoped<IRepoServiceManager, RepoServiceManager>();
+            services.ConfigurateRepositoryManager();
+            services.ConfigurateRepositoryService();
         }
 
         public void Configure(IApplicationBuilder app, IHostEnvironment env)

@@ -28,7 +28,10 @@ namespace NexusUserTest.Application.Services
                 });
             });
 
-        public static IServiceCollection ConfigurateAutoMapper(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection ConfigurateAutoMapper(this IServiceCollection services, Assembly[] assembly)
             => services.AddAutoMapper(assembly);
+
+        public static IServiceCollection ConfigurateRepositoryService(this IServiceCollection services)
+            => services.AddScoped<IRepoServiceManager, RepoServiceManager>();
     }
 }
