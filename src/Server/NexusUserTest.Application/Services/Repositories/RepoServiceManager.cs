@@ -1,5 +1,4 @@
 ﻿using NexusUserTest.Domain.Repositories;
-using SibCCSPETest.ServiceBase;
 
 namespace NexusUserTest.Application.Services
 {

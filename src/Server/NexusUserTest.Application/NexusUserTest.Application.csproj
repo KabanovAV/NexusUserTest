@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NexusUserTest.Common">
+      <HintPath>..\..\NexusUserTest.Common\bin\Debug\net9.0\NexusUserTest.Common.dll</HintPath>
+    </Reference>
     <Reference Include="NexusUserTest.Domain">
       <HintPath>..\NexusUserTest.Domain\bin\Debug\net9.0\NexusUserTest.Domain.dll</HintPath>
     </Reference>
