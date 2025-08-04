@@ -2,7 +2,7 @@
 using NexusUserTest.Domain.Repositories;
 using System.Linq.Expressions;
 
-namespace NexusUserTest.Infrastructure.Persistence
+namespace NexusUserTest.Infrastructure
 {
     internal class TopicRepository : RepositoryBase<Topic>, ITopicRepository
     {

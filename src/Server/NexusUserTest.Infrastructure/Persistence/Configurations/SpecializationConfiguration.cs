@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NexusUserTest.Domain.Entities;
 
-namespace NexusUserTest.Infrastructure.Persistence
+namespace NexusUserTest.Infrastructure
 {
     public class SpecializationConfiguration : IEntityTypeConfiguration<Specialization>
     {

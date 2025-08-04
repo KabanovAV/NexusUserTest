@@ -1,6 +1,6 @@
 ﻿using NexusUserTest.Domain.Repositories;
 
-namespace NexusUserTest.Infrastructure.Persistence
+namespace NexusUserTest.Infrastructure
 {
     public class RepositoryManager : IRepositoryManager
     {

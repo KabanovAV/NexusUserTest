@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NexusUserTest.Domain.Entities;
 
-namespace NexusUserTest.Infrastructure.Persistence
+namespace NexusUserTest.Infrastructure
 {
     public class DbDataContext : DbContext
     {

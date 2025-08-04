@@ -1,7 +1,7 @@
 ﻿using NexusUserTest.Domain.Entities;
 using NexusUserTest.Domain.Repositories;
 
-namespace NexusUserTest.Infrastructure.Persistence
+namespace NexusUserTest.Infrastructure
 {
     public class GroupUserRepository : RepositoryBase<GroupUser>, IGroupUserRepository
     {
