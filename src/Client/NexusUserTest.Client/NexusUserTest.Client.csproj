@@ -11,10 +11,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.7" PrivateAssets="all" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="NexusUserTest.Shared">
-      <HintPath>..\..\NexusUserTest.Shared\bin\Debug\net9.0\NexusUserTest.Shared.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
