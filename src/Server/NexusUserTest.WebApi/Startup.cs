@@ -1,4 +1,5 @@
-﻿using NexusUserTest.Application.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Application.Services;
 using NexusUserTest.Infrastructure;
 using NexusUserTest.WebApi.Middlewares;
 using Serilog;
@@ -11,13 +12,15 @@ namespace NexusUserTest.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();            
+            services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSerilog();
             services.ConfigurateCors();
             services.ConfigurateSwaggerGen();
             services.ConfigurateAutoMapper(typeof(Startup).Assembly);
-            services.ConfigurateDatabaseContext(_configuration);
+
+            var connection = _configuration.GetConnectionString("PostgreConnection");
+            services.AddDbContext<DbDataContext>(options => options.UseNpgsql(connection));
 
             services.AddScoped<IRepoServiceManager, RepoServiceManager>();
         }
