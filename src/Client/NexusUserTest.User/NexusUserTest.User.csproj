@@ -15,4 +15,17 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NexusUserTest.Common">
+      <HintPath>..\..\NexusUserTest.Common\bin\Debug\net9.0\NexusUserTest.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NexusUserTest.Shared">
+      <HintPath>..\NexusUserTest.Shared\bin\Debug\net9.0\NexusUserTest.Shared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
