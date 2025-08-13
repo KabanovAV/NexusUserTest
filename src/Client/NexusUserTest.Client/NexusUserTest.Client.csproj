@@ -1,9 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NexusUserTest.Admin\NexusUserTest.Admin.csproj" />
+    <ProjectReference Include="..\NexusUserTest.Shared\NexusUserTest.Shared.csproj" />
+    <ProjectReference Include="..\NexusUserTest.User\NexusUserTest.User.csproj" />
+  </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 using NexusUserTest.Client.Components;
+using NexusUserTest.Shared.Services;
 
 namespace NexusUserTest.Client
 {
@@ -8,17 +9,18 @@ namespace NexusUserTest.Client
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            builder.Services.ConfigureHttpClient();
+            builder.Services.ConfigureAPI();
+            builder.Services.AddNexusBlazor();
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseDeveloperExceptionPage();
                 app.UseHsts();
             }
 
@@ -27,7 +29,9 @@ namespace NexusUserTest.Client
             app.UseStaticFiles();
             app.UseAntiforgery();
 
+            app.MapStaticAssets();
             app.MapRazorComponents<App>()
+                .AddAdditionalAssemblies([typeof(Admin._Imports).Assembly, typeof(User._Imports).Assembly])
                 .AddInteractiveServerRenderMode();
 
             app.Run();
