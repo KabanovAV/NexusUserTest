@@ -1,0 +1,15 @@
+﻿@namespace NexusUserTest.Shared.Components
+@typeparam TItem
+
+@if (PropertyValue is not null)
+{
+    <td scope="col" title="@PropertyValue">
+        @PropertyValue
+    </td>
+}
+else
+{
+    <td>
+        @ChildContent
+    </td>
+}

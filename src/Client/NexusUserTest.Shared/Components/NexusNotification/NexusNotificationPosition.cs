@@ -1,0 +1,12 @@
+﻿namespace NexusUserTest.Shared.Components
+{
+    public enum NexusNotificationPosition
+    {
+        TopLeft,
+        TopRight,
+        TopCenter,
+        BottomLeft,
+        BottomRight,
+        BottomCenter
+    }
+}
