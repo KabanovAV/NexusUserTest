@@ -17,7 +17,7 @@ else
 {
     <div style="display:@(IsUpsertForm ? "none" : "");">
         <NexusTableGrid @ref="NexusTable" TItem="UserDTO" Data="Items" SelectionMode="SelectMode"
-                        EditMode="EditMode" EmptyMessage="Нет пользователей" CssStyle="">
+                        EditMode="EditMode" ShowEmptyMessage="true" EmptyMessage="Нет пользователей" CssStyle="">
             <ToolTemplate>
                 <div class="mb-1">
                     <NexusGroupButton>
