@@ -1,0 +1,43 @@
+﻿@page "/admin/user"
+@layout AdminLayout
+@rendermode InteractiveServer
+
+@if (Items == null)
+{
+    <div class="" style=@($"height: 100%; width:100%; display: flex; align-items: center; justify-content: center;")>
+        <div style="">
+            <Wave Color="blue" Center="true" Size="2rem" style="opacity:1" />
+            <h5 class="mt-3" style="color:blue">
+                Загрузка данных
+            </h5>
+        </div>
+    </div>
+}
+else
+{
+    <div style="display:@(IsUpsertForm ? "none" : "");">
+        <NexusTableGrid @ref="NexusTable" TItem="UserDTO" Data="Items" SelectionMode="SelectMode"
+                        EditMode="EditMode" EmptyMessage="Нет пользователей" CssStyle="">
+            <ToolTemplate>
+                <div class="mb-1">
+                    <NexusGroupButton>
+                        <NexusButton Title="Добавить" OnClick="Insert" CssClass="btn-primary" IconClass="bi bi-plus-lg" Disable="IsCrud" />
+                        <NexusButton Title="Изменить" OnClick="Edit" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
+                        <NexusButton Title="Удалить" OnClick="Delete" CssClass="btn-danger" IconClass="bi bi-trash3-fill" Disable="IsSelected" />
+                    </NexusGroupButton>
+                </div>
+            </ToolTemplate>
+            <Columns>
+                <NexusTableGridColumn Title="Id" Property="Id" />
+                <NexusTableGridColumn Title="ФИО" Property="FullName" />
+                <NexusTableGridColumn Title="Логин" Property="Login" />
+                <NexusTableGridColumn Title="Пароль" Property="Password" />
+                <NexusTableGridColumn Title="Организация" Property="Organization" />
+                <NexusTableGridColumn Title="Позиция" Property="Position" />
+            </Columns>
+        </NexusTableGrid>
+    </div>
+    <div class="h-100" style="display:@(IsUpsertForm ? "" : "none");">
+        <UserFormPage Data="Data" OnCancel="Cancel" OnSave="Save" GroupSelects="GroupSelects" />
+    </div>
+}

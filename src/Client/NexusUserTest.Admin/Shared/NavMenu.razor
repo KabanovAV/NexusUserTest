@@ -1,0 +1,56 @@
+﻿@rendermode InteractiveServer
+
+<div class="layout-sidebar flex-shrink-1 p-0">
+    <div class="offcanvas-md offcanvas-end p-1" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sidebarMenuLabel">Администратор</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-nowrap flex-column flex-shrink-0 text-bg-dark">
+            <nav class="nav nav-pills flex-column mb-auto">
+                <div class="nav-item">
+                    <NavLink class="nav-link menu-sidebar-nav-link d-flex align-items-center gap-2" href="admin" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-house-fill"></i></span> Главная
+                    </NavLink>
+                </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link menu-sidebar-nav-link d-flex align-items-center gap-2" href="admin/specialization" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-clipboard-fill"></i></span> Специализация
+                    </NavLink>
+                </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link menu-sidebar-nav-link d-flex align-items-center gap-2" href="admin/group" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-people-fill"></i></span> Группа
+                    </NavLink>
+                </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link menu-sidebar-nav-link d-flex align-items-center gap-2" href="admin/user" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-person-fill"></i></span> Пользователи
+                    </NavLink>
+                </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link menu-sidebar-nav-link d-flex align-items-center gap-2" href="admin/topic" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-clipboard-data-fill"></i></span> Темы
+                    </NavLink>
+                </div>
+                <div class="nav-item">
+                    <NavLink class="nav-link menu-sidebar-nav-link d-flex align-items-center gap-2" href="admin/question" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-question-circle-fill"></i></span> Вопрос
+                    </NavLink>
+                </div>
+            </nav>
+
+            <hr class="my-3">
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-uppercase">
+                <span>Приложения</span>
+            </h6>
+            <nav class="nav flex-column">
+                <div class="nav-item">
+                    <NavLink class="nav-link d-flex align-items-center gap-2" href="" Match="NavLinkMatch.All">
+                        <span aria-hidden="true"><i class="bi bi-zoom-out"></i></span> Приложения
+                    </NavLink>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>

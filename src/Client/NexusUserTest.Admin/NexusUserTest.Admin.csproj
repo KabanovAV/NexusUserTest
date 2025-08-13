@@ -6,13 +6,31 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="C:\Users\kabanov.aleksey\.nuget\packages\blazorpro.spinkit\1.2.0\contentFiles\any\netstandard2.1\libman.json" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.7" />
+    <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NexusUserTest.Common">
+      <HintPath>..\..\NexusUserTest.Common\bin\Debug\net9.0\NexusUserTest.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NexusUserTest.Shared">
+      <HintPath>..\NexusUserTest.Shared\bin\Debug\net9.0\NexusUserTest.Shared.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,78 @@
+﻿@if (Data != null && TopicSelects != null)
+{
+    <div class="card h-100">
+        <div class="card-header">
+            @(Data.Id == 0 ? "Добавить" : "Изменить") вопрос
+        </div>
+        <div class="card-body">
+            <form class="row">
+                <div class="mb-1">
+                    <label class="form-label">Название</label>
+                    <input type="text" class="form-control" @bind-value="Data.Title">
+                </div>
+                <div class="mb-1">
+                    <div class="card">
+                        <div class="card-header">
+                            Темы
+                        </div>
+                        <div class="card-body">
+                            @foreach (var item in TopicSelects)
+                            {
+                                <div class="form-check form-check-inline" @onclick="() => CheckboxChange(item.Value)">
+                                    <input class="form-check-input" type="checkbox" checked="@(Data.TopicQuestionItems!.Any(x => x.TopicId == item.Value) ? true : false)">
+                                    <label class="form-check-label">
+                                        @item.Text
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <div class="card">
+                        <div class="card-header">
+                            Ответы
+                        </div>
+                        <div class="card-body">
+                            <NexusTableGrid @ref="NexusTable" TItem="AnswerDTO" Data="Data.AnswerItems" SelectionMode="SelectMode"
+                                            EditMode="EditMode" EmptyMessage="Нет ответов">
+                                <ToolTemplate>
+                                    <div class="mb-1">
+                                        <NexusGroupButton>
+                                            <NexusButton Title="Добавить" OnClick="Add" CssClass="btn-primary" IconClass="bi bi-plus-lg" />
+                                            @if(Data.Id != 0)
+                                            {
+                                                <NexusButton Title="Изменить" OnClick="Edit" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
+                                            }                                            
+                                            <NexusButton Title="Удалить" OnClick="Remove" CssClass="btn-danger" IconClass="bi bi-trash3-fill" />
+                                        </NexusGroupButton>
+                                    </div>
+                                </ToolTemplate>
+                                <Columns>
+                                    <NexusTableGridColumn Title="Id" Property="Id" />
+                                    <NexusTableGridColumn Title="Название" Property="Title" />
+                                    <NexusTableGridColumn Title="Ответ" Property="IsCorrect" />
+                                </Columns>
+                                <EditColumns>
+                                    <NexusTableGridColumn Title="Id" Property="Id" />
+                                    <NexusTableGridColumn Title="Название">
+                                        <input class="form-control border border-black" type="text" @bind="context.Title" />
+                                    </NexusTableGridColumn>
+                                    <NexusTableGridColumn Title="Ответ">
+                                        <input class="form-check-input border border-black" type="checkbox" @bind="context.IsCorrect" />
+                                    </NexusTableGridColumn>
+                                </EditColumns>
+                            </NexusTableGrid>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-end gap-1">
+                <button class="btn btn-light border" @onclick="Cancel">Отмена</button>
+                <button class="btn btn-light border" @onclick="Save">@(Data.Id == 0 ? "Сохранить" : "Изменить")</button>
+            </div>
+        </div>
+    </div>
+}
