@@ -24,7 +24,7 @@ else
                     <NexusButton Title="Изменить" OnClick="Edit" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
                     <NexusButton Title="Удалить" OnClick="Delete" CssClass="btn-danger" IconClass="bi bi-trash3-fill" Disable="IsSelected" />
                 </NexusGroupButton>
-                <NexusGroupButton>
+                <NexusGroupButton Visible="IsSaveCancel">
                     <NexusButton Title="Сохранить" OnClick="Save" CssClass="btn-success" IconClass="bi bi-floppy-fill" Disable="IsSaveCancel" />
                     <NexusButton Title="Отменить" OnClick="Cancel" CssClass="btn-danger" IconClass="bi bi-x-lg" Disable="IsSaveCancel" />
                 </NexusGroupButton>
