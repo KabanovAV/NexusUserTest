@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Components.Forms;
 using NexusUserTest.Common.DTOs;
 using NexusUserTest.Shared;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace NexusUserTest.Admin.Views
 {
     public partial class UserFormPage
     {
-        [Parameter]
+        [Parameter, EditorRequired]
         public UserDTO Data { get; set; }
         [Parameter]
         public IEnumerable<SelectItem> GroupSelects { get; set; }
@@ -22,6 +24,12 @@ namespace NexusUserTest.Admin.Views
             base.OnParametersSet();
             Data ??= new();
             editContext = new(Data);
+        }
+        private string GetDisplayName(string propertyName)
+        {
+            var property = typeof(UserDTO).GetProperty(propertyName);
+            var displayAttribute = property?.GetCustomAttribute<DisplayAttribute>();
+            return displayAttribute?.Name ?? propertyName;
         }
         private void CheckboxChange(int args)
         {

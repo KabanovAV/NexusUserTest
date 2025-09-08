@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared;
+using NexusUserTest.Shared.NexusBlazor;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace NexusUserTest.Admin.Views
 {
     public partial class QuestionFormPage
     {
-        [Parameter]
+        [Parameter, EditorRequired]
         public QuestionDTO Data { get; set; }
         [Parameter]
         public IEnumerable<SelectItem> TopicSelects { get; set; }
@@ -21,7 +24,19 @@ namespace NexusUserTest.Admin.Views
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
         public bool IsSelected => !NexusTable.IsRowsSelected;
-
+        private EditContext? editContext;
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            Data ??= new();
+            editContext = new(Data);
+        }
+        private string GetDisplayName(string propertyName)
+        {
+            var property = typeof(QuestionDTO).GetProperty(propertyName);
+            var displayAttribute = property?.GetCustomAttribute<DisplayAttribute>();
+            return displayAttribute?.Name ?? propertyName;
+        }
         private void CheckboxChange(int args)
         {
             if (Data.TopicQuestionItems!.FirstOrDefault(x => x.TopicId == args) is TopicQuestionCreateDTO topic && topic != null)
@@ -32,11 +47,9 @@ namespace NexusUserTest.Admin.Views
                 Data.TopicQuestionItems!.Add(topicQuestion);
             }
         }
-
-        public async Task Add()
+        public async Task AddAnwser()
             => await NexusTable!.InsertRow(new AnswerDTO());
-
-        public void Edit()
+        public void EditAnwser()
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
@@ -55,8 +68,7 @@ namespace NexusUserTest.Admin.Views
                 }
             }
         }
-
-        public async Task Remove()
+        public async Task RemoveAnwser()
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
@@ -64,14 +76,15 @@ namespace NexusUserTest.Admin.Views
                 await NexusTable.CancelEditRow(data);
             }
         }
-
         private async Task Save()
         {
-            await OnSave.InvokeAsync(Data);
-            if (Data.Id == 0)
-                Data.TopicQuestionItems!.Clear();
+            if (editContext!.Validate())
+            {
+                await OnSave.InvokeAsync(Data);
+                if (Data.Id == 0)
+                    Data.TopicQuestionItems!.Clear();
+            }
         }
-
         private async Task Cancel()
         {
             await OnCancel.InvokeAsync();

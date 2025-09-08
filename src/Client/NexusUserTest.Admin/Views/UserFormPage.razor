@@ -8,26 +8,26 @@
             <EditForm EditContext="editContext">
                 <DataAnnotationsValidator />
                 <div class="form-group">
-                    <label class="form-label">ФИО</label>
+                    <label class="form-label">@GetDisplayName(nameof(Data.FullName))</label>
                     <NexusTextBox @bind-Value="Data.FullName" NexusValueExpression="@(() => Data.FullName)" Placeholder="Введите ФИО" />
                     <ValidationMessage For="@(() => Data.FullName)" class="invalid-feedback" />
                 </div>
                 <div class="form-group pt-1">
-                    <label class="form-label">Логин</label>
+                    <label class="form-label">@GetDisplayName(nameof(Data.Login))</label>
                     <NexusTextBox @bind-Value="Data.Login" NexusValueExpression="@(() => Data.Login)" Placeholder="Введите логин" />
                     <ValidationMessage For="@(() => Data.Login)" class="invalid-feedback" />
                 </div>
                 <div class="form-group pt-1">
-                    <label class="form-label">Пароль</label>
+                    <label class="form-label">@GetDisplayName(nameof(Data.Password))</label>
                     <NexusTextBox @bind-Value="Data.Password" NexusValueExpression="@(() => Data.Password)" Placeholder="Введите пароль" />
                     <ValidationMessage For="@(() => Data.Password)" class="invalid-feedback" />
                 </div>
                 <div class="form-group pt-1">
-                    <label class="form-label">Организация</label>
+                    <label class="form-label">@GetDisplayName(nameof(Data.Organization))</label>
                     <NexusTextBox @bind-Value="Data.Organization" NexusValueExpression="@(() => Data.Organization)" Placeholder="Введите организацию" />
                 </div>
                 <div class="form-group pt-1">
-                    <label class="form-label">Позиция</label>
+                    <label class="form-label">@GetDisplayName(nameof(Data.Position))</label>
                     <NexusTextBox @bind-Value="Data.Position" NexusValueExpression="@(() => Data.Position)" Placeholder="Введите позицию" />
                 </div>
                 <div class="form-group pt-1">

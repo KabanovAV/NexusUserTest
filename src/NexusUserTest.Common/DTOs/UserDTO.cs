@@ -15,7 +15,9 @@ namespace NexusUserTest.Common.DTOs
         [Display(Name = "Пароль")]
         [Required(ErrorMessage = "Обязательное поле для заполнения")]
         public string Password { get; set; } = string.Empty;
+        [Display(Name = "Организация")]
         public string? Organization { get; set; }
+        [Display(Name = "Позиция")]
         public string? Position { get; set; }
         public List<GroupUserCreateDTO>? GroupUserItems { get; set; }
     }

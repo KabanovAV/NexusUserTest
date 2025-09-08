@@ -5,12 +5,52 @@
             @(Data.Id == 0 ? "Добавить" : "Изменить") вопрос
         </div>
         <div class="card-body">
-            <form class="row">
-                <div class="mb-1">
-                    <label class="form-label">Название</label>
-                    <input type="text" class="form-control" @bind-value="Data.Title">
+            <EditForm EditContext="editContext">
+                <DataAnnotationsValidator />
+                <div class="form-group">
+                    <label class="form-label">@GetDisplayName(nameof(Data.Title))</label>
+                    <NexusTextBox @bind-Value="Data.Title" NexusValueExpression="@(() => Data.Title)" Placeholder="Введите название" />
+                    <ValidationMessage For="@(() => Data.Title)" class="invalid-feedback" />
+                </div>                
+                <div class="form-group pt-1">
+                    <div class="card">
+                        <div class="card-header">
+                            Ответы
+                        </div>
+                        <div class="card-body">
+                            <NexusTableGrid @ref="NexusTable" TItem="AnswerDTO" Data="Data.AnswerItems" SelectionMode="SelectMode"
+                                            EditMode="EditMode" ShowEmptyMessage="true" EmptyMessage="Нет ответов">
+                                <ToolTemplate>
+                                    <div class="mb-1">
+                                        <NexusGroupButton>
+                                            <NexusButton Title="Добавить" OnClick="AddAnwser" CssClass="btn-primary" IconClass="bi bi-plus-lg" />
+                                            @if(Data.Id != 0)
+                                            {
+                                                <NexusButton Title="Изменить" OnClick="EditAnwser" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
+                                            }
+                                            <NexusButton Title="Удалить" OnClick="RemoveAnwser" CssClass="btn-danger" IconClass="bi bi-trash3-fill" />
+                                        </NexusGroupButton>
+                                    </div>
+                                </ToolTemplate>
+                                <Columns>
+                                    <NexusTableGridColumn Title="Id" Property="Id" />
+                                    <NexusTableGridColumn Title="Название" Property="Title" />
+                                    <NexusTableGridColumn Title="Ответ" Property="IsCorrect" />
+                                </Columns>
+                                <EditColumns Context="answer">
+                                    <NexusTableGridColumn Title="Id" Property="Id" />
+                                    <NexusTableGridColumn Title="Название">
+                                        <input class="form-control border border-black" type="text" @bind="answer.Title" />
+                                    </NexusTableGridColumn>
+                                    <NexusTableGridColumn Title="Ответ">
+                                        <input class="form-check-input border border-black" type="checkbox" @bind="answer.IsCorrect" />
+                                    </NexusTableGridColumn>
+                                </EditColumns>
+                            </NexusTableGrid>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-1">
+                <div class="form-group pt-1">
                     <div class="card">
                         <div class="card-header">
                             Темы
@@ -28,45 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-1">
-                    <div class="card">
-                        <div class="card-header">
-                            Ответы
-                        </div>
-                        <div class="card-body">
-                            <NexusTableGrid @ref="NexusTable" TItem="AnswerDTO" Data="Data.AnswerItems" SelectionMode="SelectMode"
-                                            EditMode="EditMode" EmptyMessage="Нет ответов">
-                                <ToolTemplate>
-                                    <div class="mb-1">
-                                        <NexusGroupButton>
-                                            <NexusButton Title="Добавить" OnClick="Add" CssClass="btn-primary" IconClass="bi bi-plus-lg" />
-                                            @if(Data.Id != 0)
-                                            {
-                                                <NexusButton Title="Изменить" OnClick="Edit" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
-                                            }                                            
-                                            <NexusButton Title="Удалить" OnClick="Remove" CssClass="btn-danger" IconClass="bi bi-trash3-fill" />
-                                        </NexusGroupButton>
-                                    </div>
-                                </ToolTemplate>
-                                <Columns>
-                                    <NexusTableGridColumn Title="Id" Property="Id" />
-                                    <NexusTableGridColumn Title="Название" Property="Title" />
-                                    <NexusTableGridColumn Title="Ответ" Property="IsCorrect" />
-                                </Columns>
-                                <EditColumns>
-                                    <NexusTableGridColumn Title="Id" Property="Id" />
-                                    <NexusTableGridColumn Title="Название">
-                                        <input class="form-control border border-black" type="text" @bind="context.Title" />
-                                    </NexusTableGridColumn>
-                                    <NexusTableGridColumn Title="Ответ">
-                                        <input class="form-check-input border border-black" type="checkbox" @bind="context.IsCorrect" />
-                                    </NexusTableGridColumn>
-                                </EditColumns>
-                            </NexusTableGrid>
-                        </div>
-                    </div>
-                </div>
-            </form>
+            </EditForm>
         </div>
         <div class="card-footer">
             <div class="d-flex justify-content-end gap-1">
