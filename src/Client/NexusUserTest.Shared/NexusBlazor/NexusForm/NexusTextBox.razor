@@ -1,0 +1,9 @@
+﻿@namespace NexusUserTest.Shared.NexusBlazor
+@inherits NexusBaseInput<string>
+
+<input type="text" @attributes="AdditionalAttributes"
+       class="@CombinedCssClass"
+       @bind:event="oninput"
+       @bind:get="@CurrentValueAsString"
+       @bind:set="HandleInput"
+       @onblur="HandleBlur" />

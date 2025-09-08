@@ -1,0 +1,9 @@
+﻿@namespace NexusUserTest.Shared.NexusBlazor
+@inherits NexusBaseInput<TValue>
+@typeparam TValue
+
+<input type="@InputType"
+       @attributes="AdditionalAttributes"
+       class="@CombinedCssClass"
+       value="@CurrentValueAsString"
+       @oninput="HandleInput" />

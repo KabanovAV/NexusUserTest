@@ -1,0 +1,17 @@
+﻿@namespace NexusUserTest.Shared.NexusBlazor
+@inherits NexusBaseInput<TValue>
+@typeparam TValue
+
+<select @attributes="AdditionalAttributes"
+        class="@CombinedCssClass"
+        @bind="CurrentValue"
+        @bind:event="onchange">
+    @if (!string.IsNullOrEmpty(Placeholder))
+    {
+        <option value="">@Placeholder</option>
+    }
+    @foreach (var item in Items)
+    {
+        <option value="@GetItemValue(item)">@GetItemText(item)</option>
+    }
+</select>

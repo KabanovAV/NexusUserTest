@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NexusUserTest.Shared.Components;
+using NexusUserTest.Shared.NexusBlazor;
 
 namespace NexusUserTest.Shared.Services
 {
