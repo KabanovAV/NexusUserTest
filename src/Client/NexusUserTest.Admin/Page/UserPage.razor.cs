@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common.DTOs;
 using NexusUserTest.Shared;
-using NexusUserTest.Shared.Components;
+using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
 namespace NexusUserTest.Admin.Page

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Shared.Components;
+using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared;
 
 namespace NexusUserTest.Admin.Views

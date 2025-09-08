@@ -1,32 +1,47 @@
-﻿@if (Data != null && GroupSelects != null)
+﻿<style>
+    div.validation-message {
+        border-color: var(--bs-form-invalid-border-color);
+        padding-right: calc(1.5em + .75rem);
+        background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e);
+        background-repeat: no-repeat;
+        background-position: right calc(.375em + .1875rem) center;
+        background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+    }
+</style>
+
+@if (Data != null && GroupSelects != null)
 {
     <div class="card h-100">
         <div class="card-header">
             @(Data.Id == 0 ? "Добавить" : "Изменить") пользователя
         </div>
         <div class="card-body">
-            <form class="row">
-                <div class="mb-1">
+            <EditForm EditContext="editContext">
+                <DataAnnotationsValidator />
+                <div class="form-group">
                     <label class="form-label">ФИО</label>
-                    <input type="text" class="form-control" @bind-value="Data.FullName">
+                    <NexusTextBox @bind-Value="Data.FullName" NexusValueExpression="@(() => Data.FullName)" Placeholder="Введите ФИО" />
+                    <ValidationMessage For="@(() => Data.FullName)" class="invalid-feedback" />
                 </div>
-                <div class="mb-1">
+                <div class="form-group pt-1">
                     <label class="form-label">Логин</label>
-                    <input type="text" class="form-control" @bind-value="Data.Login">
+                    <NexusTextBox @bind-Value="Data.Login" NexusValueExpression="@(() => Data.Login)" Placeholder="Введите логин" />
+                    <ValidationMessage For="@(() => Data.Login)" class="invalid-feedback" />
                 </div>
-                <div class="mb-1">
+                <div class="form-group pt-1">
                     <label class="form-label">Пароль</label>
-                    <input type="text" class="form-control" @bind-value="Data.Password">
+                    <NexusTextBox @bind-Value="Data.Password" NexusValueExpression="@(() => Data.Password)" Placeholder="Введите пароль" />
+                    <ValidationMessage For="@(() => Data.Password)" class="invalid-feedback" />
                 </div>
-                <div class="mb-1">
+                <div class="form-group pt-1">
                     <label class="form-label">Организация</label>
-                    <input type="text" class="form-control" @bind-value="Data.Organization">
+                    <NexusTextBox @bind-Value="Data.Organization" NexusValueExpression="@(() => Data.Organization)" Placeholder="Введите организацию" />
                 </div>
-                <div class="mb-1">
+                <div class="form-group pt-1">
                     <label class="form-label">Позиция</label>
-                    <input type="text" class="form-control" @bind-value="Data.Position">
+                    <NexusTextBox @bind-Value="Data.Position" NexusValueExpression="@(() => Data.Position)" Placeholder="Введите позицию" />
                 </div>
-                <div class="mt-2">
+                <div class="form-group pt-1">
                     <div class="card">
                         <div class="card-header">
                             Группы
@@ -44,7 +59,7 @@
                         </div>
                     </div>
                 </div>
-            </form>
+            </EditForm>
         </div>
         <div class="card-footer">
             <div class="d-flex justify-content-end gap-1">
