@@ -46,7 +46,7 @@ namespace NexusUserTest.Shared.NexusBlazor
 
         private bool IsInsertMode { get; set; }
         private bool IsEditMode { get; set; }
-        private bool IsExpnadMode => ExpandMode != NexusTableGridExpandMode.None && ExpandedRows.Count > 0;
+        private bool IsExpnadMode => ExpandMode != NexusTableGridExpandMode.None;
 
         public void AddItem(NexusTableGridColumn<TItem> item)
         {

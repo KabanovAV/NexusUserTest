@@ -15,7 +15,10 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th style="display:@(IsExpnadMode ? "" : "none");width:10px;"></th>
+                @if (IsExpnadMode)
+                {
+                    <th style="width:10px;"></th>
+                }
                 @foreach (var item in _items)
                 {
                     <th scope="col">@item.Title</th>
