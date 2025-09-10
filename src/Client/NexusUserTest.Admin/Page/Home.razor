@@ -3,4 +3,14 @@
 
 <PageTitle>Admin page</PageTitle>
 
-<h1>Home page</h1>
+<h1>Список групп</h1>
+
+<NexusTableGrid @ref="NexusTable" TItem="GroupDTO" Data="Items" SelectionMode="NexusTableGridSelectionMode.Single"
+                RowDoubleClick="DbClick">
+    <Columns>
+        <NexusTableGridColumn Title="Название" Property="Title" />
+        <NexusTableGridColumn Title="Специализация" Property="SpecializationTitle" />
+        <NexusTableGridColumn Title="Начало" Property="Begin" />
+        <NexusTableGridColumn Title="Окончание" Property="End" />
+    </Columns>
+</NexusTableGrid>
