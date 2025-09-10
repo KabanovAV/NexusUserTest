@@ -34,7 +34,7 @@
                     {
                         @foreach (var item in Data)
                         {
-                            <tr @key="item" @onclick="() => SelectRow(item)" class="@(SelectedRows.Contains(item) ? "selected-row" : "")">
+                            <tr @key="item" @onclick="() => SelectRow(item)" @ondblclick="() => OnRowDblClick(item)" class="@(SelectedRows.Contains(item) ? "selected-row" : "")">
                                 <th @onclick="@(() => OnExpandRow(item))" @onclick:stopPropagation="true"
                                     style="display:@(ExpandMode != NexusTableGridExpandMode.None ? "" : "none");">
                                     <i class="bi @(ExpandedRows.Contains(item) ? "bi-chevron-down" : "bi-chevron-right")"></i>

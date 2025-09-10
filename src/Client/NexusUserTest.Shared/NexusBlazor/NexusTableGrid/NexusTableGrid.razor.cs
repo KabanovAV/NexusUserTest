@@ -30,6 +30,8 @@ namespace NexusUserTest.Shared.NexusBlazor
         public NexusTableGridEditMode EditMode { get; set; }
         [Parameter]
         public EventCallback OnSelectRow { get; set; }
+        [Parameter]
+        public EventCallback<TItem> RowDoubleClick { get; set; }
 
         private List<NexusTableGridColumn<TItem>> _items = [];
         public List<NexusTableGridColumn<TItem>> Items
@@ -73,6 +75,9 @@ namespace NexusUserTest.Shared.NexusBlazor
             }
             await OnSelectRow.InvokeAsync();
         }
+
+        public async Task OnRowDblClick(TItem args)
+            => await RowDoubleClick.InvokeAsync(args);
 
         public bool IsRowsSelected
             => SelectedRows.Count != 0;
