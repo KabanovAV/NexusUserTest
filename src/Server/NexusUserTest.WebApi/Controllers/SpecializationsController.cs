@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Domain.Entities;
+using SibCCSPETest.WebApi.MappingProfiles;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
@@ -17,8 +17,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll(string? include = null)
         {
             var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
-            var specializationDTOs = _mapper.Map<IEnumerable<SpecializationDTO>>(specializations);
-            return Ok(specializationDTOs);
+            return Ok(specializations.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -27,8 +26,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {id} не найдена." });
-            var specializationDTO = _mapper.Map<SpecializationDTO>(specialization);
-            return Ok(specializationDTO);
+            return Ok(specialization.ToDto());
         }
 
         [HttpPost]
@@ -36,9 +34,9 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (specializationCreateDTO == null)
                 return BadRequest("Данные для добавления специализации пустые.");
-            var specialization = _mapper.Map<Specialization>(specializationCreateDTO);
+            var specialization = specializationCreateDTO.ToEntity();
             await _service.SpecializationRepository.AddSpecializationAsync(specialization, include);
-            var specializationDTO = _mapper.Map<SpecializationDTO>(specialization);
+            var specializationDTO = specialization.ToDto();
             return CreatedAtAction(nameof(Get), new { id = specializationDTO.Id }, specializationDTO);
         }
 
@@ -50,10 +48,9 @@ namespace SibCCSPETest.WebApi.Controllers
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == specializationDTO.Id, include);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
-            _mapper.Map(specializationDTO, specialization);
+            specialization.UpdateFromDto(specializationDTO);
             await _service.SpecializationRepository.UpdateSpecialization(specialization, include);
-            specializationDTO = _mapper.Map<SpecializationDTO>(specialization);
-            return Ok(specializationDTO);
+            return Ok(specialization.ToDto());
         }
 
         [HttpDelete("{id:int}")]

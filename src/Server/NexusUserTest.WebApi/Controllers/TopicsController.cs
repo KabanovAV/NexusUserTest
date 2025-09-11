@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common.DTOs;
 using NexusUserTest.Domain.Entities;
+using SibCCSPETest.WebApi.MappingProfiles;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
@@ -17,8 +18,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<TopicDTO>>> GetAll(string? include = null)
         {
             var topics = await _service.TopicRepository.GetAllTopicAsync(includeProperties: include);
-            var topicDTOs = _mapper.Map<IEnumerable<TopicDTO>>(topics);
-            return Ok(topicDTOs);
+            return Ok(topics.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -27,8 +27,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id, include);
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {id} не найдена." });
-            var topicDTO = _mapper.Map<TopicDTO>(topic);
-            return Ok(topicDTO);
+            return Ok(topic.ToDto());
         }
 
         [HttpPost]
@@ -36,9 +35,9 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (topicCreateDTO == null)
                 return BadRequest("Данные для добавления темы пустые.");
-            var topic = _mapper.Map<Topic>(topicCreateDTO);
+            var topic = topicCreateDTO.ToEntity();
             await _service.TopicRepository.AddTopicAsync(topic, include);
-            var topicDTO = _mapper.Map<TopicDTO>(topic);
+            var topicDTO = topic.ToDto();
             return CreatedAtAction(nameof(Get), new { id = topicDTO.Id }, topicDTO);
         }
 
@@ -50,10 +49,9 @@ namespace SibCCSPETest.WebApi.Controllers
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == topicDTO.Id, include);
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {topicDTO.Id} не найдена." });
-            _mapper.Map(topicDTO, topic);
+            topic.UpdateFromDto(topicDTO);
             await _service.TopicRepository.UpdateTopic(topic, include);
-            topicDTO = _mapper.Map<TopicDTO>(topic);
-            return Ok(topicDTO);
+            return Ok(topic.ToDto());
         }
 
         [HttpDelete("{id:int}")]

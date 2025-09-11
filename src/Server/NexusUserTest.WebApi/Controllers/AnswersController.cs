@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.WebApi
 {
@@ -17,8 +17,7 @@ namespace NexusUserTest.WebApi
         public async Task<ActionResult<IEnumerable<AnswerDTO>>> GetAll(string? include = null)
         {
             var answers = await _service.AnswerRepository.GetAllAnswerAsync(includeProperties: include);
-            var answerDTOs = _mapper.Map<IEnumerable<AnswerDTO>>(answers);
-            return Ok(answerDTOs);
+            return Ok(answers.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -27,8 +26,7 @@ namespace NexusUserTest.WebApi
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id, include);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {id} не найден." });
-            var answerDTO = _mapper.Map<AnswerDTO>(answer);
-            return Ok(answerDTO);
+            return Ok(answer.ToDto());
         }
 
         [HttpPost]
@@ -36,9 +34,9 @@ namespace NexusUserTest.WebApi
         {
             if (answerCreateDTO == null)
                 return BadRequest("Данные для добавления ответа пустые.");
-            var answer = _mapper.Map<Answer>(answerCreateDTO);
+            var answer = answerCreateDTO.ToEntity();
             await _service.AnswerRepository.AddAnswerAsync(answer, include);
-            var answerDTO = _mapper.Map<AnswerDTO>(answer);
+            var answerDTO = answer.ToDto();
             return CreatedAtAction(nameof(Get), new { id = answerDTO.Id }, answerDTO);
         }
 
@@ -47,9 +45,9 @@ namespace NexusUserTest.WebApi
         {
             if (answerCreateDTOs == null)
                 return BadRequest("Данные для добавления ответов пустые.");
-            var answers = _mapper.Map<List<Answer>>(answerCreateDTOs);
-            await _service.AnswerRepository.AddRangeAnswerAsync(answers, include);
-            var answerDTOs = _mapper.Map<List<AnswerDTO>>(answers);
+            var answers = answerCreateDTOs.ToEntity();
+            await _service.AnswerRepository.AddRangeAnswerAsync([.. answers], include);
+            var answerDTOs = answers.ToDto();
             return CreatedAtAction(nameof(GetAll), answerDTOs);
         }
 
@@ -61,10 +59,9 @@ namespace NexusUserTest.WebApi
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == answerDTO.Id, include);
             if (answer == null)
                 return NotFound(new { Message = $"Вопрос с id {answerDTO.Id} не найден." });
-            _mapper.Map(answerDTO, answer);
+            answer.UpdateFromDto(answerDTO);
             await _service.AnswerRepository.UpdateAnswer(answer, include);
-            answerDTO = _mapper.Map<AnswerDTO>(answer);
-            return Ok(answerDTO);
+            return Ok(answer.ToDto());
         }
 
         [HttpDelete("{id:int}")]

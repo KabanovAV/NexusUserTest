@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Domain.Entities;
+using SibCCSPETest.WebApi.MappingProfiles;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
@@ -17,8 +18,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll(string? include = null)
         {
             var users = await _service.UserRepository.GetAllUserAsync(includeProperties: include);
-            var userDTOs = _mapper.Map<IEnumerable<UserDTO>>(users);
-            return Ok(userDTOs);
+            return Ok(users.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -27,8 +27,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            var userDTO = _mapper.Map<UserDTO>(user);
-            return Ok(userDTO);
+            return Ok(user.ToDto());
         }
 
         [HttpPost]
@@ -36,9 +35,9 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (userCreateDTO == null)
                 return BadRequest("Данные для добавления пользователя пустые.");
-            var user = _mapper.Map<User>(userCreateDTO);
+            var user = userCreateDTO.ToEntity();
             await _service.UserRepository.AddUserAsync(user, include);
-            var userDTO = _mapper.Map<UserDTO>(user);
+            var userDTO = user.ToDto();
             return CreatedAtAction(nameof(Get), new { id = userDTO.Id }, userDTO);
         }
 
@@ -50,10 +49,9 @@ namespace SibCCSPETest.WebApi.Controllers
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == userDTO.Id, include);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {userDTO.Id} не найден." });
-            _mapper.Map(userDTO, user);
+            user.UpdateFromDto(userDTO);
             await _service.UserRepository.UpdateUser(user, include);
-            userDTO = _mapper.Map<UserDTO>(user);
-            return Ok(userDTO);
+            return Ok(user.ToDto());
         }
 
         [HttpDelete("{id:int}")]

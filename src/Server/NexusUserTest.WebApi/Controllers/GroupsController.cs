@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Domain.Entities;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
@@ -17,8 +17,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAll(string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
-            var groupDTOs = _mapper.Map<IEnumerable<GroupDTO>>(groups);
-            return Ok(groupDTOs);
+            return Ok(groups.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -27,8 +26,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
                 return NotFound(new { Message = $"Группа с id {id} не найдена." });
-            var groupDTO = _mapper.Map<GroupDTO>(group);
-            return Ok(groupDTO);
+            return Ok(group.ToDto());
         }
 
         [HttpPost]
@@ -36,9 +34,9 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (groupCreateDTO == null)
                 return BadRequest("Данные для добавления группы пустые.");
-            var group = _mapper.Map<Group>(groupCreateDTO);
+            var group = groupCreateDTO.ToEntity();
             await _service.GroupRepository.AddGroupAsync(group, include);
-            var groupDTO = _mapper.Map<GroupDTO>(group);
+            var groupDTO = group.ToDto();
             return CreatedAtAction(nameof(Get), new { id = groupDTO.Id }, groupDTO);
         }
 
@@ -50,10 +48,9 @@ namespace SibCCSPETest.WebApi.Controllers
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == groupDTO.Id, include);
             if (group == null)
                 return NotFound(new { Message = $"Группа с id {groupDTO.Id} не найдена." });
-            _mapper.Map(groupDTO, group);
+            group.UpdateFromDto(groupDTO);
             await _service.GroupRepository.UpdateGroup(group, include);
-            groupDTO = _mapper.Map<GroupDTO>(group);
-            return Ok(groupDTO);
+            return Ok(group.ToDto());
         }
 
         [HttpDelete("{id:int}")]
