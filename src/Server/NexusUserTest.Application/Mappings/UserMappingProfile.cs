@@ -5,6 +5,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
 {
     public static class UserMappingProfile
     {
+        /// <summary>
+        /// Маппинг из обьекта User в UserDTO
+        /// </summary>
+        /// <param name="entity">Обьект User</param>
+        /// <returns>User</returns>
         public static UserDTO? ToDto(this User entity)
             => entity == null ? null : new UserDTO
             {
@@ -18,9 +23,19 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                     .Select(gu => new GroupUserCreateDTO { GroupId = gu.GroupId, UserId = gu.UserId })] : []
             };
 
+        /// <summary>
+        /// Маппинг списка из обьектов User в список User
+        /// </summary>
+        /// <param name="entities">Список обьектов User</param>
+        /// <returns>Список User</returns>
         public static IEnumerable<UserDTO?> ToDto(this IEnumerable<User> entities)
             => entities.Select(e => e.ToDto()) ?? [];
 
+        /// <summary>
+        /// Маппинг из UserDTO в обьект User
+        /// </summary>
+        /// <param name="dto">UserDTO</param>
+        /// <returns>User</returns>
         public static User? ToEntity(this UserDTO dto)
             => dto == null ? null : new User
             {
@@ -35,9 +50,19 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 GroupUser = dto.GroupUserItems != null ? GroupUserListConverter(dto.GroupUserItems) : []
             };
 
-        public static IEnumerable<User?> ToEntity(this IEnumerable<UserDTO> entities)
-            => entities.Select(e => e.ToEntity()) ?? [];
+        /// <summary>
+        /// Маппинг списка из UserDTO в список обьектов User
+        /// </summary>
+        /// <param name="dtos">Список UserDTO</param>
+        /// <returns>Список User</returns>
+        public static IEnumerable<User?> ToEntity(this IEnumerable<UserDTO> dtos)
+            => dtos.Select(e => e.ToEntity()) ?? [];
 
+        /// <summary>
+        /// Маппинг из UserCreateDTO создание в обьект User
+        /// </summary>
+        /// <param name="dto">UserCreateDTO</param>
+        /// <returns>Обьект User</returns>
         public static User? ToEntity(this UserCreateDTO dto)
             => dto == null ? null : new User
             {
@@ -51,6 +76,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 GroupUser = dto.GroupUserItems != null ? GroupUserListConverter(dto.GroupUserItems) : []
             };
 
+        /// <summary>
+        /// Маппинг обновления обьекта User
+        /// </summary>
+        /// <param name="entity">Обьект User</param>
+        /// <param name="dto">UserDTO</param>
         public static void UpdateFromDto(this User entity, UserDTO dto)
         {
             if (dto == null) return;
@@ -77,6 +107,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 GroupUserListConverter(entity, dto);
         }
 
+        /// <summary>
+        /// Обьединение и конвертирование в обьекта Question
+        /// </summary>
+        /// <param name="fullName">Обьект Question</param>
+        /// <param name="index">QuestionDTO</param>
         private static string GetNamePart(string fullName, int index)
         {
             if (string.IsNullOrWhiteSpace(fullName))
@@ -85,6 +120,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             return names.Length > index ? names[index] : string.Empty;
         }
 
+        /// <summary>
+        /// Конвертирование списка из GroupUserCreateDTO в список обьектов GroupUser
+        /// </summary>
+        /// <param name="items">GroupUserCreateDTO</param>
+        /// <returns>Список GroupUser</returns>
         private static List<GroupUser> GroupUserListConverter(List<GroupUserCreateDTO> items)
         {
             List<GroupUser> groupUser = [];
@@ -93,6 +133,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             return groupUser;
         }
 
+        /// <summary>
+        /// Обьединение и конвертирование в обьект User
+        /// </summary>
+        /// <param name="entity">Обьект User</param>
+        /// <param name="dto">UserDTO</param>
         private static void GroupUserListConverter(this User entity, UserDTO dto)
         {
             if (entity.GroupUser != null && dto.GroupUserItems != null)

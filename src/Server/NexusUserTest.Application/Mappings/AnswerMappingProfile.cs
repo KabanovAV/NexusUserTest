@@ -5,6 +5,11 @@ namespace NexusUserTest.Application.Mappings
 {
     public static class AnswerMappingProfile
     {
+        /// <summary>
+        /// Маппинг из обьекта Answer в AnswerDTO
+        /// </summary>
+        /// <param name="entity">Обьект Answer</param>
+        /// <returns>AnswerDTO</returns>
         public static AnswerDTO? ToDto(this Answer entity)
             => entity == null ? null : new AnswerDTO
             {
@@ -15,9 +20,19 @@ namespace NexusUserTest.Application.Mappings
                 IsCorrect = entity.IsCorrect
             };
 
+        /// <summary>
+        /// Маппинг списка из Answer в список AnswerDTO
+        /// </summary>
+        /// <param name="entities">Список обьектов ответов</param>
+        /// <returns>Список DTO ответов</returns>
         public static IEnumerable<AnswerDTO?> ToDto(this IEnumerable<Answer> entities)
             => entities.Select(e => e.ToDto()) ?? [];
 
+        /// <summary>
+        /// Маппинг из AnswerDTO в обьект Answer
+        /// </summary>
+        /// <param name="dto">AnswerDTO</param>
+        /// <returns>Answer</returns>
         public static Answer? ToEntity(this AnswerDTO dto)
             => dto == null ? null : new Answer
             {
@@ -27,9 +42,19 @@ namespace NexusUserTest.Application.Mappings
                 IsCorrect = dto.IsCorrect
             };
 
-        public static IEnumerable<Answer?> ToEntity(this IEnumerable<AnswerDTO> entities)
-            => entities.Select(e => e.ToEntity()) ?? [];
+        /// <summary>
+        /// Маппинг списка из AnswerDTO в список обьектов Answer
+        /// </summary>
+        /// <param name="dtos">Список AnswerDTO</param>
+        /// <returns>Список обьектов Answer</returns>
+        public static IEnumerable<Answer?> ToEntity(this IEnumerable<AnswerDTO> dtos)
+            => dtos.Select(e => e.ToEntity()) ?? [];
 
+        /// <summary>
+        /// Маппинг из AnswerCreateDTO создание в обьект Answer
+        /// </summary>
+        /// <param name="dto">AnswerCreateDTO</param>
+        /// <returns>Обьект Answer</returns>
         public static Answer? ToEntity(this AnswerCreateDTO dto)
             => dto == null ? null : new Answer
             {
@@ -38,9 +63,19 @@ namespace NexusUserTest.Application.Mappings
                 IsCorrect = dto.IsCorrect
             };
 
-        public static IEnumerable<Answer?> ToEntity(this IEnumerable<AnswerCreateDTO> entities)
-            => entities.Select(e => e.ToEntity()) ?? [];
+        /// <summary>
+        /// Маппинг из списка AnswerCreateDTO создание в список обьектов Answer
+        /// </summary>
+        /// <param name="dtos">Список AnswerCreateDTO</param>
+        /// <returns>Список обьектов Answer</returns>
+        public static IEnumerable<Answer?> ToEntity(this IEnumerable<AnswerCreateDTO> dtos)
+            => dtos.Select(e => e.ToEntity()) ?? [];
 
+        /// <summary>
+        /// Маппинг обновления обьекта Answer
+        /// </summary>
+        /// <param name="entity">Обьект Answer</param>
+        /// <param name="dto">AnswerDTO</param>
         public static void UpdateFromDto(this Answer entity, AnswerDTO dto)
         {
             if (dto == null) return;
@@ -51,16 +86,5 @@ namespace NexusUserTest.Application.Mappings
             if (entity.IsCorrect != dto.IsCorrect)
                 entity.IsCorrect = dto.IsCorrect;
         }
-
-
-        //public AnswerMappingProfile()
-        //{
-        //    CreateMap<Answer, AnswerDTO>().ForMember(dest => dest.QuestionTitle, opt =>
-        //    {
-        //        opt.PreCondition(src => src.Question != null);
-        //        opt.MapFrom(src => src.Question!.Title);
-        //    }).ReverseMap();
-        //    CreateMap<AnswerCreateDTO, Answer>();
-        //}
     }
 }
