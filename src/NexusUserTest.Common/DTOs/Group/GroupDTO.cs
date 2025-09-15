@@ -17,6 +17,5 @@ namespace NexusUserTest.Common.DTOs
         [Display(Name = "Окончание курсов")]
         [Required(ErrorMessage = "Обязательное поле для заполнения")]
         public DateTime End { get; set; }
-        public List<GroupUserCreateDTO>? GroupUserItems { get; set; }
     }
 }
