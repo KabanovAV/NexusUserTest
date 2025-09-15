@@ -25,7 +25,7 @@ namespace NexusUserTest.Admin.Page
 
         private bool IsUpsertForm;
         public bool IsCrud => NexusTable != null
-            && (NexusTable.InsertItem.Count > 0 || NexusTable.EditedItem.Count > 0);
+            && (NexusTable.InsertedItems.Count > 0 || NexusTable.EditedItems.Count > 0);
         public bool IsSelected => IsCrud || !NexusTable!.IsRowsSelected;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

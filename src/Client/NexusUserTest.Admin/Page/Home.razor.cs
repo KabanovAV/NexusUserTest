@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common.DTOs;
-using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
@@ -17,6 +16,7 @@ namespace NexusUserTest.Admin.Page
 
         private NexusTableGrid<GroupDTO>? NexusTable;
         private List<GroupDTO>? Items;
+        private IEnumerable<UserDTO>? Users;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -33,7 +33,11 @@ namespace NexusUserTest.Admin.Page
             Items = [.. g];
         }
 
-        private void DbClick(GroupDTO item)
-            => NotificationService!.ShowSuccess($"{item.Title}", "Успех");
+        private async void DbClick(GroupDTO item)
+        {
+            //Users = await ServiceAPI!.UserService.GetAllUser("Specialization,GroupUser");
+            //Users = Users.Where(x => x.
+            NotificationService!.ShowSuccess($"{item.Title}", "Успех");
+        } 
     }
 }

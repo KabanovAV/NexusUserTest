@@ -5,7 +5,7 @@
 
 <h1>Список групп</h1>
 
-<NexusTableGrid @ref="NexusTable" TItem="GroupDTO" Data="Items" SelectionMode="NexusTableGridSelectionMode.Single"
+@* <NexusTableGrid @ref="NexusTable" TItem="GroupDTO" Data="Items" SelectionMode="NexusTableGridSelectionMode.Single"
                 RowDoubleClick="DbClick">
     <Columns>
         <NexusTableGridColumn Title="Название" Property="Title" />
@@ -13,4 +13,103 @@
         <NexusTableGridColumn Title="Начало" Property="Begin" />
         <NexusTableGridColumn Title="Окончание" Property="End" />
     </Columns>
+</NexusTableGrid> *@
+
+<NexusTableGrid @ref="_table" TItem="Person"
+                Data="@People"
+                CssClass="table table-hover"
+                SelectionMode="NexusTableGridSelectionMode.Single"
+                ExpandMode="NexusTableGridExpandMode.Single"
+                EditMode="NexusTableGridEditMode.Single"
+                OnRowSelected="RowSelected"
+                OnRowExpanded="RowExpanded"
+                OnRowEdited="RowEdited"
+                RowDoubleClick="RowDoubleClicked"
+                AllowSorting="true" AllowFiltering="true" ShowEmptyMessage="true" EmptyMessage="Нет элементов в таблице">
+    <ToolTemplate>
+        <NexusGroupButton>
+            <NexusButton Title="Добавить" OnClick="InsertRow" CssClass="btn-primary" IconClass="bi bi-plus-lg" />
+        </NexusGroupButton>
+    </ToolTemplate>
+    <Columns>
+        <NexusTableGridColumn TItem="Person" Title="#">
+            <CellTemplate Context="person">
+                @(People.IndexOf(person) + 1)
+            </CellTemplate>
+        </NexusTableGridColumn>
+        <NexusTableGridColumn Title="Name" Property="p => p.Name" Sortable="true" Filterable="true">
+            <EditTemplate Context="person">
+                <input type="text" class="form-control border border-black" @bind="person.Name" />
+            </EditTemplate>
+        </NexusTableGridColumn>
+        <NexusTableGridColumn Title="Age" Property="p => p.Age" Sortable="true" Filterable="true">
+            <EditTemplate Context="person">
+                <input type="text" class="form-control border border-black" @bind="person.Age" />
+            </EditTemplate>
+        </NexusTableGridColumn>
+    </Columns>
+
+    <ExpandRow Context="person">
+        <div class="p-2 border bg-light">
+            <b>Details:</b> @person.Name (@person.Age y.o.)
+        </div>
+    </ExpandRow>
+
 </NexusTableGrid>
+
+@code {
+    private List<Person> People = new()
+    {
+        new Person { Id = 1, Name = "Alice", Age = 30 },
+        new Person { Id = 2, Name = "Bob", Age = 25 },
+        new Person { Id = 3, Name = "Charlie", Age = 40 }
+    };
+
+    private NexusTableGrid<Person>? _table;
+
+    private void RowSelected(Person person)
+    {
+        Console.WriteLine($"Selected: {person.Name}");
+    }
+
+    private void RowExpanded(Person person)
+    {
+        Console.WriteLine($"Expanded: {person.Name}");
+    }
+
+    private void RowEdited(Person person)
+    {
+        Console.WriteLine($"Editing: {person.Name}");
+    }
+
+    private void RowDoubleClicked(Person person)
+    {
+        Console.WriteLine($"Double-click: {person.Name}");
+    }
+
+    private void ClearSelection()
+    {
+        _table?.ClearSelection();
+    }
+
+    private void CollapseAll()
+    {
+        _table?.CollapseAll();
+    }
+
+    private async Task InsertRow()
+    {
+        await _table.InsertRow(new Person() { Age = 0 });
+
+        // var newPerson = new Person { Id = People.Count + 1, Name = "New Person", Age = 20 };
+        // if (_table is not null)
+        //     await _table.InsertRow(newPerson);
+    }
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public int Age { get; set; }
+    }
+}

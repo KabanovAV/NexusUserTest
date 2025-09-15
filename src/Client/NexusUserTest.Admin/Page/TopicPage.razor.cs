@@ -23,7 +23,7 @@ namespace NexusUserTest.Admin.Page
         private IEnumerable<SelectItem>? SpecializationSelects;
 
         public bool IsCrud => NexusTable != null
-            && (NexusTable.InsertItem.Count > 0 || NexusTable.EditedItem.Count > 0);
+            && (NexusTable.InsertedItems.Count > 0 || NexusTable.EditedItems.Count > 0);
         public bool IsSelected => IsCrud || !NexusTable!.IsRowsSelected;
         public bool IsSaveCancel => !IsCrud;
 
@@ -70,14 +70,14 @@ namespace NexusUserTest.Admin.Page
 
         public async Task Save()
         {
-            if (NexusTable!.InsertItem.Count == 0 && NexusTable!.EditedItem.Count > 0)
+            if (NexusTable!.InsertedItems.Count == 0 && NexusTable!.EditedItems.Count > 0)
             {
-                var data = NexusTable!.EditedItem.First();
+                var data = NexusTable!.EditedItems.First();
                 await Update(data);
             }
             else
             {
-                var data = NexusTable!.InsertItem.First();
+                var data = NexusTable!.InsertedItems.First();
                 await Add(data);
             }
             await NexusTable.Reload();

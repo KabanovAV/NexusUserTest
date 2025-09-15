@@ -17,19 +17,22 @@ else
 {
     <div style="display:@(IsUpsertForm ? "none" : "");">
         <NexusTableGrid @ref="NexusTable" TItem="QuestionDTO" Data="Items" SelectionMode="SelectMode"
-                        EditMode="EditMode" ShowEmptyMessage="true" EmptyMessage="Нет вопросов" ExpandMode="NexusTableGridExpandMode.Single">
+                        ExpandMode="NexusTableGridExpandMode.Single" EditMode="EditMode"
+                        AllowFiltering="true" ShowEmptyMessage="true" EmptyMessage="Нет вопросов">
             <ToolTemplate>
-                <div class="mb-1">
-                    <NexusGroupButton>
-                        <NexusButton Title="Добавить" OnClick="Insert" CssClass="btn-primary" IconClass="bi bi-plus-lg" Disable="IsCrud" />
-                        <NexusButton Title="Изменить" OnClick="Edit" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
-                        <NexusButton Title="Удалить" OnClick="Delete" CssClass="btn-danger" IconClass="bi bi-trash3-fill" Disable="IsSelected" />
-                    </NexusGroupButton>
-                </div>
+                <NexusGroupButton>
+                    <NexusButton Title="Добавить" OnClick="Insert" CssClass="btn-primary" IconClass="bi bi-plus-lg" Disable="IsCrud" />
+                    <NexusButton Title="Изменить" OnClick="Edit" CssClass="btn-warning" IconClass="bi bi-pencil-fill" Disable="IsSelected" />
+                    <NexusButton Title="Удалить" OnClick="Delete" CssClass="btn-danger" IconClass="bi bi-trash3-fill" Disable="IsSelected" />
+                </NexusGroupButton>
             </ToolTemplate>
             <Columns>
-                <NexusTableGridColumn Title="Id" Property="Id" />
-                <NexusTableGridColumn Title="Название" Property="Title" />
+                <NexusTableGridColumn Title="#">
+                    <CellTemplate>
+                        @(Items.IndexOf(context) + 1)
+                    </CellTemplate>
+                </NexusTableGridColumn>
+                <NexusTableGridColumn Title="Название" Property="q => q.Title" Filterable="true" />
             </Columns>
             <ExpandRow>
                 <AnswerView Items="@context.AnswerItems" QuestionId="@context.Id" />

@@ -15,13 +15,13 @@ namespace NexusUserTest.Admin.Page
         public INexusDialogService? DialogService { get; set; }
 
         private NexusTableGrid<SpecializationDTO>? NexusTable;
-        private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
-        private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
+        private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
+        private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
         private List<SpecializationDTO>? Items;
 
         public bool IsCrud => NexusTable != null
-            && (NexusTable.InsertItem.Count > 0 || NexusTable.EditedItem.Count > 0);
+            && (NexusTable.InsertedItems.Count > 0 || NexusTable.EditedItems.Count > 0);
         public bool IsSelected => IsCrud || !NexusTable!.IsRowsSelected;
         public bool IsSaveCancel => !IsCrud;
 
@@ -37,7 +37,7 @@ namespace NexusUserTest.Admin.Page
         private async Task LoadData()
         {
             var s = await ServiceAPI!.SpecializationService.GetAllSpecialization();
-            Items = s.ToList();
+            Items = [.. s];
         }
 
         public async Task Insert()
@@ -66,14 +66,14 @@ namespace NexusUserTest.Admin.Page
 
         public async Task Save()
         {
-            if (NexusTable!.InsertItem.Count == 0 && NexusTable!.EditedItem.Count > 0)
+            if (NexusTable!.InsertedItems.Count == 0 && NexusTable!.EditedItems.Count > 0)
             {
-                var data = NexusTable!.EditedItem.First();
+                var data = NexusTable!.EditedItems.First();
                 await Update(data);
             }
             else
             {
-                var data = NexusTable!.InsertItem.First();
+                var data = NexusTable!.InsertedItems.First();
                 await Add(data);
             }
             await NexusTable.Reload();
