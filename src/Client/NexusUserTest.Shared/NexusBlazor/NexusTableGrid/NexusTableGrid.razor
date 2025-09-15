@@ -12,7 +12,7 @@
 
     @ToolTemplate
 
-    <table class="table table-bordered">
+    <table class="table table-bordered @CssClass" style="@CssStyle">
         <thead>
             <tr>
                 @if (IsExpnadMode)
@@ -21,35 +21,80 @@
                 }
                 @foreach (var item in _items)
                 {
-                    <th scope="col">@item.Title</th>
+                    <th scope="col" class="@item.CssClass" style="@item.CssStyle">
+                        @if (item.HeaderTemplate is not null)
+                        {
+                            @item.HeaderTemplate
+                        }
+                        else if (!AllowSorting || !item.Sortable)
+                        {
+                            @item.Title
+                        }
+                        else
+                        {
+                            <span @onclick="() => SortBy(item.FieldName!)"
+                                  style="cursor:@(item.Sortable ? "pointer" : "default")">
+                                @item.Title
+                                @if (_state.SortColumn == item.FieldName)
+                                {
+                                    <span>@(_state.SortAscending ? "▲" : "▼")</span>
+                                }
+                            </span>
+                        }
+                    </th>
                 }
             </tr>
+            @if (AllowFiltering)
+            {
+                <tr>
+                    @if (IsExpnadMode)
+                    {
+                        <th style="width:10px;"></th>
+                    }
+                    @foreach (var item in _items)
+                    {
+                        <th>
+                            @if (item.Filterable && !string.IsNullOrEmpty(item.FieldName))
+                            {
+                                <input class="form-control form-control-sm"
+                                       @oninput="e => SetFilter(item.FieldName, e.Value?.ToString())"
+                                       placeholder="Filter..." />
+                            }
+                        </th>
+                    }
+                </tr>
+            }
         </thead>
         <tbody>
-            @if (Data != null)
+            @if (_state.View != null)
             {
-                @if (!ShowEmptyMessage || Data.Count > 0)
+                @if (!ShowEmptyMessage || _state.View.Count > 0)
                 {
                     if (_items.Count > 0)
                     {
-                        @foreach (var item in Data)
+                        @foreach (var item in _state.View)
                         {
                             <tr @key="item" @onclick="() => SelectRow(item)" @ondblclick="() => OnRowDblClick(item)" class="@(SelectedRows.Contains(item) ? "selected-row" : "")">
                                 <th @onclick="@(() => OnExpandRow(item))" @onclick:stopPropagation="true"
                                     style="display:@(ExpandMode != NexusTableGridExpandMode.None ? "" : "none");">
                                     <i class="bi @(ExpandedRows.Contains(item) ? "bi-chevron-down" : "bi-chevron-right")"></i>
                                 </th>
-                                @if (EditMode != NexusTableGridEditMode.None && EditedItem.Contains(item))
+                                @foreach (var col in Items)
                                 {
-                                    <CascadingValue Value="item">
-                                        @EditColumns(item)
-                                    </CascadingValue>
-                                }
-                                else
-                                {
-                                    <CascadingValue Value="item">
-                                        @Columns
-                                    </CascadingValue>
+                                    <td>
+                                        @if (col.CellTemplate is not null)
+                                        {
+                                            @col.CellTemplate(item)
+                                        }
+                                        else if (EditedItems.Contains(item) && col.EditTemplate is not null)
+                                        {
+                                            @col.EditTemplate(item)
+                                        }
+                                        else if (col.Property is not null)
+                                        {
+                                            @col.Field(item)
+                                        }
+                                    </td>
                                 }
                             </tr>
                             @if (ExpandMode != NexusTableGridExpandMode.None)
