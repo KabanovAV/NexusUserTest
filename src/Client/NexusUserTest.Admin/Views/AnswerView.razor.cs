@@ -18,9 +18,9 @@ namespace NexusUserTest.Admin.Views
         private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Multiple;
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        public bool IsCrud => NexusTable != null && NexusTable.InsertItem.Count == 0 && NexusTable.EditedItem.Count > 0;
-        public bool IsSelected => !NexusTable.IsRowsSelected && NexusTable.InsertItem.Count == 0 || NexusTable.EditedItem.Count > 0;
-        public bool IsSaveCancel => NexusTable.InsertItem.Count == 0 && NexusTable.EditedItem.Count == 0;
+        public bool IsCrud => NexusTable != null && NexusTable.InsertedItems.Count == 0 && NexusTable.EditedItems.Count > 0;
+        public bool IsSelected => !NexusTable.IsRowsSelected && NexusTable.InsertedItems.Count == 0 || NexusTable.EditedItems.Count > 0;
+        public bool IsSaveCancel => NexusTable.InsertedItems.Count == 0 && NexusTable.EditedItems.Count == 0;
 
         public async Task Insert()
             => await NexusTable!.InsertRow(new AnswerDTO { QuestionId = QuestionId });
@@ -47,18 +47,18 @@ namespace NexusUserTest.Admin.Views
 
         public async Task Save()
         {
-            if (NexusTable!.InsertItem.Count == 0 && NexusTable!.EditedItem.Count > 0)
+            if (NexusTable!.InsertedItems.Count == 0 && NexusTable!.EditedItems.Count > 0)
             {
-                var data = NexusTable!.EditedItem.First();
+                var data = NexusTable!.EditedItems.First();
                 await Update(data);
             }
             else
             {
-                if (NexusTable!.InsertItem.Count > 1)
-                    await AddRange(NexusTable!.EditedItem);
+                if (NexusTable!.InsertedItems.Count > 1)
+                    await AddRange([.. NexusTable!.EditedItems]);
                 else
                 {
-                    var data = NexusTable!.InsertItem.First();
+                    var data = NexusTable!.InsertedItems.First();
                     await Add(data);
                 }
             }
