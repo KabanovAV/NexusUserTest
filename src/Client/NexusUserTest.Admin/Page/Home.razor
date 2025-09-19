@@ -3,19 +3,33 @@
 
 <PageTitle>Admin page</PageTitle>
 
-<h1>Список групп</h1>
+<div style="display:@(!IsShowGroupUsers ? "" : "none")">
+    <h1>Список групп</h1>
 
-@* <NexusTableGrid @ref="NexusTable" TItem="GroupDTO" Data="Items" SelectionMode="NexusTableGridSelectionMode.Single"
-                RowDoubleClick="DbClick">
-    <Columns>
-        <NexusTableGridColumn Title="Название" Property="Title" />
-        <NexusTableGridColumn Title="Специализация" Property="SpecializationTitle" />
-        <NexusTableGridColumn Title="Начало" Property="Begin" />
-        <NexusTableGridColumn Title="Окончание" Property="End" />
-    </Columns>
-</NexusTableGrid> *@
+    <NexusTableGrid TItem="GroupInfoDTO" Data="@Items" SelectionMode="NexusTableGridSelectionMode.Single"
+                    AllowFiltering="true" RowDoubleClick="DbClick">
+        <Columns>
+            <NexusTableGridColumn Title="#">
+                <CellTemplate>
+                    @(Items.IndexOf(context) + 1)
+                </CellTemplate>
+            </NexusTableGridColumn>
+            <NexusTableGridColumn Title="Название" Property="g => g.Title" Filterable="true" />
+            <NexusTableGridColumn Title="Кол-во пользователей" Property="g => g.CountOfUsers" />
+            <NexusTableGridColumn Title="Кол-во вопросов" Property="g => g.CountOfQuestions" />
+        </Columns>
+    </NexusTableGrid>
+</div>
+<div style="display:@(IsShowGroupUsers ? "" : "none")">
+    <button class="btn" @onclick="BackToGroups">
+        <i class="bi bi-arrow-left"></i>
+    </button>
+</div>
+<div style="display:@(IsShowGroupUsers ? "" : "none")">
+    <GroupUserView GroupInfo="GroupInfo" />
+</div>
 
-<NexusTableGrid @ref="_table" TItem="Person"
+@* <NexusTableGrid @ref="_table" TItem="Person"
                 Data="@People"
                 CssClass="table table-hover"
                 SelectionMode="NexusTableGridSelectionMode.Single"
@@ -101,9 +115,9 @@
     {
         await _table.InsertRow(new Person() { Age = 0 });
 
-        // var newPerson = new Person { Id = People.Count + 1, Name = "New Person", Age = 20 };
-        // if (_table is not null)
-        //     await _table.InsertRow(newPerson);
+        var newPerson = new Person { Id = People.Count + 1, Name = "New Person", Age = 20 };
+        if (_table is not null)
+            await _table.InsertRow(newPerson);
     }
 
     public class Person
@@ -112,4 +126,4 @@
         public string? Name { get; set; }
         public int Age { get; set; }
     }
-}
+} *@

@@ -14,9 +14,12 @@ namespace NexusUserTest.Admin.Page
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private NexusTableGrid<GroupDTO>? NexusTable;
-        private List<GroupDTO>? Items;
-        private IEnumerable<UserDTO>? Users;
+        private List<GroupInfoDTO>? Items;
+        private List<GroupUserDTO>? Users;
+        private GroupInfoDetailsDTO? GroupInfo;
+
+        private NexusTableGrid<GroupUserDTO>? NexusTable;
+        private bool IsShowGroupUsers;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -29,15 +32,20 @@ namespace NexusUserTest.Admin.Page
 
         private async Task LoadData()
         {
-            var g = await ServiceAPI!.GroupService.GetAllGroup("Specialization,GroupUser");
+            var g = await ServiceAPI!.GroupService.GetAllInfoGroup("Specialization.Topics.TopicQuestion,GroupUser");
             Items = [.. g];
         }
 
-        private async void DbClick(GroupDTO item)
+        private async void DbClick(GroupInfoDTO item)
         {
-            //Users = await ServiceAPI!.UserService.GetAllUser("Specialization,GroupUser");
-            //Users = Users.Where(x => x.
-            NotificationService!.ShowSuccess($"{item.Title}", "Успех");
-        } 
+            GroupInfo = await ServiceAPI!.GroupService.GetInfoDetailsGroup(item.Id, "Specialization.Topics.TopicQuestion,Setting,GroupUser.User");
+            var u = await ServiceAPI!.GroupUserService.GetAllUsersByGroupId(item.Id, "User");
+            Users = [.. u];
+            IsShowGroupUsers = true;
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private void BackToGroups()
+            => IsShowGroupUsers = false;
     }
 }
