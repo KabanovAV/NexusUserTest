@@ -36,32 +36,35 @@
 
         private void Apply()
         {
-            IEnumerable<TItem> query = Source;
-
-            // Фильтрация
-            foreach (var filter in Filters.Where(f => !string.IsNullOrEmpty(f.Value)))
+            if (Source != null)
             {
-                query = query.Where(item =>
-                {
-                    var prop = typeof(TItem).GetProperty(filter.Key);
-                    var val = prop?.GetValue(item)?.ToString();
-                    return val?.Contains(filter.Value!, StringComparison.OrdinalIgnoreCase) ?? false;
-                });
-            }
+                IEnumerable<TItem> query = Source;
 
-            // Сортировка
-            if (!string.IsNullOrEmpty(SortColumn))
-            {
-                var prop = typeof(TItem).GetProperty(SortColumn);
-                if (prop != null)
+                // Фильтрация
+                foreach (var filter in Filters.Where(f => !string.IsNullOrEmpty(f.Value)))
                 {
-                    query = SortAscending
-                        ? query.OrderBy(x => prop.GetValue(x))
-                        : query.OrderByDescending(x => prop.GetValue(x));
+                    query = query.Where(item =>
+                    {
+                        var prop = typeof(TItem).GetProperty(filter.Key);
+                        var val = prop?.GetValue(item)?.ToString();
+                        return val?.Contains(filter.Value!, StringComparison.OrdinalIgnoreCase) ?? false;
+                    });
                 }
+
+                // Сортировка
+                if (!string.IsNullOrEmpty(SortColumn))
+                {
+                    var prop = typeof(TItem).GetProperty(SortColumn);
+                    if (prop != null)
+                    {
+                        query = SortAscending
+                            ? query.OrderBy(x => prop.GetValue(x))
+                            : query.OrderByDescending(x => prop.GetValue(x));
+                    }
+                }
+                Filtered = [.. query];
+                View = Filtered;
             }
-            Filtered = [.. query];
-            View = Filtered;
         }
     }
 }

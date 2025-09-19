@@ -1,49 +1,81 @@
-﻿//using NexusUserTest.Common.DTOs;
-//using System.Net.Http.Json;
+﻿using NexusUserTest.Common.DTOs;
+using System.Net.Http.Json;
 
-//namespace NexusUserTest.Shared.Services
-//{
-//    public interface ISettingService
-//    {
-//        IEnumerable<Setting> GetAllSetting(Expression<Func<Setting, bool>>? expression = null, string? includeProperties = null);
-//        Setting GetSetting(Expression<Func<Setting, bool>> expression, string? includeProperties = null);
-//        void AddSetting(Setting entity);
-//        void UpdateSetting(Setting entity);
-//        void DeleteSetting(Setting entity);
-//        void RefreshSetting(Setting entity);
-//    }
+namespace NexusUserTest.Shared.Services
+{
+    public interface ISettingAPIService
+    {
+        Task<SettingDTO?> GetSetting(int id, string? include = null);
+        Task<SettingDTO?> AddSetting(SettingDTO item, string? include = null);
+        Task<SettingDTO?> UpdateSetting(SettingDTO item, string? include = null);
+        Task DeleteSetting(int id);
+    }
 
-//    public class SettingService : ISettingService
-//    {
-//        private readonly IRepositoryManager _repository;
+    public class SettingAPIService : ISettingAPIService
+    {
+        private readonly HttpClient _httpClient;
 
-//        public SettingService(IRepositoryManager repository)
-//            => _repository = repository;
+        public SettingAPIService(IHttpClientFactory httpClienFactory)
+        {
+            _httpClient = httpClienFactory.CreateClient("HttpClient");
+        }
 
-//        public IEnumerable<Setting> GetAllSetting(Expression<Func<Setting, bool>>? expression = null, string? includeProperties = null)
-//            => _repository.Setting.GetAllSetting(expression, includeProperties);
+        public async Task<SettingDTO?> GetSetting(int id, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/settings/{id}?include={include}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<SettingDTO>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return null;
+            }
+        }
 
-//        public Setting GetSetting(Expression<Func<Setting, bool>> expression, string? includeProperties = null)
-//            => _repository.Setting.GetSetting(expression, includeProperties);
+        public async Task<SettingDTO?> AddSetting(SettingDTO item, string? include = null)
+        {
+            try
+            {
+                using var response = await _httpClient.PostAsJsonAsync($"api/settings?include={include}", item);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<SettingDTO>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return null;
+            }
+        }
 
-//        public void AddSetting(Setting entity)
-//        {
-//            _repository.Setting.AddSetting(entity);
-//            _repository.Save();
-//        }
+        public async Task<SettingDTO?> UpdateSetting(SettingDTO item, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/settings?include={include}", item);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<SettingDTO>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return null;
+            }
+        }
 
-//        public void UpdateSetting(Setting entity)
-//        {
-//            _repository.Setting.UpdateSetting(entity);
-//            _repository.Save();
-//        }
-
-//        public void DeleteSetting(Setting entity)
-//        {
-//            _repository.Setting.DeleteSetting(entity);
-//            _repository.Save();
-//        }
-
-//        public void RefreshSetting(Setting entity) => _repository.Setting.RefreshSetting(entity);
-//    }
-//}
+        public async Task DeleteSetting(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/settings/{id}");
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+            }
+        }
+    }
+}

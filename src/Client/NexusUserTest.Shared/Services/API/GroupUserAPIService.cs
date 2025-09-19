@@ -1,40 +1,67 @@
-﻿//using NexusUserTest.Common.DTOs;
-//using System.Net.Http.Json;
+﻿using NexusUserTest.Common.DTOs;
+using System.Net.Http.Json;
 
-//namespace NexusUserTest.Shared.Services
-//{
-//    public interface IGroupUserService
-//    {
-//        void AddGroupUser(GroupUser entity);
-//        void UpdateGroupUser(GroupUser entity);
-//        void DeleteGroupUser(GroupUser entity);
-//    }
+namespace NexusUserTest.Shared.Services
+{
+    public interface IGroupUserAPIService
+    {
+        Task<IEnumerable<GroupUserDTO>> GetAllUsersByGroupId(int groupId, string? include = null);
+        Task<GroupUserDTO?> GetGroupUser(int id, string? include = null);
+        Task<GroupUserDTO?> UpdateGroupUser(GroupUserDTO item, string? include = null);
+    }
 
-//    public class GroupUserService : IGroupUserService
-//    {
-//        private readonly IRepositoryManager _repository;
+    public class GroupUserAPIService : IGroupUserAPIService
+    {
+        private readonly HttpClient _httpClient;
 
-//        public GroupUserService(IRepositoryManager repository)
-//            => _repository = repository;
+        public GroupUserAPIService(IHttpClientFactory httpClienFactory)
+        {
+            _httpClient = httpClienFactory.CreateClient("HttpClient");
+        }
 
-//        public void AddGroupUser(GroupUser entity)
-//        {
-//            _repository.GroupUser.AddGroupUser(entity);
-//            _repository.Save();
-//        }
+        public async Task<IEnumerable<GroupUserDTO>> GetAllUsersByGroupId(int groupId, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/groupusers/group/{groupId}?include={include}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<GroupUserDTO>>() ?? [];
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return new List<GroupUserDTO>();
+            }
+        }
 
-//        public void UpdateGroupUser(GroupUser entity)
-//        {
-//            _repository.GroupUser.UpdateGroupUser(entity);
-//            _repository.Save();
-//        }
+        public async Task<GroupUserDTO?> GetGroupUser(int id, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/groupusers/{id}?include={include}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<GroupUserDTO>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return null;
+            }
+        }
 
-//        public void DeleteGroupUser(GroupUser entity)
-//        {
-//            _repository.GroupUser.DeleteGroupUser(entity);
-//            _repository.Save();
-//        }
-
-//        public void RefreshGroupUser(GroupUser entity) => _repository.GroupUser.RefreshGroupUser(entity);
-//    }
-//}
+        public async Task<GroupUserDTO?> UpdateGroupUser(GroupUserDTO item, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/groupusers?include={include}", item);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<GroupUserDTO>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return null;
+            }
+        }
+    }
+}
