@@ -2,7 +2,7 @@
 
 namespace NexusUserTest.Common.DTOs
 {
-    public class GroupDTO
+    public class GroupEditDTO
     {
         public int Id { get; set; }
         [Display(Name = "Название")]

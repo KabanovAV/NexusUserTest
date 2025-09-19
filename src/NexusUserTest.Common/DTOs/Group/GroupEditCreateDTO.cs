@@ -2,7 +2,7 @@
 
 namespace NexusUserTest.Common.DTOs
 {
-    public class GroupCreateDTO
+    public class GroupEditCreateDTO
     {
         [Display(Name = "Название")]
         [Required(ErrorMessage = "Обязательное поле для заполнения")]
