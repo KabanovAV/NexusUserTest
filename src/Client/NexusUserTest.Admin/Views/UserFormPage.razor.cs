@@ -37,7 +37,7 @@ namespace NexusUserTest.Admin.Views
                 Data.GroupUserItems!.Remove(group);
             else
             {
-                var groupUser = new GroupUserCreateDTO { GroupId = args };
+                var groupUser = new GroupUserCreateDTO { GroupId = args, Status = 1 };
                 Data.GroupUserItems!.Add(groupUser);
             }
         }
