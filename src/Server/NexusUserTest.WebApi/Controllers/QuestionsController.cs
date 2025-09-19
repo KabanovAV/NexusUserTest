@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common.DTOs;
 using SibCCSPETest.WebApi.MappingProfiles;
@@ -8,10 +7,9 @@ namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuestionsController(IRepoServiceManager service, IMapper mapper) : ControllerBase
+    public class QuestionsController(IRepoServiceManager service) : ControllerBase
     {
         private readonly IRepoServiceManager _service = service;
-        private readonly IMapper _mapper = mapper;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetAll(string? include = null)
