@@ -6,7 +6,6 @@ namespace NexusUserTest.Application.Services
 {
     public interface ISettingRepoService
     {
-        Task<IEnumerable<Setting>> GetAllSettingAsync(Expression<Func<Setting, bool>>? expression = null, string? includeProperties = null);
         Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null);
         Task<Setting> AddSettingAsync(Setting entity, string? includeProperties = null);
         Task<Setting> UpdateSetting(Setting entity, string? includeProperties = null);
@@ -19,9 +18,6 @@ namespace NexusUserTest.Application.Services
 
         public SettingRepoService(IRepositoryManager repository)
             => _repository = repository;
-
-        public async Task<IEnumerable<Setting>> GetAllSettingAsync(Expression<Func<Setting, bool>>? expression = null, string? includeProperties = null)
-            => await _repository.Setting.GetAllSettingAsync(expression, includeProperties);
 
         public async Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null)
             => await _repository.Setting.GetSettingAsync(expression, includeProperties);

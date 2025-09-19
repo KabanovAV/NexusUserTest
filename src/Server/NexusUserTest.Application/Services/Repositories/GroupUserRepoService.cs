@@ -1,13 +1,14 @@
 ﻿using NexusUserTest.Domain.Entities;
 using NexusUserTest.Domain.Repositories;
+using System.Linq.Expressions;
 
 namespace NexusUserTest.Application.Services
 {
     public interface IGroupUserRepoService
     {
-        Task AddGroupUserAsync(GroupUser entity);
-        void UpdateGroupUser(GroupUser entity);
-        void DeleteGroupUser(GroupUser entity);
+        Task<IEnumerable<GroupUser>> GetAllGroupUserAsync(Expression<Func<GroupUser, bool>>? expression = null, string? includeProperties = null);
+        Task<GroupUser> GetGroupUserAsync(Expression<Func<GroupUser, bool>> expression, string? includeProperties = null);
+        Task<GroupUser> UpdateGroupUser(GroupUser entity, string? includeProperties = null);
     }
 
     public class GroupUserRepoService : IGroupUserRepoService
@@ -17,25 +18,18 @@ namespace NexusUserTest.Application.Services
         public GroupUserRepoService(IRepositoryManager repository)
             => _repository = repository;
 
-        public async Task AddGroupUserAsync(GroupUser entity)
-        {
-            entity.CreatedDate = DateTime.Now;
-            entity.ChangedDate = DateTime.Now;
-            await _repository.GroupUser.AddGroupUserAsync(entity);
-            _repository.Save();
-        }
+        public async Task<IEnumerable<GroupUser>> GetAllGroupUserAsync(Expression<Func<GroupUser, bool>>? expression = null, string? includeProperties = null)
+            => await _repository.GroupUser.GetAllGroupUserAsync(expression, includeProperties);
 
-        public void UpdateGroupUser(GroupUser entity)
+        public async Task<GroupUser> GetGroupUserAsync(Expression<Func<GroupUser, bool>> expression, string? includeProperties = null)
+            => await _repository.GroupUser.GetGroupUserAsync(expression, includeProperties);
+
+        public async Task<GroupUser> UpdateGroupUser(GroupUser entity, string? includeProperties = null)
         {
             entity.ChangedDate = DateTime.Now;
             _repository.GroupUser.UpdateGroupUser(entity);
             _repository.Save();
-        }
-
-        public void DeleteGroupUser(GroupUser entity)
-        {
-            _repository.GroupUser.DeleteGroupUser(entity);
-            _repository.Save();
+            return await _repository.GroupUser.GetGroupUserAsync(gu => gu.Id == entity.Id, includeProperties);
         }
     }
 }
