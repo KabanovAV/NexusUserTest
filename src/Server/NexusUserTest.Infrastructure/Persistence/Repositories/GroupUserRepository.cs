@@ -1,5 +1,6 @@
 ﻿using NexusUserTest.Domain.Entities;
 using NexusUserTest.Domain.Repositories;
+using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
@@ -8,8 +9,12 @@ namespace NexusUserTest.Infrastructure
         public GroupUserRepository(DbDataContext db)
             : base(db) { }
 
-        public async Task AddGroupUserAsync(GroupUser entity) => await AddAsync(entity);
+        public async Task<IEnumerable<GroupUser>> GetAllGroupUserAsync(Expression<Func<GroupUser, bool>>? expression = null, string? includeProperties = null)
+            => await GetAllAsync(expression, includeProperties);
+
+        public async Task<GroupUser> GetGroupUserAsync(Expression<Func<GroupUser, bool>> expression, string? includeProperties = null)
+            => await GetAsync(expression, includeProperties);
+
         public void UpdateGroupUser(GroupUser entity) => Update(entity);
-        public void DeleteGroupUser(GroupUser entity) => Delete(entity);
     }
 }

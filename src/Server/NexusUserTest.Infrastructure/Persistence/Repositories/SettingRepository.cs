@@ -9,9 +9,6 @@ namespace NexusUserTest.Infrastructure
         public SettingRepository(DbDataContext db)
             : base(db) { }
 
-        public async Task<IEnumerable<Setting>> GetAllSettingAsync(Expression<Func<Setting, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
-
         public async Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null)
             => await GetAsync(expression, includeProperties);
 
