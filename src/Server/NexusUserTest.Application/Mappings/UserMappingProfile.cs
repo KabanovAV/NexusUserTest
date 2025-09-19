@@ -20,7 +20,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 Organization = entity.Organization,
                 Position = entity.Position,
                 GroupUserItems = entity.GroupUser != null ? [.. entity.GroupUser
-                    .Select(gu => new GroupUserCreateDTO { GroupId = gu.GroupId, UserId = gu.UserId })] : []
+                    .Select(gu => new GroupUserCreateDTO { GroupId = gu.GroupId })] : []
             };
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         {
             List<GroupUser> groupUser = [];
             foreach (var item in items!)
-                groupUser.Add(new GroupUser { GroupId = item.GroupId, UserId = item.UserId });
+                groupUser.Add(new GroupUser { GroupId = item.GroupId });
             return groupUser;
         }
 
@@ -154,11 +154,13 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                     var existing = entity.GroupUser.FirstOrDefault(gu => gu.GroupId == item.GroupId);
                     if (existing != null)
                     {
-                        existing.GroupId = item.GroupId;
-                        existing.UserId = item.UserId;
+                        if (existing.GroupId != item.GroupId && item.GroupId != 0)
+                            existing.GroupId = item.GroupId;
+                        if (existing.Status != item.Status && item.Status != 1)
+                            existing.Status = item.Status;
                     }
                     else
-                        entity.GroupUser.Add(new GroupUser { GroupId = item.GroupId, UserId = item.UserId });
+                        entity.GroupUser.Add(new GroupUser { GroupId = item.GroupId });
                 }
             }
         }

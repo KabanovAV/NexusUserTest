@@ -25,7 +25,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                         IsCorrect = a.IsCorrect
                     })] : [],
                 TopicQuestionItems = entity.TopicQuestion != null ? [.. entity.TopicQuestion
-                    .Select(gu => new TopicQuestionCreateDTO { TopicId = gu.TopicId, QuestionId = gu.QuestionId })] : []
+                    .Select(gu => new TopicQuestionCreateDTO { TopicId = gu.TopicId })] : []
             };
 
         /// <summary>
@@ -129,9 +129,12 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                     var existing = entity.Answers.FirstOrDefault(a => a.Id == item.Id);
                     if (existing != null)
                     {
-                        existing.Title = item.Title;
-                        existing.QuestionId = item.QuestionId;
-                        existing.IsCorrect = item.IsCorrect;
+                        if (item.Title != null && !string.IsNullOrEmpty(item.Title) && existing.Title != item.Title)
+                            existing.Title = item.Title;
+                        if (existing.QuestionId != item.QuestionId && item.QuestionId != 0)
+                            existing.QuestionId = item.QuestionId;
+                        if (existing.IsCorrect != item.IsCorrect)
+                            existing.IsCorrect = item.IsCorrect;
                     }
                     else
                         entity.Answers.Add(new Answer { Title = item.Title, QuestionId = item.QuestionId, IsCorrect = item.IsCorrect });
@@ -148,7 +151,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         {
             List<TopicQuestion> topicQuestion = [];
             foreach (var item in items!)
-                topicQuestion.Add(new TopicQuestion { TopicId = item.TopicId, QuestionId = item.QuestionId });
+                topicQuestion.Add(new TopicQuestion { TopicId = item.TopicId });
             return topicQuestion;
         }
 
@@ -173,11 +176,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                     var existing = entity.TopicQuestion.FirstOrDefault(tq => tq.TopicId == item.TopicId);
                     if (existing != null)
                     {
-                        existing.TopicId = item.TopicId;
-                        existing.QuestionId = item.QuestionId;
+                        if (existing.TopicId != item.TopicId && item.TopicId != 0)
+                            existing.TopicId = item.TopicId;
                     }
                     else
-                        entity.TopicQuestion.Add(new TopicQuestion { TopicId = item.TopicId, QuestionId = item.QuestionId });
+                        entity.TopicQuestion.Add(new TopicQuestion { TopicId = item.TopicId });
                 }
             }
         }
