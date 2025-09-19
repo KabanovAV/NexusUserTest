@@ -15,11 +15,11 @@ namespace NexusUserTest.Admin.Page
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private NexusTableGrid<GroupDTO>? NexusTable;
+        private NexusTableGrid<GroupEditDTO>? NexusTable;
         private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private List<GroupDTO>? Items;
+        private List<GroupEditDTO>? Items;
         private IEnumerable<SelectItem>? SpecializationSelects;
 
         public bool IsCrud => NexusTable != null
@@ -38,14 +38,14 @@ namespace NexusUserTest.Admin.Page
 
         private async Task LoadData()
         {
-            var g = await ServiceAPI!.GroupService.GetAllGroup("Specialization,GroupUser");
+            var g = await ServiceAPI!.GroupService.GetAllEditGroup("Specialization,GroupUser");
             Items = [.. g];
         }
 
         public async Task Insert()
         {
             SpecializationSelects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
-            await NexusTable!.InsertRow(new GroupDTO { Begin = DateTime.Now, End = DateTime.Now });
+            await NexusTable!.InsertRow(new GroupEditDTO { Begin = DateTime.Now, End = DateTime.Now });
         }
 
         public async Task Edit()
@@ -84,7 +84,7 @@ namespace NexusUserTest.Admin.Page
             await NexusTable.Reload();
         }
 
-        public async Task Add(GroupDTO entity)
+        public async Task Add(GroupEditDTO entity)
         {
             var data = await ServiceAPI!.GroupService.AddGroup(entity, "Specialization,GroupUser");
             if (data != null)
@@ -95,7 +95,7 @@ namespace NexusUserTest.Admin.Page
             }
         }
 
-        public async Task Update(GroupDTO entity)
+        public async Task Update(GroupEditDTO entity)
         {
             var data = await ServiceAPI!.GroupService.UpdateGroup(entity, "Specialization,GroupUser");
             if (data != null)
