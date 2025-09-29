@@ -10,7 +10,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект Topic</param>
         /// <returns>TopicDTO</returns>
-        public static TopicDTO? ToDto(this Topic entity)
+        public static TopicDTO? ToAdminDto(this Topic entity)
             => entity == null ? null : new TopicDTO
             {
                 Id = entity.Id,
@@ -24,8 +24,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entities">Список обьектов Topic</param>
         /// <returns>Список TopicDTO</returns>
-        public static IEnumerable<TopicDTO?> ToDto(this IEnumerable<Topic> entities)
-            => entities.Select(e => e.ToDto()) ?? [];
+        public static List<TopicDTO> ToAdminDto(this IEnumerable<Topic> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
         /// Маппинг из TopicDTO в обьект Topic
@@ -45,8 +45,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="dtos">Список TopicDTO</param>
         /// <returns>Список обьектов Topic</returns>
-        public static IEnumerable<Topic?> ToEntity(this IEnumerable<TopicDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Topic> ToEntity(this IEnumerable<TopicDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг из TopicCreateDTO создание в обьект Topic
@@ -73,5 +73,39 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             if (entity.SpecializationId != 0 && entity.SpecializationId != dto.SpecializationId)
                 entity.SpecializationId = dto.SpecializationId;
         }
+
+        /// <summary>
+        /// Маппинг из обьекта Topic в QuestionTestDTO
+        /// </summary>
+        /// <param name="entity">Обьект Topic</param>
+        /// <returns>Список QuestionTestDTO</returns>
+        public static List<QuestionTestDTO>? ToTestDto(this Topic entity)
+            => entity == null && entity!.TopicQuestion == null ? [] : entity!.TopicQuestion!.Select(t => new QuestionTestDTO
+            {
+                Id = t.Question != null ? t.Question.Id : 0,
+                Title = t.Question != null ? t.Question.Title : "",
+                AnswerItems = t.Question != null && t.Question.Answers != null ? [.. t.Question.Answers
+                    .Select(a => new AnswerTestDTO
+                    {
+                        Id = a.Id,
+                        Title = a.Title
+                    })] : []
+            }).ToList();
+
+        /// <summary>
+        /// Маппинг списка из обьектов Topic в список QuestionTestDTO
+        /// </summary>
+        /// <param name="entities">Список Topic</param>
+        /// <returns>Список Topic</returns>
+        public static List<QuestionTestDTO>? ToTestDto(this IEnumerable<Topic> entities)
+        {
+            if (entities == null)
+                return null;
+            List<QuestionTestDTO> questions = [];
+            foreach (var entity in entities)
+                questions.AddRange(entity.ToTestDto()!);
+            return questions;
+        }
+
     }
 }

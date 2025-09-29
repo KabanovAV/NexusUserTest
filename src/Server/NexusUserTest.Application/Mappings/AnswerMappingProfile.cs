@@ -10,7 +10,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Answer</param>
         /// <returns>AnswerDTO</returns>
-        public static AnswerDTO? ToDto(this Answer entity)
+        public static AnswerDTO? ToAdminDto(this Answer entity)
             => entity == null ? null : new AnswerDTO
             {
                 Id = entity.Id,
@@ -23,10 +23,10 @@ namespace NexusUserTest.Application.Mappings
         /// <summary>
         /// Маппинг списка из Answer в список AnswerDTO
         /// </summary>
-        /// <param name="entities">Список обьектов ответов</param>
-        /// <returns>Список DTO ответов</returns>
-        public static IEnumerable<AnswerDTO?> ToDto(this IEnumerable<Answer> entities)
-            => entities.Select(e => e.ToDto()) ?? [];
+        /// <param name="entities">Список обьектов Answer</param>
+        /// <returns>Список AnswerDTO</returns>
+        public static List<AnswerDTO> ToAdminDto(this IEnumerable<Answer> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
         /// Маппинг из AnswerDTO в обьект Answer
@@ -47,8 +47,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список AnswerDTO</param>
         /// <returns>Список обьектов Answer</returns>
-        public static IEnumerable<Answer?> ToEntity(this IEnumerable<AnswerDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Answer> ToEntity(this IEnumerable<AnswerDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг из AnswerCreateDTO создание в обьект Answer
@@ -68,8 +68,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список AnswerCreateDTO</param>
         /// <returns>Список обьектов Answer</returns>
-        public static IEnumerable<Answer?> ToEntity(this IEnumerable<AnswerCreateDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Answer> ToEntity(this IEnumerable<AnswerCreateDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг обновления обьекта Answer

@@ -10,7 +10,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект Specialization</param>
         /// <returns>SpecializationDTO</returns>
-        public static SpecializationDTO? ToDto(this Specialization entity)
+        public static SpecializationDTO? ToAdminDto(this Specialization entity)
             => entity == null ? null : new SpecializationDTO
             {
                 Id = entity.Id,
@@ -22,8 +22,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entities">Список обьектов Specialization</param>
         /// <returns>Список SpecializationDTO</returns>
-        public static IEnumerable<SpecializationDTO?> ToDto(this IEnumerable<Specialization> entities)
-            => entities.Select(e => e.ToDto()) ?? [];
+        public static List<SpecializationDTO> ToAdminDto(this IEnumerable<Specialization> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
         /// Маппинг из SpecializationDTO в обьект Specialization
@@ -42,8 +42,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="dtos">Список SpecializationDTO</param>
         /// <returns>Список обьектов Specialization</returns>
-        public static IEnumerable<Specialization?> ToEntity(this IEnumerable<SpecializationDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Specialization> ToEntity(this IEnumerable<SpecializationDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг из SpecializationCreateDTO создание в обьект Specialization

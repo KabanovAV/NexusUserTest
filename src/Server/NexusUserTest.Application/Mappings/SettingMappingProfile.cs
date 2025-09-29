@@ -10,7 +10,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Setting</param>
         /// <returns>SettingDTO</returns>
-        public static SettingDTO? ToDto(this Setting entity)
+        public static SettingDTO? ToAdminDto(this Setting entity)
             => entity == null ? null : new SettingDTO
             {
                 Id = entity.Id,
@@ -24,8 +24,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupDTO</returns>
-        public static IEnumerable<SettingDTO?> ToDto(this IEnumerable<Setting> entities)
-            => entities.Select(e => e.ToDto()) ?? [];
+        public static List<SettingDTO> ToAdminDto(this IEnumerable<Setting> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
         /// Маппинг из SettingDTO в обьект Setting
@@ -46,8 +46,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список SettingDTO</param>
         /// <returns>Список обьектов Setting</returns>
-        public static IEnumerable<Setting?> ToEntity(this IEnumerable<SettingDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Setting> ToEntity(this IEnumerable<SettingDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг из SettingCreateDTO создание в обьект Setting

@@ -10,7 +10,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Group</param>
         /// <returns>GroupInfoDTO</returns>
-        public static GroupInfoDTO? ToInfoDto(this Group entity)
+        public static GroupInfoDTO? ToInfoAdminDto(this Group entity)
             => entity == null ? null : new GroupInfoDTO
             {
                 Id = entity.Id,
@@ -25,15 +25,15 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupInfoDTO</returns>
-        public static IEnumerable<GroupInfoDTO?> ToInfoDto(this IEnumerable<Group> entities)
-            => entities.Select(e => e.ToInfoDto()) ?? [];
+        public static List<GroupInfoDTO> ToInfoAdminDto(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToInfoAdminDto())];
 
         /// <summary>
         /// Маппинг из обьекта Group в GroupInfoDetailsDTO
         /// </summary>
         /// <param name="entity">Обьект Group</param>
         /// <returns>GroupInfoDetailsDTO</returns>
-        public static GroupInfoDetailsDTO? ToInfoDetailsDto(this Group entity)
+        public static GroupInfoDetailsDTO? ToInfoDetailsAdminDto(this Group entity)
             => entity == null ? null : new GroupInfoDetailsDTO
             {
                 Id = entity.Id,
@@ -48,19 +48,35 @@ namespace NexusUserTest.Application.Mappings
                     CountOfQuestion = entity.Setting != null ? entity.Setting.CountOfQuestion : 0,
                     Timer = entity.Setting != null ? entity.Setting.Timer : new TimeSpan()
                 },
-                User = entity.GroupUser.Select(gu => new GroupUserDTO
+                User = entity.GroupUser != null ? [.. entity.GroupUser.Select(gu => new GroupUserInfoAdminDTO
                 {
                     Id = gu.Id,
                     Status = gu.Status,
-                    User = new UserInfoDTO
+                    User = new UserInfoAdminDTO
                     {
-                        Id = gu.User.Id,
-                        FullName = gu.User != null ?
-                        string.Join(" ", new[] { gu.User.LastName, gu.User.FirstName, gu.User.Surname }.Where(s => !string.IsNullOrEmpty(s))) : "",
+                        Id = gu.User != null ? gu.User.Id : 0,
+                        FullName = gu.User != null ? string.Join(" ", new[] { gu.User.LastName, gu.User.FirstName, gu.User.Surname }.Where(s => !string.IsNullOrEmpty(s))) : "",
                         Login = gu.User != null ? gu.User.Login : "",
                         Organization = gu.User != null ? gu.User.Organization : ""
-                    }
-                }).ToList()
+                    },
+                    Results = gu.Results != null ? [.. gu.Results.Select(r => new ResultInfoAdminDTO
+                    {
+                        Id = r.Id,
+                        Question = r.Question != null ? new QuestionInfoAdminDTO
+                        {
+                            Id = r.QuestionId,
+                            Title = r.Question.Title,
+                            AnswerItems = r.Question.Answers != null ? [.. r.Question.Answers
+                                .Select(a => new AnswerInfoDTO
+                                {
+                                    Id = a.Id,
+                                    Title = a.Title,
+                                    IsCorrect = a.IsCorrect
+                                })] : []
+                        } : null,
+                        AnswerId = r.AnswerId
+                    })] : []
+                })] : []
             };
 
         /// <summary>
@@ -68,15 +84,15 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupInfoDetailsDTO</returns>
-        public static IEnumerable<GroupInfoDetailsDTO?> ToInfoDetailsDto(this IEnumerable<Group> entities)
-            => entities.Select(e => e.ToInfoDetailsDto()) ?? [];
+        public static List<GroupInfoDetailsDTO> ToInfoDetailsAdminDto(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToInfoDetailsAdminDto())];
 
         /// <summary>
         /// Маппинг из обьекта Group в GroupEditDTO
         /// </summary>
         /// <param name="entity">Обьект Group</param>
         /// <returns>GroupEditDTO</returns>
-        public static GroupEditDTO? ToEditDto(this Group entity)
+        public static GroupEditDTO? ToEditAdminDto(this Group entity)
             => entity == null ? null : new GroupEditDTO
             {
                 Id = entity.Id,
@@ -92,8 +108,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupEditDTO</returns>
-        public static IEnumerable<GroupEditDTO?> ToEditDto(this IEnumerable<Group> entities)
-            => entities.Select(e => e.ToEditDto()) ?? [];
+        public static List<GroupEditDTO> ToEditAdminDto(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToEditAdminDto())];
 
         /// <summary>
         /// Маппинг из GroupEditDTO в обьект Group
@@ -115,8 +131,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список GroupEditDTO</param>
         /// <returns>Список обьектов Group</returns>
-        public static IEnumerable<Group?> ToEntity(this IEnumerable<GroupEditDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Group> ToEntity(this IEnumerable<GroupEditDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг из GroupEditCreateDTO создание в обьект Group

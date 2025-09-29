@@ -10,7 +10,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект Question</param>
         /// <returns>QuestionDTO</returns>
-        public static QuestionDTO? ToDto(this Question entity)
+        public static QuestionDTO? ToAdminDto(this Question entity)
             => entity == null ? null : new QuestionDTO
             {
                 Id = entity.Id,
@@ -33,8 +33,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entities">Список обьектов Question</param>
         /// <returns>Список QuestionDTO</returns>
-        public static IEnumerable<QuestionDTO?> ToDto(this IEnumerable<Question> entities)
-            => entities.Select(e => e.ToDto()) ?? [];
+        public static List<QuestionDTO> ToAdminDto(this IEnumerable<Question> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
         /// Маппинг из QuestionDTO в обьект Question
@@ -55,8 +55,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="dtos">Список QuestionDTO</param>
         /// <returns>Список Question</returns>
-        public static IEnumerable<Question?> ToEntity(this IEnumerable<QuestionDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<Question> ToEntity(this IEnumerable<QuestionDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
         /// Маппинг из QuestionCreateDTO создание в обьект Question

@@ -9,8 +9,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// Маппинг из обьекта User в UserDTO
         /// </summary>
         /// <param name="entity">Обьект User</param>
-        /// <returns>User</returns>
-        public static UserDTO? ToDto(this User entity)
+        /// <returns>UserDTO</returns>
+        public static UserDTO? ToAdminDto(this User entity)
             => entity == null ? null : new UserDTO
             {
                 Id = entity.Id,
@@ -24,12 +24,12 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             };
 
         /// <summary>
-        /// Маппинг списка из обьектов User в список User
+        /// Маппинг списка из обьектов User в список UserDTO
         /// </summary>
         /// <param name="entities">Список обьектов User</param>
-        /// <returns>Список User</returns>
-        public static IEnumerable<UserDTO?> ToDto(this IEnumerable<User> entities)
-            => entities.Select(e => e.ToDto()) ?? [];
+        /// <returns>Список UserDTO</returns>
+        public static List<UserDTO> ToAdminDto(this IEnumerable<User> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
         /// Маппинг из UserDTO в обьект User
@@ -55,8 +55,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="dtos">Список UserDTO</param>
         /// <returns>Список User</returns>
-        public static IEnumerable<User?> ToEntity(this IEnumerable<UserDTO> dtos)
-            => dtos.Select(e => e.ToEntity()) ?? [];
+        public static List<User> ToEntity(this IEnumerable<UserDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(e => e.ToEntity())];
 
         /// <summary>
         /// Маппинг из UserCreateDTO создание в обьект User
@@ -81,7 +81,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект User</param>
         /// <param name="dto">UserDTO</param>
-        public static void UpdateFromDto(this User entity, UserDTO dto)
+        public static void UpdateFromAdminDto(this User entity, UserDTO dto)
         {
             if (dto == null) return;
 
@@ -108,6 +108,34 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         }
 
         /// <summary>
+        /// Маппинг из обьекта User в UserInfoTestDTO
+        /// </summary>
+        /// <param name="entity">Обьект User</param>
+        /// <returns>UserInfoTestDTO</returns>
+        public static UserInfoTestDTO? ToTestDto(this User entity)
+            => entity == null ? null : new UserInfoTestDTO
+            {
+                Id = entity.Id,
+                FullName = string.Join(" ", new[] { entity.LastName, entity.FirstName, entity.Surname }.Where(s => !string.IsNullOrEmpty(s))),
+                GroupUsers = entity.GroupUser != null ? [.. entity.GroupUser
+                    .Select(gu => new GroupUserInfoTestDTO 
+                    { 
+                        Id = gu.Id,
+                        GroupTitle = gu.Group != null ? gu.Group.Title : "",
+                        Status = gu.Status,
+                        Results = gu.Results != null ? [.. gu.Results.Select(r => new ResultInfoTestDTO{ IsCorrect = r.Answer.IsCorrect })] : []
+                    })] : []
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов User в список UserInfoTestDTO
+        /// </summary>
+        /// <param name="entities">Список обьектов User</param>
+        /// <returns>Список UserInfoTestDTO</returns>
+        public static List<UserInfoTestDTO> ToTestDto(this IEnumerable<User> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToTestDto())];
+
+        /// <summary>
         /// Обьединение и конвертирование в обьекта Question
         /// </summary>
         /// <param name="fullName">Обьект Question</param>
@@ -129,7 +157,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         {
             List<GroupUser> groupUser = [];
             foreach (var item in items!)
-                groupUser.Add(new GroupUser { GroupId = item.GroupId });
+                groupUser.Add(new GroupUser { GroupId = item.GroupId, Status = item.Status });
             return groupUser;
         }
 
@@ -160,7 +188,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                             existing.Status = item.Status;
                     }
                     else
-                        entity.GroupUser.Add(new GroupUser { GroupId = item.GroupId });
+                        entity.GroupUser.Add(new GroupUser { GroupId = item.GroupId, Status = item.Status });
                 }
             }
         }
