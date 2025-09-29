@@ -61,7 +61,7 @@ namespace NexusUserTest.Admin.Pages
                     NexusTable.EditRow(data);
                 }
             }
-            NexusTable.Refresh();
+            NexusTable!.Refresh();
         }
 
         public async Task Save()
@@ -128,46 +128,6 @@ namespace NexusUserTest.Admin.Pages
         {
             var data = NexusTable!.SelectedRows.First();
             await NexusTable.CancelEditRow(data);
-        }
-
-        public void ShowInfoNexus()
-        {
-            if (NotificationService != null)
-                NotificationService.ShowInfo("I'm an INFO message", "Уведомление");
-        }
-        public void ShowSuccessNexus()
-        {
-            if (NotificationService != null)
-                NotificationService.ShowSuccess("I'm an SUCCESS message", "Успех");
-        }
-        public void ShowWarningNexus()
-        {
-            if (NotificationService != null)
-                NotificationService.ShowWarning("I'm an WARNING message", "Предупреждение");
-        }
-        public void ShowErrorNexus()
-        {
-            if (NotificationService != null)
-                NotificationService.ShowError("I'm an ERROR message", "Ошибка");
-        }
-
-        public async Task ShowDialog()
-        {
-            if (DialogService != null)
-            {
-                var settings = new NexusDialogSetting("Подтверждение", "Вы уверены, что хотите выполнить это действие?", "Отмена", "Подтвердить");
-                var result = await DialogService.Show(settings);
-                if (result?.Canceled == false)
-                {
-                    // Действие при подтверждении
-                    Console.WriteLine("Пользователь подтвердил действие");
-                }
-                else
-                {
-                    // Действие при отмене
-                    Console.WriteLine("Действие отменено");
-                }
-            }
         }
     }
 }
