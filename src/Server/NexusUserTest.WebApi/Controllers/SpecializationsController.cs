@@ -15,7 +15,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll(string? include = null)
         {
             var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
-            return Ok(specializations.ToAdminDto());
+            return Ok(specializations.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -24,17 +24,17 @@ namespace SibCCSPETest.WebApi.Controllers
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {id} не найдена." });
-            return Ok(specialization.ToAdminDto());
+            return Ok(specialization.ToDto());
         }
 
         [HttpPost]
-        public async Task<ActionResult<SpecializationDTO>> Add(SpecializationCreateDTO specializationCreateDTO, string? include = null)
+        public async Task<ActionResult<SpecializationDTO>> Add(SpecializationDTO specializationCreateDTO, string? include = null)
         {
             if (specializationCreateDTO == null)
                 return BadRequest("Данные для добавления специализации пустые.");
             var specialization = specializationCreateDTO.ToEntity();
             await _service.SpecializationRepository.AddSpecializationAsync(specialization!, include);
-            var specializationDTO = specialization!.ToAdminDto();
+            var specializationDTO = specialization!.ToDto();
             return CreatedAtAction(nameof(Get), new { id = specializationDTO!.Id }, specializationDTO);
         }
 
@@ -48,7 +48,7 @@ namespace SibCCSPETest.WebApi.Controllers
                 return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
             specialization.UpdateFromDto(specializationDTO);
             await _service.SpecializationRepository.UpdateSpecializationAsync(specialization, include);
-            return Ok(specialization.ToAdminDto());
+            return Ok(specialization.ToDto());
         }
 
         [HttpDelete("{id:int}")]
