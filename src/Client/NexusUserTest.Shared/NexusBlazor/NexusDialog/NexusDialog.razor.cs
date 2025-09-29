@@ -7,7 +7,7 @@ namespace NexusUserTest.Shared.NexusBlazor
         [Inject]
         private INexusDialogService DialogService { get; set; }
 
-        private readonly Dictionary<Guid, NexusDialogInstance> _dialogs = new();
+        private readonly Dictionary<Guid, NexusDialogInstance> _dialogs = [];
 
         protected override void OnInitialized()
         {

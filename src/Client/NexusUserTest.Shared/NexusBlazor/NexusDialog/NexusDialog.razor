@@ -2,23 +2,29 @@
 
 @foreach (var instance in _dialogs.Values)
 {
-    <div class="modal fade @instance.Show" style="display:@instance.Display" tabindex="-1">
+    <div class="modal fade @instance.Show" style="display:@instance.Display">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@instance.Setting.Heading</h5>
-                    <button type="button" class="btn-close"
-                            @onclick="() => CancelDialog(instance.Id)"
-                            aria-label="Close"></button>
+                    <h5 class="modal-title">@instance.Setting.HeadingTitle</h5>
+                    @if (instance.Setting.IsHeadingCloseButton)
+                    {
+                        <button type="button" class="btn-close"
+                                @onclick="() => CancelDialog(instance.Id)"
+                                aria-label="Close"></button>
+                    }
                 </div>
                 <div class="modal-body">
                     <p>@instance.Setting.Message</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            @onclick="() => CancelDialog(instance.Id)">
-                        @instance.Setting.CancelButtonTitle
-                    </button>
+                    @if (!string.IsNullOrEmpty(instance.Setting.CancelButtonTitle))
+                    {
+                        <button type="button" class="btn btn-secondary"
+                                @onclick="() => CancelDialog(instance.Id)">
+                            @instance.Setting.CancelButtonTitle
+                        </button>
+                    }
                     <button type="button" class="btn btn-primary"
                             @onclick="() => ConfirmDialog(instance.Id)">
                         @instance.Setting.ApplyButtonTitle
