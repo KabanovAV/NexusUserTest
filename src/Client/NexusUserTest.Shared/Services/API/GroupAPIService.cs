@@ -6,8 +6,8 @@ namespace NexusUserTest.Shared.Services
     public interface IGroupAPIService
     {
         Task<List<GroupInfoDTO>> GetAllInfoGroup(string? include = null);
-        Task<GroupInfoDetailsDTO?> GetInfoDetailsGroup(int id, string? include = null);
         Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null);
+        Task<GroupInfoDetailsDTO?> GetInfoDetailsGroup(int id, string? include = null);        
         Task<GroupEditDTO?> GetEditGroup(int id, string? include = null);
         Task<List<SelectItem>> GetGroupSelect();
         Task<GroupEditDTO?> AddGroup(GroupEditDTO item, string? include = null);
@@ -23,9 +23,24 @@ namespace NexusUserTest.Shared.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/groups/info?include={include}");
+                var response = await _httpClient.GetAsync($"api/groups?include={include}");
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<List<GroupInfoDTO>>() ?? [];
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return [];
+            }
+        }
+
+        public async Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/groups?view=edit&include={include}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<GroupEditDTO>>() ?? [];
             }
             catch (HttpRequestException ex)
             {
@@ -38,7 +53,7 @@ namespace NexusUserTest.Shared.Services
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/groups/{id}/info?include={include}");
+                var response = await _httpClient.GetAsync($"api/groups/{id}?include={include}");
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<GroupInfoDetailsDTO>();
             }
@@ -47,28 +62,13 @@ namespace NexusUserTest.Shared.Services
                 Console.WriteLine($"API Error: {ex.Message}");
                 return null;
             }
-        }
-
-        public async Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync($"api/groups/edit?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<GroupEditDTO>>() ?? [];
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
-        }
+        }        
 
         public async Task<GroupEditDTO?> GetEditGroup(int id, string? include = null)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/groups/{id}/edit?include={include}");
+                var response = await _httpClient.GetAsync($"api/groups/{id}?view=edit&include={include}");
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<GroupEditDTO>();
             }
