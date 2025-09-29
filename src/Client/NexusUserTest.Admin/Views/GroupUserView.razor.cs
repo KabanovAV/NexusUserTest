@@ -9,10 +9,12 @@ namespace NexusUserTest.Admin.Views
     {
         [Inject]
         public IAPIService? ServiceAPI { get; set; }
+        [Inject]
+        public INexusDialogService? DialogService { get; set; }
         [Parameter]
         public GroupInfoDetailsDTO? GroupInfo { get; set; }
 
-        private NexusTableGrid<GroupUserDTO>? NexusTable;
+        private NexusTableGrid<GroupUserInfoAdminDTO>? NexusTable;
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
         int hour, minute;
 
@@ -25,10 +27,23 @@ namespace NexusUserTest.Admin.Views
             }
         }
 
-        private async void ChangeStatus(GroupUserDTO user, ChangeEventArgs e)
+        private async void ChangeStatus(GroupUserInfoAdminDTO user, ChangeEventArgs e)
         {
-            user.Status = Int32.Parse(e.Value.ToString());
-            await ServiceAPI!.GroupUserService.UpdateGroupUser(user, "User");
+            var status = Int32.Parse(e.Value.ToString());
+
+            if (user.Status == 3)
+            {
+                var settings = new NexusDialogSetting("Внимание!", "Изменение статуса приведет к удалению результата пользователя. Вы уверены, что хотите изменить статус?", "Отменить", "Изменить");
+                var result = await DialogService!.Show(settings);
+                if (result?.Canceled == false)
+                {
+                    await ServiceAPI!.ResultService.DeleteInfoResult(user.Id);
+                    GroupInfo.User.First(u => u == user).Results.Clear();
+                    await InvokeAsync(StateHasChanged);
+                }                    
+            }
+            user.Status = status;
+            await ServiceAPI!.GroupUserService.UpdateInfoGroupUser(user, "User");
         }
 
         private async void ChangeTimer()
