@@ -1,4 +1,6 @@
-﻿namespace NexusUserTest.Shared.Services
+﻿using System.Net.Http;
+
+namespace NexusUserTest.Shared.Services
 {
     public interface IAPIService
     {
@@ -10,39 +12,22 @@
         IAnswerAPIService AnswerService { get; }
         IGroupUserAPIService GroupUserService { get; }
         ISettingAPIService SettingService { get; }
-
-        //IResultService ResultService { get; }
-        //ITopicQuestionService TopicQuestionService { get; }
+        ITopicQuestionAPIService TopicQuestionService { get; }
+        IResultAPIService ResultService { get; }
     }
 
-    public class APIService : IAPIService
+    public class APIService(IHttpClientFactory httpClienFactory) : IAPIService
     {
-        private readonly Lazy<ISpecializationAPIService> _specializationService;
-        private readonly Lazy<IGroupAPIService> _groupService;
-        private readonly Lazy<IUserAPIService> _userService;
-        private readonly Lazy<ITopicAPIService> _topicService;
-        private readonly Lazy<IQuestionAPIService> _questionService;
-        private readonly Lazy<IAnswerAPIService> _answerService;
-        private readonly Lazy<IGroupUserAPIService> _groupUserService;
-        private readonly Lazy<ISettingAPIService> _settingService;
-
-        //private readonly Lazy<IResultService> _resultService;
-        //private readonly Lazy<ITopicQuestionService> _topicQuestionService;
-
-        public APIService(IHttpClientFactory httpClienFactory)
-        {
-            _specializationService = new Lazy<ISpecializationAPIService>(() => new SpecializationAPIService(httpClienFactory));
-            _groupService = new Lazy<IGroupAPIService>(() => new GroupAPIService(httpClienFactory));
-            _userService = new Lazy<IUserAPIService>(() => new UserAPIService(httpClienFactory));
-            _topicService = new Lazy<ITopicAPIService>(() => new TopicAPIService(httpClienFactory));
-            _questionService = new Lazy<IQuestionAPIService>(() => new QuestionAPIService(httpClienFactory));
-            _answerService = new Lazy<IAnswerAPIService>(() => new AnswerAPIService(httpClienFactory));
-            _groupUserService = new Lazy<IGroupUserAPIService>(() => new GroupUserAPIService(httpClienFactory));
-            _settingService = new Lazy<ISettingAPIService>(() => new SettingAPIService(httpClienFactory));
-
-            //_resultService = new Lazy<IResultService>(() => new ResultService(repository));
-            //_topicQuestionService = new Lazy<ITopicQuestionService>(() => new TopicQuestionService(repository));
-        }
+        private readonly Lazy<ISpecializationAPIService> _specializationService = new (() => new SpecializationAPIService(httpClienFactory));
+        private readonly Lazy<IGroupAPIService> _groupService = new (() => new GroupAPIService(httpClienFactory));
+        private readonly Lazy<IUserAPIService> _userService = new (() => new UserAPIService(httpClienFactory));
+        private readonly Lazy<ITopicAPIService> _topicService = new (() => new TopicAPIService(httpClienFactory));
+        private readonly Lazy<IQuestionAPIService> _questionService = new (() => new QuestionAPIService(httpClienFactory));
+        private readonly Lazy<IAnswerAPIService> _answerService = new (() => new AnswerAPIService(httpClienFactory));
+        private readonly Lazy<IGroupUserAPIService> _groupUserService = new (() => new GroupUserAPIService(httpClienFactory));
+        private readonly Lazy<ISettingAPIService> _settingService = new (() => new SettingAPIService(httpClienFactory));
+        private readonly Lazy<ITopicQuestionAPIService> _topicQuestionService = new (() => new TopicQuestionAPIService(httpClienFactory));
+        private readonly Lazy<IResultAPIService> _resultService = new(() => new ResultAPIService(httpClienFactory));
 
         public ISpecializationAPIService SpecializationService => _specializationService.Value;
         public IGroupAPIService GroupService => _groupService.Value;
@@ -52,8 +37,7 @@
         public IAnswerAPIService AnswerService => _answerService.Value;
         public IGroupUserAPIService GroupUserService => _groupUserService.Value;
         public ISettingAPIService SettingService => _settingService.Value;
-
-        //public IResultService ResultService => _resultService.Value;
-        //public ITopicQuestionService TopicQuestionService => _topicQuestionService.Value;
+        public ITopicQuestionAPIService TopicQuestionService => _topicQuestionService.Value;
+        public IResultAPIService ResultService => _resultService.Value;
     }
 }

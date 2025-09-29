@@ -5,23 +5,19 @@ namespace NexusUserTest.Shared.Services
 {
     public interface IUserAPIService
     {
-        Task<IEnumerable<UserDTO>> GetAllUser(string? include = null);
+        Task<List<UserDTO>> GetAllUser(string? include = null);
         Task<UserDTO?> GetUser(int id, string? include = null);
+        Task<UserInfoTestDTO?> GetUserTestInfo(int id, string? include = null);
         Task<UserDTO?> AddUser(UserDTO item, string? include = null);
         Task<UserDTO?> UpdateUser(UserDTO item, string? include = null);
         Task DeleteUser(int id);
     }
 
-    public class UserAPIService : IUserAPIService
+    public class UserAPIService(IHttpClientFactory httpClienFactory) : IUserAPIService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-        public UserAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
-
-        public async Task<IEnumerable<UserDTO>> GetAllUser(string? include = null)
+        public async Task<List<UserDTO>> GetAllUser(string? include = null)
         {
             try
             {
@@ -32,7 +28,7 @@ namespace NexusUserTest.Shared.Services
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"API Error: {ex.Message}");
-                return new List<UserDTO>();
+                return [];
             }
         }
 
@@ -43,6 +39,21 @@ namespace NexusUserTest.Shared.Services
                 var response = await _httpClient.GetAsync($"api/users/{id}?include={include}");
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<UserDTO>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<UserInfoTestDTO?> GetUserTestInfo(int id, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/users/{id}/test?include={include}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<UserInfoTestDTO>();
             }
             catch (HttpRequestException ex)
             {

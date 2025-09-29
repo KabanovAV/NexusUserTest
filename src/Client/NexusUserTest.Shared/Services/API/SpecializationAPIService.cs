@@ -5,24 +5,19 @@ namespace NexusUserTest.Shared.Services
 {
     public interface ISpecializationAPIService
     {
-        Task<IEnumerable<SpecializationDTO>> GetAllSpecialization(string? include = null);
-        Task<IEnumerable<SelectItem>> GetSpecializationSelect();
+        Task<List<SpecializationDTO>> GetAllSpecialization(string? include = null);
+        Task<List<SelectItem>> GetSpecializationSelect();
         Task<SpecializationDTO?> GetSpecialization(int id, string? include = null);
         Task<SpecializationDTO?> AddSpecialization(SpecializationDTO item, string? include = null);
         Task<SpecializationDTO?> UpdateSpecialization(SpecializationDTO item, string? include = null);
         Task<bool> DeleteSpecialization(int id);
     }
 
-    public class SpecializationAPIService : ISpecializationAPIService
+    public class SpecializationAPIService(IHttpClientFactory httpClienFactory) : ISpecializationAPIService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-        public SpecializationAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
-
-        public async Task<IEnumerable<SpecializationDTO>> GetAllSpecialization(string? include = null)
+        public async Task<List<SpecializationDTO>> GetAllSpecialization(string? include = null)
         {
             try
             {
@@ -33,14 +28,14 @@ namespace NexusUserTest.Shared.Services
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"API Error: {ex.Message}");
-                return new List<SpecializationDTO>();
+                return [];
             }
         }
 
-        public async Task<IEnumerable<SelectItem>> GetSpecializationSelect()
+        public async Task<List<SelectItem>> GetSpecializationSelect()
         {
             var s = await GetAllSpecialization();
-            return s.Select(s => new SelectItem { Text = s.Title, Value = s.Id }).ToList();
+            return [.. s.Select(s => new SelectItem { Text = s.Title, Value = s.Id })];
         }
 
         public async Task<SpecializationDTO?> GetSpecialization(int id, string? include = null)

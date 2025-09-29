@@ -5,23 +5,18 @@ namespace NexusUserTest.Shared.Services
 {
     public interface IQuestionAPIService
     {
-        Task<IEnumerable<QuestionDTO>> GetAllQuestion(string? include = null);
+        Task<List<QuestionDTO>> GetAllQuestion(string? include = null);
         Task<QuestionDTO?> GetQuestion(int id, string? include = null);
         Task<QuestionDTO?> AddQuestion(QuestionDTO item, string? include = null);
         Task<QuestionDTO?> UpdateQuestion(QuestionDTO item, string? include = null);
         Task DeleteQuestion(int id);
     }
 
-    public class QuestionAPIService : IQuestionAPIService
+    public class QuestionAPIService(IHttpClientFactory httpClienFactory) : IQuestionAPIService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-        public QuestionAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
-
-        public async Task<IEnumerable<QuestionDTO>> GetAllQuestion(string? include = null)
+        public async Task<List<QuestionDTO>> GetAllQuestion(string? include = null)
         {
             try
             {
@@ -32,7 +27,7 @@ namespace NexusUserTest.Shared.Services
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"API Error: {ex.Message}");
-                return new List<QuestionDTO>();
+                return [];
             }
         }
 

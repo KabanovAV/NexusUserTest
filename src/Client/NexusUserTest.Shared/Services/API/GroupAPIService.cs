@@ -5,26 +5,21 @@ namespace NexusUserTest.Shared.Services
 {
     public interface IGroupAPIService
     {
-        Task<IEnumerable<GroupInfoDTO>> GetAllInfoGroup(string? include = null);
+        Task<List<GroupInfoDTO>> GetAllInfoGroup(string? include = null);
         Task<GroupInfoDetailsDTO?> GetInfoDetailsGroup(int id, string? include = null);
-        Task<IEnumerable<GroupEditDTO>> GetAllEditGroup(string? include = null);
+        Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null);
         Task<GroupEditDTO?> GetEditGroup(int id, string? include = null);
-        Task<IEnumerable<SelectItem>> GetGroupSelect();
+        Task<List<SelectItem>> GetGroupSelect();
         Task<GroupEditDTO?> AddGroup(GroupEditDTO item, string? include = null);
         Task<GroupEditDTO?> UpdateGroup(GroupEditDTO item, string? include = null);
         Task DeleteGroup(int id);
     }
 
-    public class GroupAPIService : IGroupAPIService
+    public class GroupAPIService(IHttpClientFactory httpClienFactory) : IGroupAPIService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-        public GroupAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
-
-        public async Task<IEnumerable<GroupInfoDTO>> GetAllInfoGroup(string? include = null)
+        public async Task<List<GroupInfoDTO>> GetAllInfoGroup(string? include = null)
         {
             try
             {
@@ -54,7 +49,7 @@ namespace NexusUserTest.Shared.Services
             }
         }
 
-        public async Task<IEnumerable<GroupEditDTO>> GetAllEditGroup(string? include = null)
+        public async Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null)
         {
             try
             {
@@ -84,10 +79,10 @@ namespace NexusUserTest.Shared.Services
             }
         }
 
-        public async Task<IEnumerable<SelectItem>> GetGroupSelect()
+        public async Task<List<SelectItem>> GetGroupSelect()
         {
             var s = await GetAllEditGroup();
-            return s.Select(s => new SelectItem { Text = s.Title, Value = s.Id }).ToList();
+            return [.. s.Select(s => new SelectItem { Text = s.Title, Value = s.Id })];
         }
 
         public async Task<GroupEditDTO?> AddGroup(GroupEditDTO item, string? include = null)

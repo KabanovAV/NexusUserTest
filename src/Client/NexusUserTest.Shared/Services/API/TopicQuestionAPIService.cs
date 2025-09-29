@@ -1,41 +1,30 @@
-﻿//using NexusUserTest.Common.DTOs;
-//using System.Net.Http.Json;
+﻿using NexusUserTest.Common.DTOs;
+using System.Net.Http.Json;
 
-//namespace NexusUserTest.Shared.Services
-//{
-//    public interface ITopicQuestionService
-//    {
-//        void AddTopicQuestion(TopicQuestion entity);
-//        void UpdateTopicQuestion(TopicQuestion entity);
-//        void DeleteTopicQuestion(TopicQuestion entity);
-//        void RefreshTopicQuestion(TopicQuestion entity);
-//    }
+namespace NexusUserTest.Shared.Services
+{
+    public interface ITopicQuestionAPIService
+    {
+        Task<List<QuestionTestDTO>> GetAllQuestionsBySpecializationId(int specializationId, string? include = null);
+    }
 
-//    public class TopicQuestionService : ITopicQuestionService
-//    {
-//        private readonly IRepositoryManager _repository;
+    public class TopicQuestionAPIService(IHttpClientFactory httpClienFactory) : ITopicQuestionAPIService
+    {
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-//        public TopicQuestionService(IRepositoryManager repository)
-//            => _repository = repository;
-
-//        public void AddTopicQuestion(TopicQuestion entity)
-//        {
-//            _repository.TopicQuestion.AddTopicQuestion(entity);
-//            _repository.Save();
-//        }
-
-//        public void UpdateTopicQuestion(TopicQuestion entity)
-//        {
-//            _repository.TopicQuestion.UpdateTopicQuestion(entity);
-//            _repository.Save();
-//        }
-
-//        public void DeleteTopicQuestion(TopicQuestion entity)
-//        {
-//            _repository.TopicQuestion.DeleteTopicQuestion(entity);
-//            _repository.Save();
-//        }
-
-//        public void RefreshTopicQuestion(TopicQuestion entity) => _repository.TopicQuestion.RefreshTopicQuestion(entity);
-//    }
-//}
+        public async Task<List<QuestionTestDTO>> GetAllQuestionsBySpecializationId(int specializationId, string? include = null)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/topicquestions/specialization/{specializationId}?include={include}");
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<List<QuestionTestDTO>>() ?? [];
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"API Error: {ex.Message}");
+                return [];
+            }
+        }
+    }
+}

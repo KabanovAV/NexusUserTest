@@ -5,24 +5,19 @@ namespace NexusUserTest.Shared.Services
 {
     public interface IAnswerAPIService
     {
-        Task<IEnumerable<AnswerDTO>> GetAllAnswer(string? include = null);
+        Task<List<AnswerDTO>> GetAllAnswer(string? include = null);
         Task<AnswerDTO?> GetAnswer(int id, string? include = null);
         Task<AnswerDTO?> AddAnswer(AnswerDTO item, string? include = null);
-        Task<IEnumerable<AnswerDTO>?> AddRangeAnswer(List<AnswerDTO> items, string? include = null);
+        Task<List<AnswerDTO>?> AddRangeAnswer(IEnumerable<AnswerDTO> items, string? include = null);
         Task<AnswerDTO?> UpdateAnswer(AnswerDTO item, string? include = null);
         Task DeleteAnswer(int id);
     }
 
-    public class AnswerAPIService : IAnswerAPIService
+    public class AnswerAPIService(IHttpClientFactory httpClienFactory) : IAnswerAPIService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-        public AnswerAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
-
-        public async Task<IEnumerable<AnswerDTO>> GetAllAnswer(string? include = null)
+        public async Task<List<AnswerDTO>> GetAllAnswer(string? include = null)
         {
             try
             {
@@ -33,7 +28,7 @@ namespace NexusUserTest.Shared.Services
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"API Error: {ex.Message}");
-                return new List<AnswerDTO>();
+                return [];
             }
         }
 
@@ -67,7 +62,7 @@ namespace NexusUserTest.Shared.Services
             }
         }
 
-        public async Task<IEnumerable<AnswerDTO>?> AddRangeAnswer(List<AnswerDTO> items, string? include = null)
+        public async Task<List<AnswerDTO>?> AddRangeAnswer(IEnumerable<AnswerDTO> items, string? include = null)
         {
             try
             {
@@ -78,7 +73,7 @@ namespace NexusUserTest.Shared.Services
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"API Error: {ex.Message}");
-                return null;
+                return [];
             }
         }
 

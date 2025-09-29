@@ -11,14 +11,9 @@ namespace NexusUserTest.Shared.Services
         Task DeleteSetting(int id);
     }
 
-    public class SettingAPIService : ISettingAPIService
+    public class SettingAPIService(IHttpClientFactory httpClienFactory) : ISettingAPIService
     {
-        private readonly HttpClient _httpClient;
-
-        public SettingAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
         public async Task<SettingDTO?> GetSetting(int id, string? include = null)
         {

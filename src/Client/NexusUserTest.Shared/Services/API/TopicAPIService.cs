@@ -5,24 +5,19 @@ namespace NexusUserTest.Shared.Services
 {
     public interface ITopicAPIService
     {
-        Task<IEnumerable<TopicDTO>> GetAllTopic(string? include = null);
-        Task<IEnumerable<SelectItem>> GetTopicSelect();
+        Task<List<TopicDTO>> GetAllTopic(string? include = null);
+        Task<List<SelectItem>> GetTopicSelect();
         Task<TopicDTO?> GetTopic(int id, string? include = null);
         Task<TopicDTO?> AddTopic(TopicDTO item, string? include = null);
         Task<TopicDTO?> UpdateTopic(TopicDTO item, string? include = null);
         Task DeleteTopic(int id);
     }
 
-    public class TopicAPIService : ITopicAPIService
+    public class TopicAPIService(IHttpClientFactory httpClienFactory) : ITopicAPIService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
 
-        public TopicAPIService(IHttpClientFactory httpClienFactory)
-        {
-            _httpClient = httpClienFactory.CreateClient("HttpClient");
-        }
-
-        public async Task<IEnumerable<TopicDTO>> GetAllTopic(string? include = null)
+        public async Task<List<TopicDTO>> GetAllTopic(string? include = null)
         {
             try
             {
@@ -33,14 +28,14 @@ namespace NexusUserTest.Shared.Services
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"API Error: {ex.Message}");
-                return new List<TopicDTO>();
+                return [];
             }
         }
 
-        public async Task<IEnumerable<SelectItem>> GetTopicSelect()
+        public async Task<List<SelectItem>> GetTopicSelect()
         {
             var s = await GetAllTopic();
-            return s.Select(s => new SelectItem { Text = s.Title, Value = s.Id }).ToList();
+            return [.. s.Select(s => new SelectItem { Text = s.Title, Value = s.Id })];
         }
 
         public async Task<TopicDTO?> GetTopic(int id, string? include = null)
