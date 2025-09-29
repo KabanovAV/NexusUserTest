@@ -46,17 +46,6 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
-        /// Маппинг из SpecializationCreateDTO создание в обьект Specialization
-        /// </summary>
-        /// <param name="dto">SpecializationCreateDTO</param>
-        /// <returns>Обьект Specialization</returns>
-        public static Specialization? ToEntity(this SpecializationCreateDTO dto)
-            => dto == null ? null : new Specialization
-            {
-                Title = dto.Title
-            };
-
-        /// <summary>
         /// Маппинг обновления обьекта Specialization
         /// </summary>
         /// <param name="entity">Обьект Specialization</param>
