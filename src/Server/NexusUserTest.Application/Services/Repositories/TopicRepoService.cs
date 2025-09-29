@@ -9,16 +9,13 @@ namespace NexusUserTest.Application.Services
         Task<IEnumerable<Topic>> GetAllTopicAsync(Expression<Func<Topic, bool>>? expression = null, string? includeProperties = null);
         Task<Topic> GetTopicAsync(Expression<Func<Topic, bool>> expression, string? includeProperties = null);
         Task<Topic> AddTopicAsync(Topic entity, string? includeProperties = null);
-        Task<Topic> UpdateTopic(Topic entity, string? includeProperties = null);
-        void DeleteTopic(Topic entity);
+        Task<Topic> UpdateTopicAsync(Topic entity, string? includeProperties = null);
+        Task DeleteTopicAsync(Topic entity);
     }
 
-    public class TopicRepoService : ITopicRepoService
+    public class TopicRepoService(IRepositoryManager repository) : ITopicRepoService
     {
-        private readonly IRepositoryManager _repository;
-
-        public TopicRepoService(IRepositoryManager repository)
-            => _repository = repository;
+        private readonly IRepositoryManager _repository = repository;
 
         public async Task<IEnumerable<Topic>> GetAllTopicAsync(Expression<Func<Topic, bool>>? expression = null, string? includeProperties = null)
             => await _repository.Topic.GetAllTopicAsync(expression, includeProperties);
@@ -31,22 +28,22 @@ namespace NexusUserTest.Application.Services
             entity.CreatedDate = DateTime.Now;
             entity.ChangedDate = DateTime.Now;
             await _repository.Topic.AddTopicAsync(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
             return await _repository.Topic.GetTopicAsync(t => t.Id == entity.Id, includeProperties);
         }
 
-        public async Task<Topic> UpdateTopic(Topic entity, string? includeProperties = null)
+        public async Task<Topic> UpdateTopicAsync(Topic entity, string? includeProperties = null)
         {
             entity.ChangedDate = DateTime.Now;
             _repository.Topic.UpdateTopic(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
             return await _repository.Topic.GetTopicAsync(t => t.Id == entity.Id, includeProperties);
         }
 
-        public void DeleteTopic(Topic entity)
+        public async Task DeleteTopicAsync(Topic entity)
         {
             _repository.Topic.DeleteTopic(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
         }
     }
 }

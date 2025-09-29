@@ -6,36 +6,33 @@ namespace NexusUserTest.Application.Services
     public interface ITopicQuestionRepoService
     {
         Task AddTopicQuestionAsync(TopicQuestion entity);
-        void UpdateTopicQuestion(TopicQuestion entity);
-        void DeleteTopicQuestion(TopicQuestion entity);
+        Task UpdateTopicQuestionAsync(TopicQuestion entity);
+        Task DeleteTopicQuestionAsync(TopicQuestion entity);
     }
 
-    public class TopicQuestionRepoService : ITopicQuestionRepoService
+    public class TopicQuestionRepoService(IRepositoryManager repository) : ITopicQuestionRepoService
     {
-        private readonly IRepositoryManager _repository;
-
-        public TopicQuestionRepoService(IRepositoryManager repository)
-            => _repository = repository;
+        private readonly IRepositoryManager _repository = repository;
 
         public async Task AddTopicQuestionAsync(TopicQuestion entity)
         {
             entity.CreatedDate = DateTime.Now;
             entity.ChangedDate = DateTime.Now;
             await _repository.TopicQuestion.AddTopicQuestionAsync(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
         }
 
-        public void UpdateTopicQuestion(TopicQuestion entity)
+        public async Task UpdateTopicQuestionAsync(TopicQuestion entity)
         {
             entity.ChangedDate = DateTime.Now;
             _repository.TopicQuestion.UpdateTopicQuestion(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
         }
 
-        public void DeleteTopicQuestion(TopicQuestion entity)
+        public async Task DeleteTopicQuestionAsync(TopicQuestion entity)
         {
             _repository.TopicQuestion.DeleteTopicQuestion(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
         }
     }
 }

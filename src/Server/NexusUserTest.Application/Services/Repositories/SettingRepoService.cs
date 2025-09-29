@@ -8,16 +8,13 @@ namespace NexusUserTest.Application.Services
     {
         Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null);
         Task<Setting> AddSettingAsync(Setting entity, string? includeProperties = null);
-        Task<Setting> UpdateSetting(Setting entity, string? includeProperties = null);
-        void DeleteSetting(Setting entity);
+        Task<Setting> UpdateSettingAsync(Setting entity, string? includeProperties = null);
+        Task DeleteSettingAsync(Setting entity);
     }
 
-    public class SettingRepoService : ISettingRepoService
+    public class SettingRepoService(IRepositoryManager repository) : ISettingRepoService
     {
-        private readonly IRepositoryManager _repository;
-
-        public SettingRepoService(IRepositoryManager repository)
-            => _repository = repository;
+        private readonly IRepositoryManager _repository = repository;
 
         public async Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null)
             => await _repository.Setting.GetSettingAsync(expression, includeProperties);
@@ -27,22 +24,22 @@ namespace NexusUserTest.Application.Services
             entity.CreatedDate = DateTime.Now;
             entity.ChangedDate = DateTime.Now;
             await _repository.Setting.AddSettingAsync(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
             return await _repository.Setting.GetSettingAsync(s => s.Id == entity.Id, includeProperties);
         }
 
-        public async Task<Setting> UpdateSetting(Setting entity, string? includeProperties = null)
+        public async Task<Setting> UpdateSettingAsync(Setting entity, string? includeProperties = null)
         {
             entity.ChangedDate = DateTime.Now;
             _repository.Setting.UpdateSetting(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
             return await _repository.Setting.GetSettingAsync(s => s.Id == entity.Id, includeProperties);
         }
 
-        public void DeleteSetting(Setting entity)
+        public async Task DeleteSettingAsync(Setting entity)
         {
             _repository.Setting.DeleteSetting(entity);
-            _repository.Save();
+            await _repository.SaveAsync();
         }
     }
 }

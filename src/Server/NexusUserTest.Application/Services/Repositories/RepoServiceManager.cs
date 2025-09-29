@@ -16,32 +16,18 @@ namespace NexusUserTest.Application.Services
         IUserRepoService UserRepository { get; }
     }
 
-    public class RepoServiceManager : IRepoServiceManager
+    public class RepoServiceManager(IRepositoryManager repository) : IRepoServiceManager
     {
-        private readonly Lazy<ISpecializationRepoService> _specialization;
-        private readonly Lazy<IAnswerRepoService> _answer;
-        private readonly Lazy<IGroupRepoService> _group;
-        private readonly Lazy<IQuestionRepoService> _question;
-        private readonly Lazy<IResultRepoService> _result;
-        private readonly Lazy<ISettingRepoService> _setting;
-        private readonly Lazy<IGroupUserRepoService> _groupUser;
-        private readonly Lazy<ITopicQuestionRepoService> _topicQuestion;
-        private readonly Lazy<ITopicRepoService> _topic;
-        private readonly Lazy<IUserRepoService> _user;
-
-        public RepoServiceManager(IRepositoryManager repository)
-        {
-            _specialization = new Lazy<ISpecializationRepoService>(() => new SpecializationRepoService(repository));
-            _answer = new Lazy<IAnswerRepoService>(() => new AnswerRepoService(repository));
-            _group = new Lazy<IGroupRepoService>(() => new GroupRepoService(repository));
-            _question = new Lazy<IQuestionRepoService>(() => new QuestionRepoService(repository));
-            _result = new Lazy<IResultRepoService>(() => new ResultRepoService(repository));
-            _setting = new Lazy<ISettingRepoService>(() => new SettingRepoService(repository));
-            _groupUser = new Lazy<IGroupUserRepoService>(() => new GroupUserRepoService(repository));
-            _topicQuestion = new Lazy<ITopicQuestionRepoService>(() => new TopicQuestionRepoService(repository));
-            _topic = new Lazy<ITopicRepoService>(() => new TopicRepoService(repository));
-            _user = new Lazy<IUserRepoService>(() => new UserRepoService(repository));
-        }
+        private readonly Lazy<ISpecializationRepoService> _specialization = new(() => new SpecializationRepoService(repository));
+        private readonly Lazy<IAnswerRepoService> _answer = new(() => new AnswerRepoService(repository));
+        private readonly Lazy<IGroupRepoService> _group = new(() => new GroupRepoService(repository));
+        private readonly Lazy<IQuestionRepoService> _question = new(() => new QuestionRepoService(repository));
+        private readonly Lazy<IResultRepoService> _result = new(() => new ResultRepoService(repository));
+        private readonly Lazy<ISettingRepoService> _setting = new(() => new SettingRepoService(repository));
+        private readonly Lazy<IGroupUserRepoService> _groupUser = new(() => new GroupUserRepoService(repository));
+        private readonly Lazy<ITopicQuestionRepoService> _topicQuestion = new(() => new TopicQuestionRepoService(repository));
+        private readonly Lazy<ITopicRepoService> _topic = new(() => new TopicRepoService(repository));
+        private readonly Lazy<IUserRepoService> _user = new(() => new UserRepoService(repository));
 
         public ISpecializationRepoService SpecializationRepository => _specialization.Value;
         public IAnswerRepoService AnswerRepository => _answer.Value;
