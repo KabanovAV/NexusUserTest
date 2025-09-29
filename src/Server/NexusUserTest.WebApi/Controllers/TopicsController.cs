@@ -15,7 +15,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<TopicDTO>>> GetAll(string? include = null)
         {
             var topics = await _service.TopicRepository.GetAllTopicAsync(includeProperties: include);
-            return Ok(topics.ToDto());
+            return Ok(topics.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
@@ -24,7 +24,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id, include);
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {id} не найдена." });
-            return Ok(topic.ToDto());
+            return Ok(topic.ToAdminDto());
         }
 
         [HttpPost]
@@ -33,9 +33,9 @@ namespace SibCCSPETest.WebApi.Controllers
             if (topicCreateDTO == null)
                 return BadRequest("Данные для добавления темы пустые.");
             var topic = topicCreateDTO.ToEntity();
-            await _service.TopicRepository.AddTopicAsync(topic, include);
-            var topicDTO = topic.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = topicDTO.Id }, topicDTO);
+            await _service.TopicRepository.AddTopicAsync(topic!, include);
+            var topicDTO = topic!.ToAdminDto();
+            return CreatedAtAction(nameof(Get), new { id = topicDTO!.Id }, topicDTO);
         }
 
         [HttpPut]
@@ -47,8 +47,8 @@ namespace SibCCSPETest.WebApi.Controllers
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {topicDTO.Id} не найдена." });
             topic.UpdateFromDto(topicDTO);
-            await _service.TopicRepository.UpdateTopic(topic, include);
-            return Ok(topic.ToDto());
+            await _service.TopicRepository.UpdateTopicAsync(topic, include);
+            return Ok(topic.ToAdminDto());
         }
 
         [HttpDelete("{id:int}")]
@@ -57,7 +57,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id);
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {id} не найдена." });
-            _service.TopicRepository.DeleteTopic(topic);
+            await _service.TopicRepository.DeleteTopicAsync(topic);
             return NoContent();
         }
     }

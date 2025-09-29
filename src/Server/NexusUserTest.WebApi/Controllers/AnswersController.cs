@@ -15,7 +15,7 @@ namespace NexusUserTest.WebApi
         public async Task<ActionResult<IEnumerable<AnswerDTO>>> GetAll(string? include = null)
         {
             var answers = await _service.AnswerRepository.GetAllAnswerAsync(includeProperties: include);
-            return Ok(answers.ToDto());
+            return Ok(answers.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
@@ -24,7 +24,7 @@ namespace NexusUserTest.WebApi
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id, include);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {id} не найден." });
-            return Ok(answer.ToDto());
+            return Ok(answer.ToAdminDto());
         }
 
         [HttpPost]
@@ -33,19 +33,19 @@ namespace NexusUserTest.WebApi
             if (answerCreateDTO == null)
                 return BadRequest("Данные для добавления ответа пустые.");
             var answer = answerCreateDTO.ToEntity();
-            await _service.AnswerRepository.AddAnswerAsync(answer, include);
-            var answerDTO = answer.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = answerDTO.Id }, answerDTO);
+            await _service.AnswerRepository.AddAnswerAsync(answer!, include);
+            var answerDTO = answer!.ToAdminDto();
+            return CreatedAtAction(nameof(Get), new { id = answerDTO!.Id }, answerDTO);
         }
 
         [HttpPost("Batch")]
-        public async Task<ActionResult<List<AnswerDTO>>> Add(List<AnswerCreateDTO> answerCreateDTOs, string? include = null)
+        public async Task<ActionResult<IEnumerable<AnswerDTO>>> Add(IEnumerable<AnswerCreateDTO> answerCreateDTOs, string? include = null)
         {
             if (answerCreateDTOs == null)
                 return BadRequest("Данные для добавления ответов пустые.");
             var answers = answerCreateDTOs.ToEntity();
             await _service.AnswerRepository.AddRangeAnswerAsync([.. answers], include);
-            var answerDTOs = answers.ToDto();
+            var answerDTOs = answers.ToAdminDto();
             return CreatedAtAction(nameof(GetAll), answerDTOs);
         }
 
@@ -56,10 +56,10 @@ namespace NexusUserTest.WebApi
                 return BadRequest("Данные для обновления ответа пустые.");
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == answerDTO.Id, include);
             if (answer == null)
-                return NotFound(new { Message = $"Вопрос с id {answerDTO.Id} не найден." });
+                return NotFound(new { Message = $"Ответ с id {answerDTO.Id} не найден." });
             answer.UpdateFromDto(answerDTO);
-            await _service.AnswerRepository.UpdateAnswer(answer, include);
-            return Ok(answer.ToDto());
+            await _service.AnswerRepository.UpdateAnswerAsync(answer, include);
+            return Ok(answer.ToAdminDto());
         }
 
         [HttpDelete("{id:int}")]
@@ -68,7 +68,7 @@ namespace NexusUserTest.WebApi
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {id} не найден." });
-            _service.AnswerRepository.DeleteAnswer(answer);
+            await _service.AnswerRepository.DeleteAnswerAsync(answer);
             return NoContent();
         }
     }

@@ -14,5 +14,6 @@
         IUserRepository User { get; }
 
         void Save();
+        Task SaveAsync();
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NexusUserTest.Infrastructure;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NexusUserTest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DbDataContext))]
-    partial class DbDataContextModelSnapshot : ModelSnapshot
+    [Migration("20250922042527_ResultRemoveStatus")]
+    partial class ResultRemoveStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,6 +111,9 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                     b.Property<int>("GroupId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("StartTest")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -166,16 +172,11 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                     b.Property<int>("GroupUserId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AnswerId");
 
                     b.HasIndex("GroupUserId");
-
-                    b.HasIndex("QuestionId");
 
                     b.ToTable("Results");
                 });
@@ -392,17 +393,9 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NexusUserTest.Domain.Entities.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Answer");
 
                     b.Navigation("GroupUser");
-
-                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("NexusUserTest.Domain.Entities.Setting", b =>

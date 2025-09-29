@@ -15,7 +15,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetAll(string? include = null)
         {
             var questions = await _service.QuestionRepository.GetAllQuestionAsync(includeProperties: include);
-            return Ok(questions.ToDto());
+            return Ok(questions.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
@@ -24,7 +24,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == id, include);
             if (question == null)
                 return NotFound(new { Message = $"Вопрос с id {id} не найден." });
-            return Ok(question.ToDto());
+            return Ok(question.ToAdminDto());
         }
 
         [HttpPost]
@@ -33,9 +33,9 @@ namespace SibCCSPETest.WebApi.Controllers
             if (questionCreateDTO == null)
                 return BadRequest("Данные для добавления вопроса пустые.");
             var question = questionCreateDTO.ToEntity();
-            await _service.QuestionRepository.AddQuestionAsync(question, include);
-            var questionDTO = question.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = questionDTO.Id }, questionDTO);
+            await _service.QuestionRepository.AddQuestionAsync(question!, include);
+            var questionDTO = question!.ToAdminDto();
+            return CreatedAtAction(nameof(Get), new { id = questionDTO!.Id }, questionDTO);
         }
 
         [HttpPut]
@@ -47,8 +47,8 @@ namespace SibCCSPETest.WebApi.Controllers
             if (question == null)
                 return NotFound(new { Message = $"Вопрос с id {questionDTO.Id} не найден." });
             question.UpdateFromDto(questionDTO);
-            await _service.QuestionRepository.UpdateQuestion(question, include);
-            return Ok(question.ToDto());
+            await _service.QuestionRepository.UpdateQuestionAsync(question, include);
+            return Ok(question.ToAdminDto());
         }
 
         [HttpDelete("{id:int}")]
@@ -57,7 +57,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == id);
             if (question == null)
                 return NotFound(new { Message = $"Вопрос с id {id} не найден." });
-            _service.QuestionRepository.DeleteQuestion(question);
+            await _service.QuestionRepository.DeleteQuestionAsync(question);
             return NoContent();
         }
     }

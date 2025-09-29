@@ -18,7 +18,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id, include);
             if (setting == null)
                 return NotFound(new { Message = $"Настройка с id {id} не найдена." });
-            return Ok(setting.ToDto());
+            return Ok(setting.ToAdminDto());
         }
 
         [HttpPost]
@@ -27,9 +27,9 @@ namespace SibCCSPETest.WebApi.Controllers
             if (settingCreateDTO == null)
                 return BadRequest("Данные для добавления настройки пустые.");
             var setting = settingCreateDTO.ToEntity();
-            await _service.SettingRepository.AddSettingAsync(setting, include);
-            var settingDTO = setting.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = settingDTO.Id }, settingDTO);
+            await _service.SettingRepository.AddSettingAsync(setting!, include);
+            var settingDTO = setting!.ToAdminDto();
+            return CreatedAtAction(nameof(Get), new { id = settingDTO!.Id }, settingDTO);
         }
 
         [HttpPut]
@@ -41,8 +41,8 @@ namespace SibCCSPETest.WebApi.Controllers
             if (setting == null)
                 return NotFound(new { Message = $"Настройка с id {settingDTO.Id} не найдена." });
             setting.UpdateFromDto(settingDTO);
-            await _service.SettingRepository.UpdateSetting(setting, include);
-            return Ok(setting.ToDto());
+            await _service.SettingRepository.UpdateSettingAsync(setting, include);
+            return Ok(setting.ToAdminDto());
         }
 
         [HttpDelete("{id:int}")]
@@ -51,7 +51,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id);
             if (setting == null)
                 return NotFound(new { Message = $"Настройка с id {id} не найдена." });
-            _service.SettingRepository.DeleteSetting(setting);
+            await _service.SettingRepository.DeleteSettingAsync(setting);
             return NoContent();
         }
     }

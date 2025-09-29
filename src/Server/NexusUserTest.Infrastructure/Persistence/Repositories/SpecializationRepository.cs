@@ -4,11 +4,8 @@ using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class SpecializationRepository : RepositoryBase<Specialization>, ISpecializationRepository
+    public class SpecializationRepository(DbDataContext db) : RepositoryBase<Specialization>(db), ISpecializationRepository
     {
-        public SpecializationRepository(DbDataContext db)
-            : base(db) { }
-
         public async Task<IEnumerable<Specialization>> GetAllSpecializationAsync(Expression<Func<Specialization, bool>>? expression = null, string? includeProperties = null)
             => await GetAllAsync(expression, includeProperties);
 

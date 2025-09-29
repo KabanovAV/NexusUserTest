@@ -3,7 +3,7 @@ using NexusUserTest.Common.DTOs;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
-namespace NexusUserTest.Admin.Page
+namespace NexusUserTest.Admin.Pages
 {
     public partial class Home
     {
@@ -15,10 +15,7 @@ namespace NexusUserTest.Admin.Page
         public INexusDialogService? DialogService { get; set; }
 
         private List<GroupInfoDTO>? Items;
-        private List<GroupUserDTO>? Users;
         private GroupInfoDetailsDTO? GroupInfo;
-
-        private NexusTableGrid<GroupUserDTO>? NexusTable;
         private bool IsShowGroupUsers;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,9 +35,7 @@ namespace NexusUserTest.Admin.Page
 
         private async void DbClick(GroupInfoDTO item)
         {
-            GroupInfo = await ServiceAPI!.GroupService.GetInfoDetailsGroup(item.Id, "Specialization.Topics.TopicQuestion,Setting,GroupUser.User");
-            var u = await ServiceAPI!.GroupUserService.GetAllUsersByGroupId(item.Id, "User");
-            Users = [.. u];
+            GroupInfo = await ServiceAPI!.GroupService.GetInfoDetailsGroup(item.Id, "Specialization.Topics.TopicQuestion,Setting,GroupUser.User,GroupUser.Results.Question.Answers");
             IsShowGroupUsers = true;
             await InvokeAsync(StateHasChanged);
         }

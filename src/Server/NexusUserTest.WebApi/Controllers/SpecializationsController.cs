@@ -15,7 +15,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll(string? include = null)
         {
             var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
-            return Ok(specializations.ToDto());
+            return Ok(specializations.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
@@ -24,7 +24,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {id} не найдена." });
-            return Ok(specialization.ToDto());
+            return Ok(specialization.ToAdminDto());
         }
 
         [HttpPost]
@@ -33,9 +33,9 @@ namespace SibCCSPETest.WebApi.Controllers
             if (specializationCreateDTO == null)
                 return BadRequest("Данные для добавления специализации пустые.");
             var specialization = specializationCreateDTO.ToEntity();
-            await _service.SpecializationRepository.AddSpecializationAsync(specialization, include);
-            var specializationDTO = specialization.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = specializationDTO.Id }, specializationDTO);
+            await _service.SpecializationRepository.AddSpecializationAsync(specialization!, include);
+            var specializationDTO = specialization!.ToAdminDto();
+            return CreatedAtAction(nameof(Get), new { id = specializationDTO!.Id }, specializationDTO);
         }
 
         [HttpPut]
@@ -47,17 +47,17 @@ namespace SibCCSPETest.WebApi.Controllers
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
             specialization.UpdateFromDto(specializationDTO);
-            await _service.SpecializationRepository.UpdateSpecialization(specialization, include);
-            return Ok(specialization.ToDto());
+            await _service.SpecializationRepository.UpdateSpecializationAsync(specialization, include);
+            return Ok(specialization.ToAdminDto());
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<bool>> Delete(int id)
         {
-            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id);
+            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, "Groups,Topics");
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {id} не найдена." });
-            var result = _service.SpecializationRepository.DeleteSpecialization(specialization);
+            var result = await _service.SpecializationRepository.DeleteSpecializationAsync(specialization);
             return Ok(result);
         }
     }

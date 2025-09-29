@@ -4,9 +4,9 @@ using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
-namespace NexusUserTest.Admin.Page
+namespace NexusUserTest.Admin.Pages
 {
-    public partial class UserPage
+    public partial class QuestionPage
     {
         [Inject]
         public IAPIService? ServiceAPI { get; set; }
@@ -15,13 +15,13 @@ namespace NexusUserTest.Admin.Page
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private NexusTableGrid<UserDTO>? NexusTable;
-        private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
-        private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
+        private NexusTableGrid<QuestionDTO>? NexusTable;
+        private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
+        private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private UserDTO? Data;
-        private List<UserDTO>? Items;
-        private IEnumerable<SelectItem>? GroupSelects;
+        private QuestionDTO? Data;
+        private List<QuestionDTO>? Items;
+        private IEnumerable<SelectItem>? TopicSelects;
 
         private bool IsUpsertForm;
         public bool IsCrud => NexusTable != null
@@ -39,28 +39,28 @@ namespace NexusUserTest.Admin.Page
 
         private async Task LoadData()
         {
-            var u = await ServiceAPI!.UserService.GetAllUser("GroupUser");
-            Items = [.. u];
+            var q = await ServiceAPI!.QuestionService.GetAllQuestion("Answers,TopicQuestion");
+            Items = [.. q];
         }
 
         public async Task Insert()
         {
-            GroupSelects = await ServiceAPI!.GroupService.GetGroupSelect();
-            Data = new UserDTO { GroupUserItems = [] };
+            TopicSelects = await ServiceAPI!.TopicService.GetTopicSelect();
+            Data = new QuestionDTO { AnswerItems = [], TopicQuestionItems = [] };
             IsUpsertForm = true;
-        }
+        }            
 
         public async Task Edit()
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
-                GroupSelects = await ServiceAPI!.GroupService.GetGroupSelect();
+                TopicSelects = await ServiceAPI!.TopicService.GetTopicSelect();
                 Data = NexusTable.SelectedRows.First();
                 IsUpsertForm = true;
             }
         }
 
-        public async Task Save(UserDTO entity)
+        public async Task Save(QuestionDTO entity)
         {
             if (entity.Id != 0)
                 await Update(entity);
@@ -70,20 +70,21 @@ namespace NexusUserTest.Admin.Page
             IsUpsertForm = false;
         }
 
-        public async Task Add(UserDTO entity)
+        public async Task Add(QuestionDTO entity)
         {
-            Data = await ServiceAPI!.UserService.AddUser(entity, "GroupUser");
+            Data = await ServiceAPI!.QuestionService.AddQuestion(entity, "Answers,TopicQuestion");
             if (Data != null)
             {
                 NexusTable!.Data.Add(Data);
                 await NexusTable.SelectRow(Data);
-                NotificationService!.ShowSuccess("Пользователь добавлен", "Успех");
+                await NexusTable.OnExpandRow(Data);
+                NotificationService!.ShowSuccess("Вопрос добавлен", "Успех");
             }
         }
 
-        public async Task Update(UserDTO entity)
+        public async Task Update(QuestionDTO entity)
         {
-            Data = await ServiceAPI!.UserService.UpdateUser(entity, "GroupUser");
+            Data = await ServiceAPI!.QuestionService.UpdateQuestion(entity, "Answers,TopicQuestion");
             if (Data != null)
             {
                 var index = NexusTable!.Data.FindIndex(s => s.Id == Data.Id);
@@ -91,7 +92,7 @@ namespace NexusUserTest.Admin.Page
                     NexusTable.Data[index] = Data;
                 await NexusTable.SelectRow(Data);
                 await NexusTable.CancelEditRow(Data);
-                NotificationService!.ShowSuccess("Пользователь изменен", "Успех");
+                NotificationService!.ShowSuccess("Вопрос изменен", "Успех");
             }
         }
 
@@ -100,13 +101,13 @@ namespace NexusUserTest.Admin.Page
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
                 Data = NexusTable.SelectedRows.First();
-                var settings = new NexusDialogSetting("Удаление пользователя", $"Вы уверены, что хотите удалить \"{Data.FullName}\" пользователя?", "Отменить", "Удалить");
+                var settings = new NexusDialogSetting("Удаление вопроса", $"Вопрос удалится вместе с ответами. Вы уверены, что хотите удалить \"{Data.Title}\" вопрос?", "Отменить", "Удалить");
                 var result = await DialogService!.Show(settings);
                 if (result?.Canceled == false)
                 {
-                    await ServiceAPI!.UserService.DeleteUser(Data.Id);
+                    await ServiceAPI!.QuestionService.DeleteQuestion(Data.Id);
                     NexusTable.RemoveRow(Data);
-                    NotificationService!.ShowSuccess("Пользователь удален", "Успех");
+                    NotificationService!.ShowSuccess("Вопрос удален", "Успех");
                 }
             }
         }

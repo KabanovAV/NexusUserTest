@@ -4,11 +4,8 @@ using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class SettingRepository : RepositoryBase<Setting>, ISettingRepository
+    public class SettingRepository(DbDataContext db) : RepositoryBase<Setting>(db), ISettingRepository
     {
-        public SettingRepository(DbDataContext db)
-            : base(db) { }
-
         public async Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null)
             => await GetAsync(expression, includeProperties);
 

@@ -3,7 +3,7 @@ using NexusUserTest.Common.DTOs;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
-namespace NexusUserTest.Admin.Page
+namespace NexusUserTest.Admin.Pages
 {
     public partial class SpecializationPage
     {

@@ -4,11 +4,8 @@ using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class GroupRepository : RepositoryBase<Group>, IGroupRepository
+    public class GroupRepository(DbDataContext db) : RepositoryBase<Group>(db), IGroupRepository
     {
-        public GroupRepository(DbDataContext db)
-            : base(db) { }
-
         public async Task<IEnumerable<Group>> GetAllGroupAsync(Expression<Func<Group, bool>>? expression = null, string? includeProperties = null)
             => await GetAllAsync(expression, includeProperties);
 

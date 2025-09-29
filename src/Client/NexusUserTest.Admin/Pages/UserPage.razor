@@ -1,6 +1,8 @@
-﻿@page "/admin/question"
+﻿@page "/admin/user"
 @layout AdminLayout
 @rendermode InteractiveServer
+
+<PageTitle>Пользователи</PageTitle>
 
 @if (Items == null)
 {
@@ -16,9 +18,9 @@
 else
 {
     <div style="display:@(IsUpsertForm ? "none" : "");">
-        <NexusTableGrid @ref="NexusTable" TItem="QuestionDTO" Data="Items" SelectionMode="SelectMode"
-                        ExpandMode="NexusTableGridExpandMode.Single" EditMode="EditMode"
-                        AllowFiltering="true" ShowEmptyMessage="true" EmptyMessage="Нет вопросов">
+        <NexusTableGrid @ref="NexusTable" TItem="UserDTO" Data="Items" SelectionMode="SelectMode"
+                        EditMode="EditMode" AllowSorting="true" AllowFiltering="true"
+                        ShowEmptyMessage="true" EmptyMessage="Нет пользователей" CssStyle="">
             <ToolTemplate>
                 <NexusGroupButton>
                     <NexusButton Title="Добавить" OnClick="Insert" CssClass="btn-primary" IconClass="bi bi-plus-lg" Disable="IsCrud" />
@@ -32,14 +34,15 @@ else
                         @(Items.IndexOf(context) + 1)
                     </CellTemplate>
                 </NexusTableGridColumn>
-                <NexusTableGridColumn Title="Название" Property="q => q.Title" Filterable="true" />
+                <NexusTableGridColumn Title="ФИО" Property="u => u.FullName" Sortable="true" Filterable="true" />
+                <NexusTableGridColumn Title="Логин" Property="u => u.Login" />
+                <NexusTableGridColumn Title="Пароль" Property="u => u.Password" />
+                <NexusTableGridColumn Title="Организация" Property="u => u.Organization" Filterable="true" />
+                <NexusTableGridColumn Title="Позиция" Property="u => u.Position" />
             </Columns>
-            <ExpandRow>
-                <AnswerView Items="@context.AnswerItems" QuestionId="@context.Id" />
-            </ExpandRow>
         </NexusTableGrid>
     </div>
     <div class="h-100" style="display:@(IsUpsertForm ? "" : "none");">
-        <QuestionFormPage Data="Data" OnCancel="Cancel" OnSave="Save" TopicSelects="TopicSelects" />
+        <UserFormPage Data="Data" OnCancel="Cancel" OnSave="Save" GroupSelects="GroupSelects" />
     </div>
 }
