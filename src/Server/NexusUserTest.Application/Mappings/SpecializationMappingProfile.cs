@@ -10,7 +10,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект Specialization</param>
         /// <returns>SpecializationDTO</returns>
-        public static SpecializationDTO? ToAdminDto(this Specialization entity)
+        public static SpecializationDTO? ToDto(this Specialization entity)
             => entity == null ? null : new SpecializationDTO
             {
                 Id = entity.Id,
@@ -22,8 +22,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entities">Список обьектов Specialization</param>
         /// <returns>Список SpecializationDTO</returns>
-        public static List<SpecializationDTO> ToAdminDto(this IEnumerable<Specialization> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
+        public static List<SpecializationDTO> ToDto(this IEnumerable<Specialization> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToDto())];
 
         /// <summary>
         /// Маппинг из SpecializationDTO в обьект Specialization
