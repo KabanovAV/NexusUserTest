@@ -428,3 +428,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /src/Server/NexusUserTest.WebApi/appsettings.Development.json
+/src/Client/NexusUserTest.Client/appsettings.Development.json
