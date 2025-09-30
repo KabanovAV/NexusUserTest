@@ -72,7 +72,7 @@ namespace NexusUserTest.Shared.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/specializations?include={include}", item);
+                var response = await _httpClient.PutAsJsonAsync($"api/specializations/{item.Id}?include={include}", item);
                 response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<SpecializationDTO>();
             }

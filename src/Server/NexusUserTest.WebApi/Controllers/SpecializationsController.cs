@@ -38,12 +38,12 @@ namespace SibCCSPETest.WebApi.Controllers
             return CreatedAtAction(nameof(Get), new { id = specializationDTO!.Id }, specializationDTO);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<SpecializationDTO>> Update(SpecializationDTO specializationDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<SpecializationDTO>> Update(int id, SpecializationDTO specializationDTO, string? include = null)
         {
             if (specializationDTO == null)
                 return BadRequest("Данные для обновления специализации пустые.");
-            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == specializationDTO.Id, include);
+            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
             specialization.UpdateFromDto(specializationDTO);
