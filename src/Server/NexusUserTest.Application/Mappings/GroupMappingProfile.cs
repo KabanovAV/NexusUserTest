@@ -112,6 +112,26 @@ namespace NexusUserTest.Application.Mappings
             => [.. entities.Where(e => e != null).Select(e => e.ToEditDto())];
 
         /// <summary>
+        /// Маппинг из обьекта Group в SelectItem
+        /// </summary>
+        /// <param name="entity">Обьект Group</param>
+        /// <returns>SelectItem</returns>
+        public static SelectItem? ToSelect(this Group entity)
+            => entity == null ? null : new SelectItem
+            {
+                Value = entity.Id,
+                Text = entity.Title
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов Group в список SelectItem
+        /// </summary>
+        /// <param name="entities">Список обьектов Group</param>
+        /// <returns>Список SelectItem</returns>
+        public static List<SelectItem> ToSelect(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToSelect())];
+
+        /// <summary>
         /// Маппинг из GroupEditDTO в обьект Group
         /// </summary>
         /// <param name="dto">GroupEditDTO</param>
