@@ -77,7 +77,9 @@ namespace NexusUserTest.Admin.Pages
         public async Task Add(SpecializationDTO item)
         {
             var data = await ServiceAPI!.SpecializationService.AddSpecialization(item);
-            if (data != null)
+            if (!data.Success)
+                NotificationService!.ShowError($"{data.Error}", "Ошибка");
+            else
             {
                 NexusTable!.Data.Add(data.Data);
                 await NexusTable.SelectRow(data.Data);
@@ -88,7 +90,9 @@ namespace NexusUserTest.Admin.Pages
         public async Task Update(SpecializationDTO item)
         {
             var data = await ServiceAPI!.SpecializationService.UpdateSpecialization(item);
-            if (data != null)
+            if (!data.Success)
+                NotificationService!.ShowError($"{data.Error}", "Ошибка");
+            else
             {
                 var index = NexusTable!.Data.FindIndex(s => s.Id == data.Data.Id);
                 if (index >= 0)
@@ -108,13 +112,19 @@ namespace NexusUserTest.Admin.Pages
                 var result = await DialogService!.Show(settings);
                 if (result?.Canceled == false)
                 {
-                    var isDeleted = await ServiceAPI!.SpecializationService.DeleteSpecialization(data.Id);
-                    if (isDeleted.Data)
+                    var response = await ServiceAPI!.SpecializationService.DeleteSpecialization(data.Id);
+
+                    if (!response.Success)
+                        NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                    else
                     {
-                        NexusTable.RemoveRow(data);
-                        NotificationService!.ShowSuccess("Специализация удалена", "Успех");
+                        if (response.Data)
+                        {
+                            NexusTable.RemoveRow(data);
+                            NotificationService!.ShowSuccess("Специализация удалена", "Успех");
+                        }
+                        else NotificationService!.ShowError("Удалить специализацию нельзя из-за наличия связей", "Ошибка");
                     }
-                    else NotificationService!.ShowError("Удалить специализацию нельзя из-за наличия связей", "Ошибка");
                 }
             }
         }
