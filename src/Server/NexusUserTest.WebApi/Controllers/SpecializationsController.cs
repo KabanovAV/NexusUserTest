@@ -12,14 +12,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll([FromQuery] string? include = null)
         {
             var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
             return Ok(specializations.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<SpecializationDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<SpecializationDTO>> Get(int id, [FromQuery] string? include = null)
         {
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             if (specialization == null)
@@ -28,14 +28,14 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect(string? include = null)
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect([FromQuery] string? include = null)
         {
             var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
             return Ok(specializations.ToSelect());
         }
 
         [HttpPost]
-        public async Task<ActionResult<SpecializationDTO>> Add(SpecializationDTO specializationCreateDTO, string? include = null)
+        public async Task<ActionResult<SpecializationDTO>> Add(SpecializationDTO specializationCreateDTO, [FromQuery] string? include = null)
         {
             if (specializationCreateDTO == null)
                 return BadRequest("Данные для добавления специализации пустые.");
@@ -46,7 +46,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<SpecializationDTO>> Update(int id, SpecializationDTO specializationDTO, string? include = null)
+        public async Task<ActionResult<SpecializationDTO>> Update(int id, SpecializationDTO specializationDTO, [FromQuery] string? include = null)
         {
             if (specializationDTO == null)
                 return BadRequest("Данные для обновления специализации пустые.");

@@ -3,7 +3,6 @@ using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common;
 using SibCCSPETest.WebApi.MappingProfiles;
-using System.Linq;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
@@ -14,7 +13,7 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult> GetAll([FromQuery] string view = "info", [FromQuery] string? include = null)
+        public async Task<IActionResult> GetAll([FromQuery] string view = "info", [FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return view.ToLower() switch
@@ -25,7 +24,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult> Get(int id, [FromQuery] string view = "detailed", [FromQuery] string? include = null)
+        public async Task<IActionResult> Get(int id, [FromQuery] string view = "detailed", [FromQuery] string? include = null)
         {
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
@@ -38,14 +37,14 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect(string? include = null)
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect([FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return Ok(groups.ToSelect());
         }
 
         [HttpPost]
-        public async Task<ActionResult<GroupEditDTO>> Add(GroupEditDTO groupEditDTO, string? include = null)
+        public async Task<ActionResult<GroupEditDTO>> Add(GroupEditDTO groupEditDTO, [FromQuery] string? include = null)
         {
             if (groupEditDTO == null)
                 return BadRequest("Данные для добавления группы пустые.");
@@ -55,12 +54,12 @@ namespace SibCCSPETest.WebApi.Controllers
             return CreatedAtAction(nameof(Get), new { id = groupDTO!.Id, view = "edit" }, groupDTO);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<GroupEditDTO>> Update(GroupEditDTO groupDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<GroupEditDTO>> Update(int id, GroupEditDTO groupDTO, [FromQuery] string? include = null)
         {
             if (groupDTO == null)
                 return BadRequest("Данные для обновления группы пустые.");
-            var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == groupDTO.Id, include);
+            var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
                 return NotFound(new { Message = $"Группа с id {groupDTO.Id} не найдена." });
             group.UpdateFromEditDto(groupDTO);
