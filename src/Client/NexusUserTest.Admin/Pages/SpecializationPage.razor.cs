@@ -18,7 +18,7 @@ namespace NexusUserTest.Admin.Pages
         private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private List<SpecializationDTO>? Items;
+        private ApiResponse<List<SpecializationDTO>>? ApiResponse;
 
         public bool IsCrud => NexusTable != null
             && (NexusTable.InsertedItems.Count > 0 || NexusTable.EditedItems.Count > 0);
@@ -35,10 +35,7 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private async Task LoadData()
-        {
-            var s = await ServiceAPI!.SpecializationService.GetAllSpecialization();
-            Items = [.. s.Data];
-        }
+            => ApiResponse = await ServiceAPI!.SpecializationService.GetAllSpecialization();
 
         public async Task Insert()
             => await NexusTable!.InsertRow(new SpecializationDTO());
@@ -51,9 +48,7 @@ namespace NexusUserTest.Admin.Pages
                     && SelectMode == NexusTableGridSelectionMode.Multiple)
                 {
                     foreach (var selectRow in NexusTable.SelectedRows)
-                    {
                         NexusTable.EditRow(selectRow);
-                    }
                 }
                 else
                 {
