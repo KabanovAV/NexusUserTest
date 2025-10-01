@@ -59,7 +59,7 @@ namespace NexusUserTest.Shared.Services
         public async Task<ApiResponse<GroupEditDTO>> UpdateGroup(GroupEditDTO item, string? include = null)
             => await _responseHandler.ExecuteHttpAsync<GroupEditDTO>(async () =>
             {
-                return await _httpClient.PutAsJsonAsync($"api/groups?include={include}", item);
+                return await _httpClient.PutAsJsonAsync($"api/groups/{item.Id}?include={include}", item);
             }, "UpdateGroup");
 
         public async Task<ApiResponse<bool>> DeleteGroup(int id)
