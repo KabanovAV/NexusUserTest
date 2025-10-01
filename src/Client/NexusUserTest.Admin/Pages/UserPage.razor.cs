@@ -45,19 +45,32 @@ namespace NexusUserTest.Admin.Pages
 
         public async Task Insert()
         {
-            GroupSelects = await ServiceAPI!.GroupService.GetGroupSelect();
-            Data = new UserDTO { GroupUserItems = [] };
-            IsUpsertForm = true;
+            if (await FillSelecItems())
+            {
+                Data = new UserDTO { GroupUserItems = [] };
+                IsUpsertForm = true;
+            }
         }
 
         public async Task Edit()
         {
-            if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
+            if (NexusTable != null && NexusTable.SelectedRows.Count != 0 && await FillSelecItems())
             {
-                GroupSelects = await ServiceAPI!.GroupService.GetGroupSelect();
                 Data = NexusTable.SelectedRows.First();
                 IsUpsertForm = true;
             }
+        }
+
+        public async Task<bool> FillSelecItems()
+        {
+            var selects = await ServiceAPI!.GroupService.GetGroupSelect();
+            if (!selects.Success)
+            {
+                NotificationService!.ShowError($"{selects.Error}", "Ошибка");
+                return false;
+            }
+            GroupSelects = selects.Data;
+            return true;
         }
 
         public async Task Save(UserDTO entity)
