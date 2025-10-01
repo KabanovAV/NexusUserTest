@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Services;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common;
 using SibCCSPETest.WebApi.MappingProfiles;
 
 namespace SibCCSPETest.WebApi.Controllers

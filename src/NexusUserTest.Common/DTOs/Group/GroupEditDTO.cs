@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NexusUserTest.Common.DTOs
+namespace NexusUserTest.Common
 {
     public class GroupEditDTO
     {

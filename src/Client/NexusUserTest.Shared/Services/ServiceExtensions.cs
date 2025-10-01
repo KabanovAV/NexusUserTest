@@ -15,6 +15,9 @@ namespace NexusUserTest.Shared.Services
         }
 
         public static void ConfigureAPI(this IServiceCollection services)
-            => services.AddScoped<IAPIService, APIService>();
+        {
+            services.AddScoped<IAPIService, APIService>();
+            services.AddScoped<IApiResponseHandler, ApiResponseHandler>();
+        }
     }
 }

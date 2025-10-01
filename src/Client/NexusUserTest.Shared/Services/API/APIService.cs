@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace NexusUserTest.Shared.Services
+﻿namespace NexusUserTest.Shared.Services
 {
     public interface IAPIService
     {
@@ -16,9 +14,9 @@ namespace NexusUserTest.Shared.Services
         IResultAPIService ResultService { get; }
     }
 
-    public class APIService(IHttpClientFactory httpClienFactory) : IAPIService
+    public class APIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IAPIService
     {
-        private readonly Lazy<ISpecializationAPIService> _specializationService = new (() => new SpecializationAPIService(httpClienFactory));
+        private readonly Lazy<ISpecializationAPIService> _specializationService = new (() => new SpecializationAPIService(httpClienFactory, responseHandler));
         private readonly Lazy<IGroupAPIService> _groupService = new (() => new GroupAPIService(httpClienFactory));
         private readonly Lazy<IUserAPIService> _userService = new (() => new UserAPIService(httpClienFactory));
         private readonly Lazy<ITopicAPIService> _topicService = new (() => new TopicAPIService(httpClienFactory));

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common;
 using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using System.ComponentModel.DataAnnotations;

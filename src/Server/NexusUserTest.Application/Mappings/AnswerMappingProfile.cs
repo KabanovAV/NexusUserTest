@@ -1,4 +1,4 @@
-﻿using NexusUserTest.Common.DTOs;
+﻿using NexusUserTest.Common;
 using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.Application.Mappings

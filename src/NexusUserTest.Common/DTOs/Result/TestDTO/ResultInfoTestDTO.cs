@@ -1,4 +1,4 @@
-﻿namespace NexusUserTest.Common.DTOs
+﻿namespace NexusUserTest.Common
 {
     public class ResultInfoTestDTO
     {

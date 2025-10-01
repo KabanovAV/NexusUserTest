@@ -1,4 +1,4 @@
-﻿using NexusUserTest.Common.DTOs;
+﻿using NexusUserTest.Common;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services

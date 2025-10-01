@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common;
 using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
@@ -43,7 +43,8 @@ namespace NexusUserTest.Admin.Pages
 
         public async Task Insert()
         {
-            SpecializationSelects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
+            var selects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
+            SpecializationSelects = selects.Data;
             await NexusTable!.InsertRow(new TopicDTO());
         }
 
@@ -51,7 +52,7 @@ namespace NexusUserTest.Admin.Pages
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
-                SpecializationSelects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
+                //SpecializationSelects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
                 if (EditMode == NexusTableGridEditMode.Multiple
                     && SelectMode == NexusTableGridSelectionMode.Multiple)
                 {

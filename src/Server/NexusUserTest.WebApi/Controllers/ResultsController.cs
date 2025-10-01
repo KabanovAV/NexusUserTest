@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common;
 
 namespace NexusUserTest.WebApi
 {

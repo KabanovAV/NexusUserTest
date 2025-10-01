@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
