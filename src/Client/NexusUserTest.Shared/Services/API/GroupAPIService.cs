@@ -5,127 +5,68 @@ namespace NexusUserTest.Shared.Services
 {
     public interface IGroupAPIService
     {
-        Task<List<GroupInfoDTO>> GetAllInfoGroup(string? include = null);
-        Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null);
-        Task<GroupInfoDetailsDTO?> GetInfoDetailsGroup(int id, string? include = null);        
-        Task<GroupEditDTO?> GetEditGroup(int id, string? include = null);
-        Task<List<SelectItem>> GetGroupSelect();
-        Task<GroupEditDTO?> AddGroup(GroupEditDTO item, string? include = null);
-        Task<GroupEditDTO?> UpdateGroup(GroupEditDTO item, string? include = null);
-        Task DeleteGroup(int id);
+        Task<ApiResponse<List<GroupInfoDTO>>> GetAllInfoGroup(string? include = null);
+        Task<ApiResponse<List<GroupEditDTO>>> GetAllEditGroup(string? include = null);
+        Task<ApiResponse<GroupInfoDetailsDTO>> GetInfoDetailsGroup(int id, string? include = null);        
+        Task<ApiResponse<GroupEditDTO>> GetEditGroup(int id, string? include = null);
+        Task<ApiResponse<List<SelectItem>>> GetGroupSelect();
+        Task<ApiResponse<GroupEditDTO>> AddGroup(GroupEditDTO item, string? include = null);
+        Task<ApiResponse<GroupEditDTO>> UpdateGroup(GroupEditDTO item, string? include = null);
+        Task<ApiResponse<bool>> DeleteGroup(int id);
     }
 
-    public class GroupAPIService(IHttpClientFactory httpClienFactory) : IGroupAPIService
+    public class GroupAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IGroupAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<List<GroupInfoDTO>> GetAllInfoGroup(string? include = null)
-        {
-            try
+        public async Task<ApiResponse<List<GroupInfoDTO>>> GetAllInfoGroup(string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<List<GroupInfoDTO>>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/groups?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<GroupInfoDTO>>() ?? [];
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
-        }
+                return await _httpClient.GetAsync($"api/groups?include={include}");
+            }, "GetAllInfoGroup");
 
-        public async Task<List<GroupEditDTO>> GetAllEditGroup(string? include = null)
-        {
-            try
+        public async Task<ApiResponse<List<GroupEditDTO>>> GetAllEditGroup(string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<List<GroupEditDTO>>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/groups?view=edit&include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<GroupEditDTO>>() ?? [];
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
-        }
+                return await _httpClient.GetAsync($"api/groups?view=edit&include={include}");
+            }, "GetAllEditGroup");
 
-        public async Task<GroupInfoDetailsDTO?> GetInfoDetailsGroup(int id, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<GroupInfoDetailsDTO>> GetInfoDetailsGroup(int id, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<GroupInfoDetailsDTO>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/groups/{id}?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupInfoDetailsDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }        
+                return await _httpClient.GetAsync($"api/groups/{id}?include={include}");
+            }, "GetInfoDetailsGroup");        
 
-        public async Task<GroupEditDTO?> GetEditGroup(int id, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<GroupEditDTO>> GetEditGroup(int id, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<GroupEditDTO>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/groups/{id}?view=edit&include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupEditDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.GetAsync($"api/groups/{id}?view=edit&include={include}");
+            }, "GetEditGroup");
 
-        public async Task<List<SelectItem>> GetGroupSelect()
-        {
-            var s = await GetAllEditGroup();
-            return [.. s.Select(s => new SelectItem { Text = s.Title, Value = s.Id })];
-        }
+        public async Task<ApiResponse<List<SelectItem>>> GetGroupSelect()
+            => await _responseHandler.ExecuteHttpAsync<List<SelectItem>>(async () =>
+            {
+                return await _httpClient.GetAsync($"api/groups/select");
+            }, "GetGroupSelect");
 
-        public async Task<GroupEditDTO?> AddGroup(GroupEditDTO item, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<GroupEditDTO>> AddGroup(GroupEditDTO item, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<GroupEditDTO>(async () =>
             {
-                using var response = await _httpClient.PostAsJsonAsync($"api/groups?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupEditDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.PostAsJsonAsync($"api/groups?include={include}", item);
+            }, "AddGroup");
 
-        public async Task<GroupEditDTO?> UpdateGroup(GroupEditDTO item, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<GroupEditDTO>> UpdateGroup(GroupEditDTO item, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<GroupEditDTO>(async () =>
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/groups?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupEditDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.PutAsJsonAsync($"api/groups?include={include}", item);
+            }, "UpdateGroup");
 
-        public async Task DeleteGroup(int id)
-        {
-            try
+        public async Task<ApiResponse<bool>> DeleteGroup(int id)
+            => await _responseHandler.ExecuteAsync<bool>(async () =>
             {
                 var response = await _httpClient.DeleteAsync($"api/groups/{id}");
-                response.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-            }
-        }
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }, "DeleteGroup");
     }
 }
