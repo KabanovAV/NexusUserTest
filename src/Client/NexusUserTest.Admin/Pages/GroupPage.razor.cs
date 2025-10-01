@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common;
-using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
@@ -19,7 +18,7 @@ namespace NexusUserTest.Admin.Pages
         private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private List<GroupEditDTO>? Items;
+        private ApiResponse<List<GroupEditDTO>>? ApiResponse;
         private IEnumerable<SelectItem>? SpecializationSelects;
 
         public bool IsCrud => NexusTable != null
@@ -37,30 +36,22 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private async Task LoadData()
-        {
-            var g = await ServiceAPI!.GroupService.GetAllEditGroup("Specialization,GroupUser");
-            Items = [.. g];
-        }
+            => ApiResponse = await ServiceAPI!.GroupService.GetAllEditGroup("Specialization,GroupUser");
 
         public async Task Insert()
         {
-            var selects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
-            SpecializationSelects = selects.Data;
-            await NexusTable!.InsertRow(new GroupEditDTO { Begin = DateTime.Now, End = DateTime.Now });
+            if (await FillSelecItems())
+                await NexusTable!.InsertRow(new GroupEditDTO { Begin = DateTime.Now, End = DateTime.Now });
         }
 
         public async Task Edit()
         {
-            if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
+            if (NexusTable != null && NexusTable.SelectedRows.Count != 0 && await FillSelecItems())
             {
-                //SpecializationSelects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
-                if (EditMode == NexusTableGridEditMode.Multiple
-                    && SelectMode == NexusTableGridSelectionMode.Multiple)
+                if (EditMode == NexusTableGridEditMode.Multiple && SelectMode == NexusTableGridSelectionMode.Multiple)
                 {
                     foreach (var selectRow in NexusTable.SelectedRows)
-                    {
                         NexusTable.EditRow(selectRow);
-                    }
                 }
                 else
                 {
@@ -68,6 +59,18 @@ namespace NexusUserTest.Admin.Pages
                     NexusTable.EditRow(data);
                 }
             }
+        }
+
+        public async Task<bool> FillSelecItems()
+        {
+            var selects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
+            if (!selects.Success)
+            {
+                NotificationService!.ShowError($"{selects.Error}", "Ошибка");
+                return false;
+            }
+            SpecializationSelects = selects.Data;
+            return true;
         }
 
         public async Task Save()
@@ -88,10 +91,12 @@ namespace NexusUserTest.Admin.Pages
         public async Task Add(GroupEditDTO entity)
         {
             var data = await ServiceAPI!.GroupService.AddGroup(entity, "Specialization,GroupUser");
-            if (data != null)
+            if (!data.Success)
+                NotificationService!.ShowError($"{data.Error}", "Ошибка");
+            else
             {
-                NexusTable!.Data.Add(data);
-                await NexusTable.SelectRow(data);
+                NexusTable!.Data.Add(data.Data!);
+                await NexusTable.SelectRow(data.Data!);
                 NotificationService!.ShowSuccess("Группа добавлена", "Успех");
             }
         }
@@ -99,13 +104,15 @@ namespace NexusUserTest.Admin.Pages
         public async Task Update(GroupEditDTO entity)
         {
             var data = await ServiceAPI!.GroupService.UpdateGroup(entity, "Specialization,GroupUser");
-            if (data != null)
+            if (!data.Success)
+                NotificationService!.ShowError($"{data.Error}", "Ошибка");
+            else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Data!.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = data;
-                await NexusTable.SelectRow(data);
-                await NexusTable.CancelEditRow(data);
+                    NexusTable.Data[index] = data.Data!;
+                await NexusTable.SelectRow(data.Data!);
+                await NexusTable.CancelEditRow(data.Data!);
                 NotificationService!.ShowSuccess("Группа изменена", "Успех");
             }
         }
@@ -119,9 +126,14 @@ namespace NexusUserTest.Admin.Pages
                 var result = await DialogService!.Show(settings);
                 if (result?.Canceled == false)
                 {
-                    await ServiceAPI!.GroupService.DeleteGroup(data.Id);
-                    NexusTable.RemoveRow(data);
-                    NotificationService!.ShowSuccess("Группа удалена", "Успех");
+                    var response = await ServiceAPI!.GroupService.DeleteGroup(data.Id);
+                    if (!response.Success)
+                        NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                    else
+                    {
+                        NexusTable.RemoveRow(data);
+                        NotificationService!.ShowSuccess("Группа удалена", "Успех");
+                    }
                 }
             }
         }
@@ -131,12 +143,5 @@ namespace NexusUserTest.Admin.Pages
             var data = NexusTable!.SelectedRows.First();
             await NexusTable.CancelEditRow(data);
         }
-
-        //public void OnSelecChange(ChangeEventArgs args, GroupDTO item)
-        //{
-        //    var result = Int32.Parse(args.Value.ToString());
-        //    item.SpecializationId = result;
-        //    item.SpecializationTitle = SpecializationSelectItems.First(s => s.Value == result).Text;
-        //}
     }
 }
