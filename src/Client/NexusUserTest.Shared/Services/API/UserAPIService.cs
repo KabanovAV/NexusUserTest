@@ -5,104 +5,54 @@ namespace NexusUserTest.Shared.Services
 {
     public interface IUserAPIService
     {
-        Task<List<UserDTO>> GetAllUser(string? include = null);
-        Task<UserDTO?> GetUser(int id, string? include = null);
-        Task<UserInfoTestDTO?> GetUserTestInfo(int id, string? include = null);
-        Task<UserDTO?> AddUser(UserDTO item, string? include = null);
-        Task<UserDTO?> UpdateUser(UserDTO item, string? include = null);
-        Task DeleteUser(int id);
+        Task<ApiResponse<List<UserAdminDTO>>> GetAllUser(string? include = null);
+        Task<ApiResponse<UserAdminDTO>> GetUser(int id, string? include = null);
+        Task<ApiResponse<UserInfoTestDTO>> GetUserTestInfo(int id, string? include = null);
+        Task<ApiResponse<UserAdminDTO>> AddUser(UserAdminDTO item, string? include = null);
+        Task<ApiResponse<UserAdminDTO>> UpdateUser(UserAdminDTO item, string? include = null);
+        Task<ApiResponse<bool>> DeleteUser(int id);
     }
 
-    public class UserAPIService(IHttpClientFactory httpClienFactory) : IUserAPIService
+    public class UserAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IUserAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<List<UserDTO>> GetAllUser(string? include = null)
-        {
-            try
+        public async Task<ApiResponse<List<UserAdminDTO>>> GetAllUser(string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<List<UserAdminDTO>>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/users?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<UserDTO>>() ?? [];
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
-        }
+                return await _httpClient.GetAsync($"api/users?include={include}");
+            }, "GetAllUser");
 
-        public async Task<UserDTO?> GetUser(int id, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<UserAdminDTO>> GetUser(int id, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<UserAdminDTO>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/users/{id}?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.GetAsync($"api/users/{id}?include={include}");
+            }, "GetUser");
 
-        public async Task<UserInfoTestDTO?> GetUserTestInfo(int id, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<UserInfoTestDTO>> GetUserTestInfo(int id, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<UserInfoTestDTO>(async () =>
             {
-                var response = await _httpClient.GetAsync($"api/users/{id}/test?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserInfoTestDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.GetAsync($"api/users/{id}?view=test&include={include}");
+            }, "GetUserTestInfo");
 
-        public async Task<UserDTO?> AddUser(UserDTO item, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<UserAdminDTO>> AddUser(UserAdminDTO item, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<UserAdminDTO>(async () =>
             {
-                using var response = await _httpClient.PostAsJsonAsync($"api/users?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserDTO>(); ;
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.PostAsJsonAsync($"api/users?include={include}", item);
+            }, "AddUser");
 
-        public async Task<UserDTO?> UpdateUser(UserDTO item, string? include = null)
-        {
-            try
+        public async Task<ApiResponse<UserAdminDTO>> UpdateUser(UserAdminDTO item, string? include = null)
+            => await _responseHandler.ExecuteHttpAsync<UserAdminDTO>(async () =>
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/users?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<UserDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+                return await _httpClient.PutAsJsonAsync($"api/users/{item.Id}?include={include}", item);
+            }, "UpdateUser");
 
-        public async Task DeleteUser(int id)
-        {
-            try
+        public async Task<ApiResponse<bool>> DeleteUser(int id)
+            => await _responseHandler.ExecuteAsync<bool>(async () =>
             {
                 var response = await _httpClient.DeleteAsync($"api/users/{id}");
-                response.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-            }
-        }
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }, "DeleteUser");
     }
 }
