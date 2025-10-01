@@ -13,47 +13,42 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAll([FromQuery] string? include = null)
         {
             var users = await _service.UserRepository.GetAllUserAsync(includeProperties: include);
             return Ok(users.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<UserDTO>> Get(int id, string? include = null)
+        public async Task<IActionResult> Get(int id, [FromQuery] string view = "info", [FromQuery] string? include = null)
         {
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            return Ok(user.ToAdminDto());
-        }
-
-        [HttpGet("{id:int}/test")]
-        public async Task<ActionResult<UserInfoTestDTO>> GetTest(int id, string? include = null)
-        {
-            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
-            if (user == null)
-                return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            return Ok(user.ToTestDto());
+            return view.ToLower() switch
+            {
+                "test" => Ok(user.ToTestDto()),
+                _ => Ok(user.ToAdminDto())
+            };
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserDTO>> Add(UserCreateDTO userCreateDTO, string? include = null)
+        public async Task<ActionResult<UserAdminDTO>> Add(UserAdminDTO userAdminDTO, [FromQuery] string? include = null)
         {
-            if (userCreateDTO == null)
+            if (userAdminDTO == null)
                 return BadRequest("Данные для добавления пользователя пустые.");
-            var user = userCreateDTO.ToEntity();
+            var user = userAdminDTO.ToEntity();
             await _service.UserRepository.AddUserAsync(user!, include);
             var userDTO = user!.ToAdminDto();
             return CreatedAtAction(nameof(Get), new { id = userDTO!.Id }, userDTO);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<UserDTO>> Update(UserDTO userDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<UserAdminDTO>> Update(int id, UserAdminDTO userDTO, [FromQuery] string? include = null)
         {
             if (userDTO == null)
                 return BadRequest("Данные для обновления пользователя пустые.");
-            var user = await _service.UserRepository.GetUserAsync(u => u.Id == userDTO.Id, include);
+            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {userDTO.Id} не найден." });
             user.UpdateFromAdminDto(userDTO);
