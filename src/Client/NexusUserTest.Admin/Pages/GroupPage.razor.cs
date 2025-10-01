@@ -90,29 +90,29 @@ namespace NexusUserTest.Admin.Pages
 
         public async Task Add(GroupEditDTO entity)
         {
-            var data = await ServiceAPI!.GroupService.AddGroup(entity, "Specialization,GroupUser");
-            if (!data.Success)
-                NotificationService!.ShowError($"{data.Error}", "Ошибка");
+            var response = await ServiceAPI!.GroupService.AddGroup(entity, "Specialization,GroupUser");
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
             else
             {
-                NexusTable!.Data.Add(data.Data!);
-                await NexusTable.SelectRow(data.Data!);
+                NexusTable!.Data.Add(response.Data!);
+                await NexusTable.SelectRow(response.Data!);
                 NotificationService!.ShowSuccess("Группа добавлена", "Успех");
             }
         }
 
         public async Task Update(GroupEditDTO entity)
         {
-            var data = await ServiceAPI!.GroupService.UpdateGroup(entity, "Specialization,GroupUser");
-            if (!data.Success)
-                NotificationService!.ShowError($"{data.Error}", "Ошибка");
+            var response = await ServiceAPI!.GroupService.UpdateGroup(entity, "Specialization,GroupUser");
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
             else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Data!.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == response.Data!.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = data.Data!;
-                await NexusTable.SelectRow(data.Data!);
-                await NexusTable.CancelEditRow(data.Data!);
+                    NexusTable.Data[index] = response.Data!;
+                await NexusTable.SelectRow(response.Data!);
+                await NexusTable.CancelEditRow(response.Data!);
                 NotificationService!.ShowSuccess("Группа изменена", "Успех");
             }
         }
