@@ -1,4 +1,4 @@
-﻿using NexusUserTest.Common.DTOs;
+﻿using NexusUserTest.Common;
 using NexusUserTest.Domain.Entities;
 
 namespace SibCCSPETest.WebApi.MappingProfiles
@@ -24,6 +24,26 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// <returns>Список SpecializationDTO</returns>
         public static List<SpecializationDTO> ToDto(this IEnumerable<Specialization> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToDto())];
+
+        /// <summary>
+        /// Маппинг из обьекта Specialization в SelectItem
+        /// </summary>
+        /// <param name="entity">Обьект Specialization</param>
+        /// <returns>SelectItem</returns>
+        public static SelectItem? ToSelect(this Specialization entity)
+            => entity == null ? null : new SelectItem
+            {
+                Value = entity.Id,
+                Text = entity.Title
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов Specialization в список SelectItem
+        /// </summary>
+        /// <param name="entities">Список обьектов Specialization</param>
+        /// <returns>Список SelectItem</returns>
+        public static List<SelectItem> ToSelect(this IEnumerable<Specialization> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToSelect())];
 
         /// <summary>
         /// Маппинг из SpecializationDTO в обьект Specialization
@@ -55,6 +75,6 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             if (dto == null) return;
             if (dto.Title != null && !string.IsNullOrEmpty(dto.Title) && entity.Title != dto.Title)
                 entity.Title = dto.Title;
-        }
+        }        
     }
 }
