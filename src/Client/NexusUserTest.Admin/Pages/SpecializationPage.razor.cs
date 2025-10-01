@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
@@ -37,7 +37,7 @@ namespace NexusUserTest.Admin.Pages
         private async Task LoadData()
         {
             var s = await ServiceAPI!.SpecializationService.GetAllSpecialization();
-            Items = [.. s];
+            Items = [.. s.Data];
         }
 
         public async Task Insert()
@@ -84,8 +84,8 @@ namespace NexusUserTest.Admin.Pages
             var data = await ServiceAPI!.SpecializationService.AddSpecialization(item);
             if (data != null)
             {
-                NexusTable!.Data.Add(data);
-                await NexusTable.SelectRow(data);
+                NexusTable!.Data.Add(data.Data);
+                await NexusTable.SelectRow(data.Data);
                 NotificationService!.ShowSuccess("Специализация добавлена", "Успех");
             }
         }
@@ -95,11 +95,11 @@ namespace NexusUserTest.Admin.Pages
             var data = await ServiceAPI!.SpecializationService.UpdateSpecialization(item);
             if (data != null)
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Data.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = data;
-                await NexusTable.SelectRow(data);
-                await NexusTable.CancelEditRow(data);
+                    NexusTable.Data[index] = data.Data;
+                await NexusTable.SelectRow(data.Data);
+                await NexusTable.CancelEditRow(data.Data);
                 NotificationService!.ShowSuccess("Специализация изменена", "Успех");
             }
         }
@@ -114,7 +114,7 @@ namespace NexusUserTest.Admin.Pages
                 if (result?.Canceled == false)
                 {
                     var isDeleted = await ServiceAPI!.SpecializationService.DeleteSpecialization(data.Id);
-                    if (isDeleted)
+                    if (isDeleted.Data)
                     {
                         NexusTable.RemoveRow(data);
                         NotificationService!.ShowSuccess("Специализация удалена", "Успех");
