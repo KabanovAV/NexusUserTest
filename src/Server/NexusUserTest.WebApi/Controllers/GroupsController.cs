@@ -2,6 +2,8 @@
 using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common;
+using SibCCSPETest.WebApi.MappingProfiles;
+using System.Linq;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
@@ -33,6 +35,13 @@ namespace SibCCSPETest.WebApi.Controllers
                 "edit" => Ok(group.ToEditDto()),
                 _ => Ok(group.ToInfoDetailDto())
             };
+        }
+
+        [HttpGet("select")]
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect(string? include = null)
+        {
+            var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
+            return Ok(groups.ToSelect());
         }
 
         [HttpPost]
