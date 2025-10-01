@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using NexusUserTest.Common;
-using NexusUserTest.Shared;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -10,27 +9,30 @@ namespace NexusUserTest.Admin.Views
     public partial class UserFormPage
     {
         [Parameter, EditorRequired]
-        public UserDTO Data { get; set; }
+        public UserAdminDTO Data { get; set; }
         [Parameter]
-        public IEnumerable<SelectItem> GroupSelects { get; set; }
+        public IEnumerable<SelectItem>? GroupSelects { get; set; }
         [Parameter]
         public EventCallback OnCancel { get; set; }
         [Parameter]
-        public EventCallback<UserDTO> OnSave { get; set; }
+        public EventCallback<UserAdminDTO> OnSave { get; set; }
 
         private EditContext? editContext;
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             Data ??= new();
             editContext = new(Data);
         }
+
         private string GetDisplayName(string propertyName)
         {
-            var property = typeof(UserDTO).GetProperty(propertyName);
+            var property = typeof(UserAdminDTO).GetProperty(propertyName);
             var displayAttribute = property?.GetCustomAttribute<DisplayAttribute>();
             return displayAttribute?.Name ?? propertyName;
         }
+
         private void CheckboxChange(int args)
         {
             if (Data.GroupUserItems!.FirstOrDefault(x => x.GroupId == args) is GroupUserCreateDTO group && group != null)
@@ -41,18 +43,23 @@ namespace NexusUserTest.Admin.Views
                 Data.GroupUserItems!.Add(groupUser);
             }
         }
+
         private async Task Save()
         {
             if (editContext!.Validate())
             {
                 await OnSave.InvokeAsync(Data);
-                if (Data.Id == 0)
-                    Data.GroupUserItems!.Clear();
+                ResetData();
             }
         }
         private async Task Cancel()
         {
             await OnCancel.InvokeAsync();
+            ResetData();
+        }
+
+        private void ResetData()
+        {
             if (Data.Id == 0)
                 Data.GroupUserItems!.Clear();
         }
