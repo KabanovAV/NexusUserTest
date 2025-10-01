@@ -6,12 +6,12 @@ namespace SibCCSPETest.WebApi.MappingProfiles
     public static class UserMappingProfile
     {
         /// <summary>
-        /// Маппинг из обьекта User в UserDTO
+        /// Маппинг из обьекта User в UserAdminDTO
         /// </summary>
         /// <param name="entity">Обьект User</param>
-        /// <returns>UserDTO</returns>
-        public static UserDTO? ToAdminDto(this User entity)
-            => entity == null ? null : new UserDTO
+        /// <returns>UserAdminDTO</returns>
+        public static UserAdminDTO? ToAdminDto(this User entity)
+            => entity == null ? null : new UserAdminDTO
             {
                 Id = entity.Id,
                 FullName = string.Join(" ", new[] { entity.LastName, entity.FirstName, entity.Surname }.Where(s => !string.IsNullOrEmpty(s))),
@@ -24,19 +24,47 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             };
 
         /// <summary>
-        /// Маппинг списка из обьектов User в список UserDTO
+        /// Маппинг списка из обьектов User в список UserAdminDTO
         /// </summary>
         /// <param name="entities">Список обьектов User</param>
-        /// <returns>Список UserDTO</returns>
-        public static List<UserDTO> ToAdminDto(this IEnumerable<User> entities)
+        /// <returns>Список UserAdminDTO</returns>
+        public static List<UserAdminDTO> ToAdminDto(this IEnumerable<User> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
 
         /// <summary>
-        /// Маппинг из UserDTO в обьект User
+        /// Маппинг из обьекта User в UserInfoTestDTO
         /// </summary>
-        /// <param name="dto">UserDTO</param>
+        /// <param name="entity">Обьект User</param>
+        /// <returns>UserInfoTestDTO</returns>
+        public static UserInfoTestDTO? ToTestDto(this User entity)
+            => entity == null ? null : new UserInfoTestDTO
+            {
+                Id = entity.Id,
+                FullName = string.Join(" ", new[] { entity.LastName, entity.FirstName, entity.Surname }.Where(s => !string.IsNullOrEmpty(s))),
+                GroupUsers = entity.GroupUser != null ? [.. entity.GroupUser
+                    .Select(gu => new GroupUserInfoTestDTO
+                    {
+                        Id = gu.Id,
+                        GroupTitle = gu.Group != null ? gu.Group.Title : "",
+                        Status = gu.Status,
+                        Results = gu.Results != null ? [.. gu.Results.Select(r => new ResultInfoTestDTO{ IsCorrect = r.Answer.IsCorrect })] : []
+                    })] : []
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов User в список UserInfoTestDTO
+        /// </summary>
+        /// <param name="entities">Список обьектов User</param>
+        /// <returns>Список UserInfoTestDTO</returns>
+        public static List<UserInfoTestDTO> ToTestDto(this IEnumerable<User> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToTestDto())];
+
+        /// <summary>
+        /// Маппинг из UserAdminDTO в обьект User
+        /// </summary>
+        /// <param name="dto">UserAdminDTO</param>
         /// <returns>User</returns>
-        public static User? ToEntity(this UserDTO dto)
+        public static User? ToEntity(this UserAdminDTO dto)
             => dto == null ? null : new User
             {
                 Id = dto.Id,
@@ -51,37 +79,19 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             };
 
         /// <summary>
-        /// Маппинг списка из UserDTO в список обьектов User
+        /// Маппинг списка из UserAdminDTO в список обьектов User
         /// </summary>
-        /// <param name="dtos">Список UserDTO</param>
+        /// <param name="dtos">Список UserAdminDTO</param>
         /// <returns>Список User</returns>
-        public static List<User> ToEntity(this IEnumerable<UserDTO> dtos)
+        public static List<User> ToEntity(this IEnumerable<UserAdminDTO> dtos)
             => [.. dtos.Where(dto => dto != null).Select(e => e.ToEntity())];
-
-        /// <summary>
-        /// Маппинг из UserCreateDTO создание в обьект User
-        /// </summary>
-        /// <param name="dto">UserCreateDTO</param>
-        /// <returns>Обьект User</returns>
-        public static User? ToEntity(this UserCreateDTO dto)
-            => dto == null ? null : new User
-            {
-                LastName = GetNamePart(dto.FullName, 0),
-                FirstName = GetNamePart(dto.FullName, 1),
-                Surname = GetNamePart(dto.FullName, 2),
-                Login = dto.Login,
-                Password = dto.Password,
-                Organization = dto.Organization,
-                Position = dto.Position,
-                GroupUser = dto.GroupUserItems != null ? GroupUserListConverter(dto.GroupUserItems) : []
-            };
 
         /// <summary>
         /// Маппинг обновления обьекта User
         /// </summary>
         /// <param name="entity">Обьект User</param>
-        /// <param name="dto">UserDTO</param>
-        public static void UpdateFromAdminDto(this User entity, UserDTO dto)
+        /// <param name="dto">UserAdminDTO</param>
+        public static void UpdateFromAdminDto(this User entity, UserAdminDTO dto)
         {
             if (dto == null) return;
 
@@ -105,35 +115,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 entity.Position = dto.Position;
             if (dto.GroupUserItems != null)
                 GroupUserListConverter(entity, dto);
-        }
-
-        /// <summary>
-        /// Маппинг из обьекта User в UserInfoTestDTO
-        /// </summary>
-        /// <param name="entity">Обьект User</param>
-        /// <returns>UserInfoTestDTO</returns>
-        public static UserInfoTestDTO? ToTestDto(this User entity)
-            => entity == null ? null : new UserInfoTestDTO
-            {
-                Id = entity.Id,
-                FullName = string.Join(" ", new[] { entity.LastName, entity.FirstName, entity.Surname }.Where(s => !string.IsNullOrEmpty(s))),
-                GroupUsers = entity.GroupUser != null ? [.. entity.GroupUser
-                    .Select(gu => new GroupUserInfoTestDTO 
-                    { 
-                        Id = gu.Id,
-                        GroupTitle = gu.Group != null ? gu.Group.Title : "",
-                        Status = gu.Status,
-                        Results = gu.Results != null ? [.. gu.Results.Select(r => new ResultInfoTestDTO{ IsCorrect = r.Answer.IsCorrect })] : []
-                    })] : []
-            };
-
-        /// <summary>
-        /// Маппинг списка из обьектов User в список UserInfoTestDTO
-        /// </summary>
-        /// <param name="entities">Список обьектов User</param>
-        /// <returns>Список UserInfoTestDTO</returns>
-        public static List<UserInfoTestDTO> ToTestDto(this IEnumerable<User> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToTestDto())];
+        }        
 
         /// <summary>
         /// Обьединение и конвертирование в обьекта Question
@@ -165,8 +147,8 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// Обьединение и конвертирование в обьект User
         /// </summary>
         /// <param name="entity">Обьект User</param>
-        /// <param name="dto">UserDTO</param>
-        private static void GroupUserListConverter(this User entity, UserDTO dto)
+        /// <param name="dto">UserAdminDTO</param>
+        private static void GroupUserListConverter(this User entity, UserAdminDTO dto)
         {
             if (entity.GroupUser != null && dto.GroupUserItems != null)
             {
