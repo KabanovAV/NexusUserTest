@@ -3,31 +3,39 @@
 
 <PageTitle>Список групп</PageTitle>
 
-<div style="display:@(!IsShowGroupUsers ? "" : "none")">
-    <h1>Список групп</h1>
+<LoadDataView TItem="List<GroupInfoDTO>" Data="Groups" />
 
-    <NexusTableGrid TItem="GroupInfoDTO" Data="@Items" SelectionMode="NexusTableGridSelectionMode.Single"
-                    AllowFiltering="true" RowDoubleClick="DbClick">
-        <Columns>
-            <NexusTableGridColumn Title="#">
-                <CellTemplate>
-                    @(Items.IndexOf(context) + 1)
-                </CellTemplate>
-            </NexusTableGridColumn>
-            <NexusTableGridColumn Title="Название" Property="g => g.Title" Filterable="true" />
-            <NexusTableGridColumn Title="Кол-во пользователей" Property="g => g.CountOfUsers" />
-            <NexusTableGridColumn Title="Кол-во вопросов" Property="g => g.CountOfQuestions" />
-        </Columns>
-    </NexusTableGrid>
-</div>
-<div style="display:@(IsShowGroupUsers ? "" : "none")">
-    <button class="btn" @onclick="BackToGroups">
-        <i class="bi bi-arrow-left"></i>
-    </button>
-</div>
-<div style="display:@(IsShowGroupUsers ? "" : "none")">
-    <GroupUserView GroupInfo="GroupInfo" />
-</div>
+@if (Groups != null && Groups.Success)
+{
+    <div style="display:@(!IsShowGroupUsers ? "" : "none")">
+        <h1>Список групп</h1>
+
+        <NexusTableGrid TItem="GroupInfoDTO" Data="@Groups.Data" SelectionMode="NexusTableGridSelectionMode.Single"
+                        AllowFiltering="true" RowDoubleClick="DbClick">
+            <Columns>
+                <NexusTableGridColumn Title="#">
+                    <CellTemplate>
+                        @(Groups.Data!.IndexOf(context) + 1)
+                    </CellTemplate>
+                </NexusTableGridColumn>
+                <NexusTableGridColumn Title="Название" Property="g => g.Title" Filterable="true" />
+                <NexusTableGridColumn Title="Кол-во пользователей" Property="g => g.CountOfUsers" />
+                <NexusTableGridColumn Title="Кол-во вопросов" Property="g => g.CountOfQuestions" />
+            </Columns>
+        </NexusTableGrid>
+    </div>
+
+    @if (GroupInfo != null && GroupInfo.Success)
+    {
+        <div style="display:@(IsShowGroupUsers ? "" : "none")">
+            <button class="btn" @onclick="BackToGroups">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <GroupUserView GroupInfo="GroupInfo.Data" />
+        </div>
+    }
+}
+
 
 @* <NexusTableGrid @ref="_table" TItem="Person"
                 Data="@People"

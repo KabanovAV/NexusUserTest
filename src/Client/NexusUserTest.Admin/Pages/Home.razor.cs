@@ -14,8 +14,8 @@ namespace NexusUserTest.Admin.Pages
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private List<GroupInfoDTO>? Items;
-        private GroupInfoDetailsDTO? GroupInfo;
+        private ApiResponse<List<GroupInfoDTO>>? Groups;
+        private ApiResponse<GroupInfoDetailsDTO>? GroupInfo;
         private bool IsShowGroupUsers;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -28,10 +28,7 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private async Task LoadData()
-        {
-            var g = await ServiceAPI!.GroupService.GetAllInfoGroup("Specialization.Topics.TopicQuestion,GroupUser");
-            Items = [.. g];
-        }
+            => Groups = await ServiceAPI!.GroupService.GetAllInfoGroup("Specialization.Topics.TopicQuestion,GroupUser");
 
         private async void DbClick(GroupInfoDTO item)
         {
@@ -41,6 +38,9 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private void BackToGroups()
-            => IsShowGroupUsers = false;
+        {
+            IsShowGroupUsers = false;
+            GroupInfo = null;
+        }
     }
 }
