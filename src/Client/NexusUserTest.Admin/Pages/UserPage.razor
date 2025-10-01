@@ -4,21 +4,12 @@
 
 <PageTitle>Пользователи</PageTitle>
 
-@if (Items == null)
-{
-    <div class="" style=@($"height: 100%; width:100%; display: flex; align-items: center; justify-content: center;")>
-        <div style="">
-            <Wave Color="blue" Center="true" Size="2rem" style="opacity:1" />
-            <h5 class="mt-3" style="color:blue">
-                Загрузка данных
-            </h5>
-        </div>
-    </div>
-}
-else
+<LoadDataView TItem="List<UserAdminDTO>" Data="ApiResponse" />
+
+@if (ApiResponse != null && ApiResponse.Success)
 {
     <div style="display:@(IsUpsertForm ? "none" : "");">
-        <NexusTableGrid @ref="NexusTable" TItem="UserDTO" Data="Items" SelectionMode="SelectMode"
+        <NexusTableGrid @ref="NexusTable" TItem="UserAdminDTO" Data="ApiResponse.Data" SelectionMode="SelectMode"
                         EditMode="EditMode" AllowSorting="true" AllowFiltering="true"
                         ShowEmptyMessage="true" EmptyMessage="Нет пользователей" CssStyle="">
             <ToolTemplate>
@@ -31,7 +22,7 @@ else
             <Columns>
                 <NexusTableGridColumn Title="#">
                     <CellTemplate>
-                        @(Items.IndexOf(context) + 1)
+                        @(ApiResponse.Data!.IndexOf(context) + 1)
                     </CellTemplate>
                 </NexusTableGridColumn>
                 <NexusTableGridColumn Title="ФИО" Property="u => u.FullName" Sortable="true" Filterable="true" />
@@ -43,6 +34,6 @@ else
         </NexusTableGrid>
     </div>
     <div class="h-100" style="display:@(IsUpsertForm ? "" : "none");">
-        <UserFormPage Data="Data" OnCancel="Cancel" OnSave="Save" GroupSelects="GroupSelects" />
+        <UserFormPage Data="Upsert" OnCancel="Cancel" OnSave="Save" GroupSelects="GroupSelects" />
     </div>
 }

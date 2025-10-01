@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common;
-using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
@@ -15,12 +14,12 @@ namespace NexusUserTest.Admin.Pages
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private NexusTableGrid<UserDTO>? NexusTable;
+        private NexusTableGrid<UserAdminDTO>? NexusTable;
         private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private UserDTO? Data;
-        private List<UserDTO>? Items;
+        private UserAdminDTO? Upsert;
+        private ApiResponse<List<UserAdminDTO>>? ApiResponse;
         private IEnumerable<SelectItem>? GroupSelects;
 
         private bool IsUpsertForm;
@@ -38,16 +37,13 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private async Task LoadData()
-        {
-            var u = await ServiceAPI!.UserService.GetAllUser("GroupUser");
-            Items = [.. u];
-        }
+            => ApiResponse = await ServiceAPI!.UserService.GetAllUser("GroupUser");
 
         public async Task Insert()
         {
             if (await FillSelecItems())
             {
-                Data = new UserDTO { GroupUserItems = [] };
+                Upsert = new UserAdminDTO { GroupUserItems = [] };
                 IsUpsertForm = true;
             }
         }
@@ -56,7 +52,7 @@ namespace NexusUserTest.Admin.Pages
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0 && await FillSelecItems())
             {
-                Data = NexusTable.SelectedRows.First();
+                Upsert = NexusTable.SelectedRows.First();
                 IsUpsertForm = true;
             }
         }
@@ -73,7 +69,7 @@ namespace NexusUserTest.Admin.Pages
             return true;
         }
 
-        public async Task Save(UserDTO entity)
+        public async Task Save(UserAdminDTO entity)
         {
             if (entity.Id != 0)
                 await Update(entity);
@@ -83,27 +79,31 @@ namespace NexusUserTest.Admin.Pages
             IsUpsertForm = false;
         }
 
-        public async Task Add(UserDTO entity)
+        public async Task Add(UserAdminDTO entity)
         {
-            Data = await ServiceAPI!.UserService.AddUser(entity, "GroupUser");
-            if (Data != null)
+            var response = await ServiceAPI!.UserService.AddUser(entity, "GroupUser");
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                NexusTable!.Data.Add(Data);
-                await NexusTable.SelectRow(Data);
+                NexusTable!.Data.Add(response.Data!);
+                await NexusTable.SelectRow(response.Data!);
                 NotificationService!.ShowSuccess("Пользователь добавлен", "Успех");
             }
         }
 
-        public async Task Update(UserDTO entity)
+        public async Task Update(UserAdminDTO entity)
         {
-            Data = await ServiceAPI!.UserService.UpdateUser(entity, "GroupUser");
-            if (Data != null)
+            var response = await ServiceAPI!.UserService.UpdateUser(entity, "GroupUser");
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == Data.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == response.Data!.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = Data;
-                await NexusTable.SelectRow(Data);
-                await NexusTable.CancelEditRow(Data);
+                    NexusTable.Data[index] = response.Data!;
+                await NexusTable.SelectRow(response.Data!);
+                await NexusTable.CancelEditRow(response.Data!);
                 NotificationService!.ShowSuccess("Пользователь изменен", "Успех");
             }
         }
@@ -112,22 +112,18 @@ namespace NexusUserTest.Admin.Pages
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
-                Data = NexusTable.SelectedRows.First();
-                var settings = new NexusDialogSetting("Удаление пользователя", $"Вы уверены, что хотите удалить \"{Data.FullName}\" пользователя?", "Отменить", "Удалить");
+                var data = NexusTable.SelectedRows.First();
+                var settings = new NexusDialogSetting("Удаление пользователя", $"Вы уверены, что хотите удалить \"{data.FullName}\" пользователя?", "Отменить", "Удалить");
                 var result = await DialogService!.Show(settings);
                 if (result?.Canceled == false)
                 {
-                    await ServiceAPI!.UserService.DeleteUser(Data.Id);
-                    NexusTable.RemoveRow(Data);
+                    await ServiceAPI!.UserService.DeleteUser(data.Id);
+                    NexusTable.RemoveRow(data);
                     NotificationService!.ShowSuccess("Пользователь удален", "Успех");
                 }
             }
         }
 
-        public async Task Cancel()
-        {
-            IsUpsertForm = false;
-            await NexusTable!.CancelEditRow(Data!);
-        }
+        public void Cancel() => IsUpsertForm = false;
     }
 }
