@@ -27,6 +27,13 @@ namespace SibCCSPETest.WebApi.Controllers
             return Ok(specialization.ToDto());
         }
 
+        [HttpGet("select")]
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect(string? include = null)
+        {
+            var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
+            return Ok(specializations.ToSelect());
+        }
+
         [HttpPost]
         public async Task<ActionResult<SpecializationDTO>> Add(SpecializationDTO specializationCreateDTO, string? include = null)
         {
