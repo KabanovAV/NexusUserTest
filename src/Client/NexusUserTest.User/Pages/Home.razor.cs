@@ -144,7 +144,7 @@ namespace NexusUserTest.User.Pages
             UserTest!.Status = 3;
             await ServiceAPI!.GroupUserService.UpdateTestGroupUser(UserTest);
 
-            var group = UserInfo!.GroupUsers!.First(u => u.Id == UserTest.Id);
+            var group = UserInfo!.Data.GroupUsers!.First(u => u.Id == UserTest.Id);
             group.Status = 3;
             group.Results = await ServiceAPI!.ResultService.GetAllTestInfoResultsync(UserTest.Id, "Answer");
 

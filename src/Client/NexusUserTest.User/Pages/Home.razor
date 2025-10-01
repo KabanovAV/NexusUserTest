@@ -3,9 +3,9 @@
 
 <PageTitle>Страница пользователя</PageTitle>
 
-@if (UserInfo != null)
+@if (UserInfo != null && UserInfo.Success)
 {
-    <h4>Пользователь - @UserInfo.FullName</h4>
+    <h4>Пользователь - @UserInfo.Data.FullName</h4>
 
     <div style="display:@(IsTesting ? "none" : "");">
         <div class="card mt-2">
@@ -14,7 +14,7 @@
             </div>
             <div class="card-body p-2">
                 <div class="d-flex flex-row">
-                    @foreach (var group in UserInfo.GroupUsers)
+                    @foreach (var group in UserInfo.Data.GroupUsers)
                     {
                         if (group.Status == 2)
                         {
@@ -50,13 +50,13 @@
                 Результаты
             </div>
             <div class="card-body">
-                @if (UserInfo.GroupUsers.Any(r => r.Results!.Count > 0 && r.Status != 2))
+                @if (UserInfo.Data.GroupUsers.Any(r => r.Results!.Count > 0 && r.Status != 2))
                 {
-                    <NexusTableGrid TItem="GroupUserInfoTestDTO" Data="@UserInfo.GroupUsers.Where(u => u.Status != 2).ToList()">
+                    <NexusTableGrid TItem="GroupUserInfoTestDTO" Data="@UserInfo.Data.GroupUsers.Where(u => u.Status != 2).ToList()">
                         <Columns>
                             <NexusTableGridColumn Title="#">
                                 <CellTemplate>
-                                    @(UserInfo.GroupUsers.IndexOf(context) + 1)
+                                    @(UserInfo.Data.GroupUsers.IndexOf(context) + 1)
                                 </CellTemplate>
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="Наименование" Property="gu => gu.GroupTitle" />
