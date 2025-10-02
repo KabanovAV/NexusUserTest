@@ -28,9 +28,9 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect()
         {
-            var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
+            var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync();
             return Ok(specializations.ToSelect());
         }
 

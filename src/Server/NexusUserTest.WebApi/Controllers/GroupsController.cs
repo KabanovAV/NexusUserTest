@@ -45,9 +45,9 @@ namespace SibCCSPETest.WebApi.Controllers
         }        
 
         [HttpGet("select")]
-        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect()
         {
-            var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
+            var groups = await _service.GroupRepository.GetAllGroupAsync();
             return Ok(groups.ToSelect());
         }
 
