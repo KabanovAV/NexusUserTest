@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Mappings;
 using NexusUserTest.Application.Services;
 using NexusUserTest.Common;
 using SibCCSPETest.WebApi.MappingProfiles;
@@ -15,7 +16,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<TopicDTO>>> GetAll(string? include = null)
         {
             var topics = await _service.TopicRepository.GetAllTopicAsync(includeProperties: include);
-            return Ok(topics.ToAdminDto());
+            return Ok(topics.ToDto());
         }
 
         [HttpGet("{id:int}")]
@@ -24,7 +25,14 @@ namespace SibCCSPETest.WebApi.Controllers
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id, include);
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {id} не найдена." });
-            return Ok(topic.ToAdminDto());
+            return Ok(topic.ToDto());
+        }
+
+        [HttpGet("select")]
+        public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect()
+        {
+            var topics = await _service.TopicRepository.GetAllTopicAsync();
+            return Ok(topics.ToSelect());
         }
 
         [HttpPost]
@@ -34,21 +42,21 @@ namespace SibCCSPETest.WebApi.Controllers
                 return BadRequest("Данные для добавления темы пустые.");
             var topic = topicCreateDTO.ToEntity();
             await _service.TopicRepository.AddTopicAsync(topic!, include);
-            var topicDTO = topic!.ToAdminDto();
+            var topicDTO = topic!.ToDto();
             return CreatedAtAction(nameof(Get), new { id = topicDTO!.Id }, topicDTO);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<TopicDTO>> Update(TopicDTO topicDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, TopicDTO topicDTO)
         {
             if (topicDTO == null)
                 return BadRequest("Данные для обновления темы пустые.");
-            var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == topicDTO.Id, include);
+            var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id);
             if (topic == null)
                 return NotFound(new { Message = $"Тема с id {topicDTO.Id} не найдена." });
             topic.UpdateFromDto(topicDTO);
-            await _service.TopicRepository.UpdateTopicAsync(topic, include);
-            return Ok(topic.ToAdminDto());
+            await _service.TopicRepository.UpdateTopicAsync(topic);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
