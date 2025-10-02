@@ -6,6 +6,91 @@ namespace NexusUserTest.Application.Mappings
     public static class GroupMappingProfile
     {
         /// <summary>
+        /// Маппинг из обьекта Group в GroupDTO
+        /// </summary>
+        /// <param name="entity">Обьект Group</param>
+        /// <returns>GroupDTO</returns>
+        public static GroupDTO? ToEditDto(this Group entity)
+            => entity == null ? null : new GroupDTO
+            {
+                Id = entity.Id,
+                Title = entity.Title,
+                SpecializationId = entity.SpecializationId,
+                SpecializationTitle = entity.Specialization != null ? entity.Specialization.Title : "",
+                Begin = entity.Begin,
+                End = entity.End
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов Group в список GroupDTO
+        /// </summary>
+        /// <param name="entities">Список Group</param>
+        /// <returns>Список GroupDTO</returns>
+        public static List<GroupDTO> ToEditDto(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToEditDto())];
+
+        /// <summary>
+        /// Маппинг из обьекта Group в SelectItem
+        /// </summary>
+        /// <param name="entity">Обьект Group</param>
+        /// <returns>SelectItem</returns>
+        public static SelectItem? ToSelect(this Group entity)
+            => entity == null ? null : new SelectItem
+            {
+                Value = entity.Id,
+                Text = entity.Title
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов Group в список SelectItem
+        /// </summary>
+        /// <param name="entities">Список обьектов Group</param>
+        /// <returns>Список SelectItem</returns>
+        public static List<SelectItem> ToSelect(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToSelect())];
+
+        /// <summary>
+        /// Маппинг из GroupEditDTO в обьект Group
+        /// </summary>
+        /// <param name="dto">GroupEditDTO</param>
+        /// <returns>Обьект Group</returns>
+        public static Group? ToEntity(this GroupDTO dto)
+            => dto == null ? null : new Group
+            {
+                Id = dto.Id,
+                Title = dto.Title,
+                SpecializationId = dto.SpecializationId,
+                Begin = dto.Begin,
+                End = dto.End
+            };
+
+        /// <summary>
+        /// Маппинг списка из GroupEditDTO в список обьектов Group
+        /// </summary>
+        /// <param name="dtos">Список GroupEditDTO</param>
+        /// <returns>Список обьектов Group</returns>
+        public static List<Group> ToEntity(this IEnumerable<GroupDTO> dtos)
+            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
+
+        /// <summary>
+        /// Маппинг обновления обьекта Group
+        /// </summary>
+        /// <param name="entity">Обьект Group</param>
+        /// <param name="dto">GroupEditDTO</param>
+        public static void UpdateFromEditDto(this Group entity, GroupDTO dto)
+        {
+            if (dto == null) return;
+            if (dto.Title != null && !string.IsNullOrEmpty(dto.Title) && entity.Title != dto.Title)
+                entity.Title = dto.Title;
+            if (entity.SpecializationId != 0 && entity.SpecializationId != dto.SpecializationId)
+                entity.SpecializationId = dto.SpecializationId;
+            if (entity.Begin != dto.Begin)
+                entity.Begin = dto.Begin;
+            if (entity.End != dto.End)
+                entity.End = dto.End;
+        }
+
+        /// <summary>
         /// Маппинг из обьекта Group в GroupInfoDTO
         /// </summary>
         /// <param name="entity">Обьект Group</param>
@@ -85,91 +170,6 @@ namespace NexusUserTest.Application.Mappings
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupInfoDetailsDTO</returns>
         public static List<GroupInfoDetailsDTO> ToInfoDetailDto(this IEnumerable<Group> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToInfoDetailDto())];
-
-        /// <summary>
-        /// Маппинг из обьекта Group в GroupEditDTO
-        /// </summary>
-        /// <param name="entity">Обьект Group</param>
-        /// <returns>GroupEditDTO</returns>
-        public static GroupEditDTO? ToEditDto(this Group entity)
-            => entity == null ? null : new GroupEditDTO
-            {
-                Id = entity.Id,
-                Title = entity.Title,
-                SpecializationId = entity.SpecializationId,
-                SpecializationTitle = entity.Specialization != null ? entity.Specialization.Title : "",
-                Begin = entity.Begin,
-                End = entity.End
-            };
-
-        /// <summary>
-        /// Маппинг списка из обьектов Group в список GroupEditDTO
-        /// </summary>
-        /// <param name="entities">Список Group</param>
-        /// <returns>Список GroupEditDTO</returns>
-        public static List<GroupEditDTO> ToEditDto(this IEnumerable<Group> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToEditDto())];
-
-        /// <summary>
-        /// Маппинг из обьекта Group в SelectItem
-        /// </summary>
-        /// <param name="entity">Обьект Group</param>
-        /// <returns>SelectItem</returns>
-        public static SelectItem? ToSelect(this Group entity)
-            => entity == null ? null : new SelectItem
-            {
-                Value = entity.Id,
-                Text = entity.Title
-            };
-
-        /// <summary>
-        /// Маппинг списка из обьектов Group в список SelectItem
-        /// </summary>
-        /// <param name="entities">Список обьектов Group</param>
-        /// <returns>Список SelectItem</returns>
-        public static List<SelectItem> ToSelect(this IEnumerable<Group> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToSelect())];
-
-        /// <summary>
-        /// Маппинг из GroupEditDTO в обьект Group
-        /// </summary>
-        /// <param name="dto">GroupEditDTO</param>
-        /// <returns>Обьект Group</returns>
-        public static Group? ToEntity(this GroupEditDTO dto)
-            => dto == null ? null : new Group
-            {
-                Id = dto.Id,
-                Title = dto.Title,
-                SpecializationId = dto.SpecializationId,
-                Begin = dto.Begin,
-                End = dto.End
-            };
-
-        /// <summary>
-        /// Маппинг списка из GroupEditDTO в список обьектов Group
-        /// </summary>
-        /// <param name="dtos">Список GroupEditDTO</param>
-        /// <returns>Список обьектов Group</returns>
-        public static List<Group> ToEntity(this IEnumerable<GroupEditDTO> dtos)
-            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
-
-        /// <summary>
-        /// Маппинг обновления обьекта Group
-        /// </summary>
-        /// <param name="entity">Обьект Group</param>
-        /// <param name="dto">GroupEditDTO</param>
-        public static void UpdateFromEditDto(this Group entity, GroupEditDTO dto)
-        {
-            if (dto == null) return;
-            if (dto.Title != null && !string.IsNullOrEmpty(dto.Title) && entity.Title != dto.Title)
-                entity.Title = dto.Title;
-            if (entity.SpecializationId != 0 && entity.SpecializationId != dto.SpecializationId)
-                entity.SpecializationId = dto.SpecializationId;
-            if (entity.Begin != dto.Begin)
-                entity.Begin = dto.Begin;
-            if (entity.End != dto.End)
-                entity.End = dto.End;
-        }
+            => [.. entities.Where(e => e != null).Select(e => e.ToInfoDetailDto())];      
     }
 }
