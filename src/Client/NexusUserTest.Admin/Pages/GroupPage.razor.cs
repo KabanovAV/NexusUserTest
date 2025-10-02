@@ -103,16 +103,16 @@ namespace NexusUserTest.Admin.Pages
 
         public async Task Update(GroupEditDTO entity)
         {
-            var response = await ServiceAPI!.GroupService.UpdateGroup(entity, "Specialization,GroupUser");
+            var response = await ServiceAPI!.GroupService.UpdateGroup(entity);
             if (!response.Success)
                 NotificationService!.ShowError($"{response.Error}", "Ошибка");
             else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == response.Data!.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == entity.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = response.Data!;
-                await NexusTable.SelectRow(response.Data!);
-                await NexusTable.CancelEditRow(response.Data!);
+                    NexusTable.Data[index] = entity;
+                await NexusTable.SelectRow(entity);
+                await NexusTable.CancelEditRow(entity);
                 NotificationService!.ShowSuccess("Группа изменена", "Успех");
             }
         }
