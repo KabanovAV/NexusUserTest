@@ -4,11 +4,11 @@
 
 <PageTitle>Группы</PageTitle>
 
-<LoadDataView TItem="List<GroupEditDTO>" Data="ApiResponse" />
+<LoadDataView TItem="List<GroupDTO>" Data="ApiResponse" />
 
 @if (ApiResponse != null && ApiResponse.Success)
 {
-    <NexusTableGrid @ref="NexusTable" TItem="GroupEditDTO" Data="ApiResponse.Data" SelectionMode="SelectMode"
+    <NexusTableGrid @ref="NexusTable" TItem="GroupDTO" Data="ApiResponse.Data" SelectionMode="SelectMode"
                     EditMode="EditMode" AllowSorting="true" AllowFiltering="true"
                     ShowEmptyMessage="true" EmptyMessage="Нет групп">
         <ToolTemplate>

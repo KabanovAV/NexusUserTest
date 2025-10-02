@@ -14,11 +14,11 @@ namespace NexusUserTest.Admin.Pages
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private NexusTableGrid<GroupEditDTO>? NexusTable;
+        private NexusTableGrid<GroupDTO>? NexusTable;
         private readonly NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private readonly NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private ApiResponse<List<GroupEditDTO>>? ApiResponse;
+        private ApiResponse<List<GroupDTO>>? ApiResponse;
         private IEnumerable<SelectItem>? SpecializationSelects;
 
         public bool IsCrud => NexusTable != null
@@ -36,12 +36,12 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private async Task LoadData()
-            => ApiResponse = await ServiceAPI!.GroupService.GetAllEditGroup("Specialization,GroupUser");
+            => ApiResponse = await ServiceAPI!.GroupService.GetAllGroup("Specialization,GroupUser");
 
         public async Task Insert()
         {
             if (await FillSelecItems())
-                await NexusTable!.InsertRow(new GroupEditDTO { Begin = DateTime.Now, End = DateTime.Now });
+                await NexusTable!.InsertRow(new GroupDTO { Begin = DateTime.Now, End = DateTime.Now });
         }
 
         public async Task Edit()
@@ -88,7 +88,7 @@ namespace NexusUserTest.Admin.Pages
             await NexusTable.Reload();
         }
 
-        public async Task Add(GroupEditDTO entity)
+        public async Task Add(GroupDTO entity)
         {
             var response = await ServiceAPI!.GroupService.AddGroup(entity, "Specialization,GroupUser");
             if (!response.Success)
@@ -101,7 +101,7 @@ namespace NexusUserTest.Admin.Pages
             }
         }
 
-        public async Task Update(GroupEditDTO entity)
+        public async Task Update(GroupDTO entity)
         {
             var response = await ServiceAPI!.GroupService.UpdateGroup(entity);
             if (!response.Success)
