@@ -1,92 +1,73 @@
-﻿using NexusUserTest.Common;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using NexusUserTest.Common;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services
 {
     public interface IQuestionAPIService
     {
-        Task<List<QuestionDTO>> GetAllQuestion(string? include = null);
-        Task<QuestionDTO?> GetQuestion(int id, string? include = null);
-        Task<QuestionDTO?> AddQuestion(QuestionDTO item, string? include = null);
-        Task<QuestionDTO?> UpdateQuestion(QuestionDTO item, string? include = null);
-        Task DeleteQuestion(int id);
+        Task<ApiResponse<List<QuestionAdminDTO>>> GetAllQuestion(string? include = null);
+        Task<ApiResponse<QuestionAdminDTO>> GetQuestion(int id, string? include = null);
+        Task<ApiResponse<QuestionAdminDTO>> AddQuestion(QuestionAdminDTO item, string? include = null);
+        Task<ApiResponse<Unit>> UpdateQuestion(QuestionAdminDTO item, string? include = null);
+        Task<ApiResponse<Unit>> DeleteQuestion(int id);
     }
 
-    public class QuestionAPIService(IHttpClientFactory httpClienFactory) : IQuestionAPIService
+    public class QuestionAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IQuestionAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<List<QuestionDTO>> GetAllQuestion(string? include = null)
+        public async Task<ApiResponse<List<QuestionAdminDTO>>> GetAllQuestion(string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/questions?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<QuestionDTO>>() ?? [];
+                var url = QueryHelpers.AddQueryString("api/questions", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<List<QuestionAdminDTO>>(() =>
+                    _httpClient.GetAsync(url), "GetAllQuestion");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
+            return await _responseHandler.ExecuteHttpAsync<List<QuestionAdminDTO>>(() =>
+                    _httpClient.GetAsync("api/questions"), "GetAllQuestion");
         }
 
-        public async Task<QuestionDTO?> GetQuestion(int id, string? include = null)
+        public async Task<ApiResponse<QuestionAdminDTO>> GetQuestion(int id, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/questions/{id}?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<QuestionDTO>();
+                var url = QueryHelpers.AddQueryString($"api/questions/{id}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<QuestionAdminDTO>(() =>
+                    _httpClient.GetAsync(url), "GetQuestion");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<QuestionAdminDTO>(() =>
+                    _httpClient.GetAsync($"api/questions/{id}"), "GetQuestion");
         }
 
-        public async Task<QuestionDTO?> AddQuestion(QuestionDTO item, string? include = null)
+        public async Task<ApiResponse<QuestionAdminDTO>> AddQuestion(QuestionAdminDTO item, string? include = null)
         {
-            try
+            if (include != null)
             {
-                using var response = await _httpClient.PostAsJsonAsync($"api/questions?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<QuestionDTO>();
+                var url = QueryHelpers.AddQueryString("api/questions", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<QuestionAdminDTO>(() =>
+                    _httpClient.PostAsJsonAsync(url, item), "AddQuestion");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<QuestionAdminDTO>(() =>
+                    _httpClient.PostAsJsonAsync("api/questions", item), "AddQuestion");
         }
 
-        public async Task<QuestionDTO?> UpdateQuestion(QuestionDTO item, string? include = null)
+        public async Task<ApiResponse<Unit>> UpdateQuestion(QuestionAdminDTO item, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/questions?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<QuestionDTO>();
+                var url = QueryHelpers.AddQueryString($"api/questions/{item.Id}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.PutAsJsonAsync(url, item), "UpdateQuestion");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.PutAsJsonAsync($"api/questions/{item.Id}", item), "UpdateQuestion");
         }
 
-        public async Task DeleteQuestion(int id)
-        {
-            try
-            {
-                var response = await _httpClient.DeleteAsync($"api/questions/{id}");
-                response.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-            }
-        }
+        public async Task<ApiResponse<Unit>> DeleteQuestion(int id)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.DeleteAsync($"api/questions/{id}"), "DeleteQuestion");
     }
 }
