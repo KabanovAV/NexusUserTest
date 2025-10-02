@@ -52,7 +52,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GroupEditDTO>> Add(GroupEditDTO groupEditDTO, [FromQuery] string? include = null)
+        public async Task<ActionResult<GroupDTO>> Add(GroupDTO groupEditDTO, [FromQuery] string? include = null)
         {
             if (groupEditDTO == null)
                 return BadRequest("Данные для добавления группы пустые.");
@@ -63,7 +63,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, GroupEditDTO groupDTO)
+        public async Task<IActionResult> Update(int id, GroupDTO groupDTO)
         {
             if (groupDTO == null)
                 return BadRequest("Данные для обновления группы пустые.");
