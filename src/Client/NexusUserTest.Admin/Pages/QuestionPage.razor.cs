@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common;
-using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
@@ -15,12 +14,12 @@ namespace NexusUserTest.Admin.Pages
         [Inject]
         public INexusDialogService? DialogService { get; set; }
 
-        private NexusTableGrid<QuestionDTO>? NexusTable;
+        private NexusTableGrid<QuestionAdminDTO>? NexusTable;
         private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private QuestionDTO? Data;
-        private List<QuestionDTO>? Items;
+        private QuestionAdminDTO? Upsert;
+        private ApiResponse<List<QuestionAdminDTO>>? ApiResponse;
         private IEnumerable<SelectItem>? TopicSelects;
 
         private bool IsUpsertForm;
@@ -38,29 +37,39 @@ namespace NexusUserTest.Admin.Pages
         }
 
         private async Task LoadData()
-        {
-            var q = await ServiceAPI!.QuestionService.GetAllQuestion("Answers,TopicQuestion");
-            Items = [.. q];
-        }
+            => ApiResponse = await ServiceAPI!.QuestionService.GetAllQuestion("Answers,TopicQuestion");
 
         public async Task Insert()
         {
-            TopicSelects = await ServiceAPI!.TopicService.GetTopicSelect();
-            Data = new QuestionDTO { AnswerItems = [], TopicQuestionItems = [] };
-            IsUpsertForm = true;
-        }            
-
-        public async Task Edit()
-        {
-            if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
+            if (await FillSelecItems())
             {
-                TopicSelects = await ServiceAPI!.TopicService.GetTopicSelect();
-                Data = NexusTable.SelectedRows.First();
+                Upsert = new QuestionAdminDTO { AnswerItems = [], TopicQuestionItems = [] };
                 IsUpsertForm = true;
             }
         }
 
-        public async Task Save(QuestionDTO entity)
+        public async Task Edit()
+        {
+            if (NexusTable != null && NexusTable.SelectedRows.Count != 0 && await FillSelecItems())
+            {
+                Upsert = NexusTable.SelectedRows.First();
+                IsUpsertForm = true;
+            }
+        }
+
+        public async Task<bool> FillSelecItems()
+        {
+            var selects = await ServiceAPI!.TopicService.GetTopicSelect();
+            if (!selects.Success)
+            {
+                NotificationService!.ShowError($"{selects.Error}", "Ошибка");
+                return false;
+            }
+            TopicSelects = selects.Data;
+            return true;
+        }
+
+        public async Task Save(QuestionAdminDTO entity)
         {
             if (entity.Id != 0)
                 await Update(entity);
@@ -70,28 +79,32 @@ namespace NexusUserTest.Admin.Pages
             IsUpsertForm = false;
         }
 
-        public async Task Add(QuestionDTO entity)
+        public async Task Add(QuestionAdminDTO entity)
         {
-            Data = await ServiceAPI!.QuestionService.AddQuestion(entity, "Answers,TopicQuestion");
-            if (Data != null)
+            var response = await ServiceAPI!.QuestionService.AddQuestion(entity, "Answers,TopicQuestion");
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                NexusTable!.Data.Add(Data);
-                await NexusTable.SelectRow(Data);
-                await NexusTable.OnExpandRow(Data);
+                NexusTable!.Data.Add(response.Data!);
+                await NexusTable.SelectRow(response.Data!);
+                await NexusTable.OnExpandRow(response.Data!);
                 NotificationService!.ShowSuccess("Вопрос добавлен", "Успех");
             }
         }
 
-        public async Task Update(QuestionDTO entity)
+        public async Task Update(QuestionAdminDTO entity)
         {
-            Data = await ServiceAPI!.QuestionService.UpdateQuestion(entity, "Answers,TopicQuestion");
-            if (Data != null)
+            var response = await ServiceAPI!.QuestionService.UpdateQuestion(entity, "Answers,TopicQuestion");
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == Data.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == entity.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = Data;
-                await NexusTable.SelectRow(Data);
-                await NexusTable.CancelEditRow(Data);
+                    NexusTable.Data[index] = entity;
+                await NexusTable.SelectRow(entity);
+                await NexusTable.CancelEditRow(entity);
                 NotificationService!.ShowSuccess("Вопрос изменен", "Успех");
             }
         }
@@ -100,22 +113,18 @@ namespace NexusUserTest.Admin.Pages
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
-                Data = NexusTable.SelectedRows.First();
-                var settings = new NexusDialogSetting("Удаление вопроса", $"Вопрос удалится вместе с ответами. Вы уверены, что хотите удалить \"{Data.Title}\" вопрос?", "Отменить", "Удалить");
+                var data = NexusTable.SelectedRows.First();
+                var settings = new NexusDialogSetting("Удаление вопроса", $"Вопрос удалится вместе с ответами. Вы уверены, что хотите удалить \"{data.Title}\" вопрос?", "Отменить", "Удалить");
                 var result = await DialogService!.Show(settings);
                 if (result?.Canceled == false)
                 {
-                    await ServiceAPI!.QuestionService.DeleteQuestion(Data.Id);
-                    NexusTable.RemoveRow(Data);
+                    await ServiceAPI!.QuestionService.DeleteQuestion(data.Id);
+                    NexusTable.RemoveRow(data);
                     NotificationService!.ShowSuccess("Вопрос удален", "Успех");
                 }
             }
         }
 
-        public async Task Cancel()
-        {
-            IsUpsertForm = false;
-            await NexusTable!.CancelEditRow(Data!);
-        }
+        public void Cancel() => IsUpsertForm = false;
     }
 }
