@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using NexusUserTest.Common;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services
@@ -10,7 +11,7 @@ namespace NexusUserTest.Shared.Services
         Task<ApiResponse<List<SelectItem>>> GetSpecializationSelect();
         Task<ApiResponse<SpecializationDTO>> GetSpecialization(int id, string? include = null);
         Task<ApiResponse<SpecializationDTO>> AddSpecialization(SpecializationDTO item, string? include = null);
-        Task<ApiResponse<Unit>> UpdateSpecialization(SpecializationDTO item, string? include = null);
+        Task<ApiResponse<Unit>> UpdateSpecialization(SpecializationDTO item);
         Task<ApiResponse<bool>> DeleteSpecialization(int id);
     }
 
@@ -57,20 +58,12 @@ namespace NexusUserTest.Shared.Services
             }
             return await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(() =>
                 _httpClient.PostAsJsonAsync("api/specializations", item), "AddSpecialization");
-        }            
-
-        public async Task<ApiResponse<Unit>> UpdateSpecialization(SpecializationDTO item, string? include = null)
-        {
-            if (include != null)
-            {
-                var url = QueryHelpers.AddQueryString($"api/specializations/{item.Id}", "include", include);
-                return await _responseHandler.ExecuteHttpAsync(() =>
-                    _httpClient.PutAsJsonAsync(url, item), "UpdateSpecialization");
-            }
-            return await _responseHandler.ExecuteHttpAsync(() =>
-                _httpClient.PutAsJsonAsync($"api/specializations/{item.Id}", item), "UpdateSpecialization");
         }
-            
+
+        public async Task<ApiResponse<Unit>> UpdateSpecialization(SpecializationDTO item)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                _httpClient.PutAsJsonAsync($"api/specializations/{item.Id}", item), "UpdateSpecialization");
+
 
         public async Task<ApiResponse<bool>> DeleteSpecialization(int id)
             => await _responseHandler.ExecuteAsync<bool>(async () =>

@@ -46,16 +46,16 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, SpecializationDTO specializationDTO, [FromQuery] string? include = null)
+        public async Task<IActionResult> Update(int id, SpecializationDTO specializationDTO)
         {
             if (specializationDTO == null)
                 return BadRequest("Данные для обновления специализации пустые.");
-            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
+            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
             specialization.UpdateFromDto(specializationDTO);
-            await _service.SpecializationRepository.UpdateSpecializationAsync(specialization, include);
-            return Ok();
+            await _service.SpecializationRepository.UpdateSpecializationAsync(specialization);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
