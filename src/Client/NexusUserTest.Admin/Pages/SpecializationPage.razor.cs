@@ -94,11 +94,11 @@ namespace NexusUserTest.Admin.Pages
                 NotificationService!.ShowError($"{response.Error}", "Ошибка");
             else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == response.Data!.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == item!.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = response.Data!;
-                await NexusTable.SelectRow(response.Data!);
-                await NexusTable.CancelEditRow(response.Data!);
+                    NexusTable.Data[index] = item;
+                await NexusTable.SelectRow(item);
+                await NexusTable.CancelEditRow(item);
                 NotificationService!.ShowSuccess("Специализация изменена", "Успех");
             }
         }
