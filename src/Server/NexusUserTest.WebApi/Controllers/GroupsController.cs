@@ -12,18 +12,27 @@ namespace SibCCSPETest.WebApi.Controllers
     {
         private readonly IRepoServiceManager _service = service;
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] string? include = null)
+        {
+            var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
+            return Ok(groups.ToDto());
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id, [FromQuery] string? include = null)
+        {
+            var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
+            if (group == null)
+                return NotFound(new { Message = $"Группа с id {id} не найдена." });
+            return Ok(group.ToDto());
+        }
+
         [HttpGet("info")]
         public async Task<IActionResult> GetAllInfo([FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return Ok(groups.ToInfoDto());
-        }
-
-        [HttpGet("edit")]
-        public async Task<IActionResult> GetAllEdit([FromQuery] string? include = null)
-        {
-            var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
-            return Ok(groups.ToEditDto());
         }
 
         [HttpGet("{id:int}/info")]
@@ -33,16 +42,7 @@ namespace SibCCSPETest.WebApi.Controllers
             if (group == null)
                 return NotFound(new { Message = $"Группа с id {id} не найдена." });
             return Ok(group.ToInfoDetailDto());
-        }
-
-        [HttpGet("{id:int}/edit")]
-        public async Task<IActionResult> GetEdit(int id, [FromQuery] string? include = null)
-        {
-            var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
-            if (group == null)
-                return NotFound(new { Message = $"Группа с id {id} не найдена." });
-            return Ok(group.ToEditDto());
-        }
+        }        
 
         [HttpGet("select")]
         public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect([FromQuery] string? include = null)
@@ -58,8 +58,8 @@ namespace SibCCSPETest.WebApi.Controllers
                 return BadRequest("Данные для добавления группы пустые.");
             var group = groupEditDTO.ToEntity();
             await _service.GroupRepository.AddGroupAsync(group!, include);
-            var groupDTO = group!.ToEditDto();
-            return CreatedAtAction(nameof(GetEdit), new { id = groupDTO!.Id }, groupDTO);
+            var groupDTO = group!.ToDto();
+            return CreatedAtAction(nameof(Get), new { id = groupDTO!.Id }, groupDTO);
         }
 
         [HttpPut("{id:int}")]
@@ -70,7 +70,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id);
             if (group == null)
                 return NotFound(new { Message = $"Группа с id {groupDTO.Id} не найдена." });
-            group.UpdateFromEditDto(groupDTO);
+            group.UpdateFromDto(groupDTO);
             await _service.GroupRepository.UpdateGroupAsync(group);
             return NoContent();
         }

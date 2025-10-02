@@ -10,7 +10,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Group</param>
         /// <returns>GroupDTO</returns>
-        public static GroupDTO? ToEditDto(this Group entity)
+        public static GroupDTO? ToDto(this Group entity)
             => entity == null ? null : new GroupDTO
             {
                 Id = entity.Id,
@@ -26,8 +26,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupDTO</returns>
-        public static List<GroupDTO> ToEditDto(this IEnumerable<Group> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToEditDto())];
+        public static List<GroupDTO> ToDto(this IEnumerable<Group> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToDto())];
 
         /// <summary>
         /// Маппинг из обьекта Group в SelectItem
@@ -77,7 +77,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Group</param>
         /// <param name="dto">GroupEditDTO</param>
-        public static void UpdateFromEditDto(this Group entity, GroupDTO dto)
+        public static void UpdateFromDto(this Group entity, GroupDTO dto)
         {
             if (dto == null) return;
             if (dto.Title != null && !string.IsNullOrEmpty(dto.Title) && entity.Title != dto.Title)
