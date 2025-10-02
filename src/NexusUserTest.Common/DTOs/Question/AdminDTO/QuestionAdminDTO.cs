@@ -2,7 +2,7 @@
 
 namespace NexusUserTest.Common
 {
-    public class QuestionDTO
+    public class QuestionAdminDTO
     {
         public int Id { get; set; }
         [Display(Name = "Название")]
