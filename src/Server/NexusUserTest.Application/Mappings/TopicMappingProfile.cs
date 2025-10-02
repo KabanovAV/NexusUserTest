@@ -10,7 +10,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект Topic</param>
         /// <returns>TopicDTO</returns>
-        public static TopicDTO? ToAdminDto(this Topic entity)
+        public static TopicDTO? ToDto(this Topic entity)
             => entity == null ? null : new TopicDTO
             {
                 Id = entity.Id,
@@ -24,8 +24,28 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entities">Список обьектов Topic</param>
         /// <returns>Список TopicDTO</returns>
-        public static List<TopicDTO> ToAdminDto(this IEnumerable<Topic> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
+        public static List<TopicDTO> ToDto(this IEnumerable<Topic> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToDto())];
+
+        /// <summary>
+        /// Маппинг из обьекта Topic в SelectItem
+        /// </summary>
+        /// <param name="entity">Обьект Topic</param>
+        /// <returns>SelectItem</returns>
+        public static SelectItem? ToSelect(this Topic entity)
+            => entity == null ? null : new SelectItem
+            {
+                Value = entity.Id,
+                Text = entity.Title
+            };
+
+        /// <summary>
+        /// Маппинг списка из обьектов Topic в список SelectItem
+        /// </summary>
+        /// <param name="entities">Список обьектов Topic</param>
+        /// <returns>Список SelectItem</returns>
+        public static List<SelectItem> ToSelect(this IEnumerable<Topic> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToSelect())];
 
         /// <summary>
         /// Маппинг из TopicDTO в обьект Topic
