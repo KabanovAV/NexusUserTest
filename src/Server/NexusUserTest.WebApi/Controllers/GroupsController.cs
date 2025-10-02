@@ -13,14 +13,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAll([FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return Ok(groups.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<GroupDTO>> Get(int id, [FromQuery] string? include = null)
         {
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
@@ -29,14 +29,14 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("info")]
-        public async Task<IActionResult> GetAllInfo([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<GroupInfoDTO>>> GetAllInfoDTO([FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return Ok(groups.ToInfoDto());
         }
 
         [HttpGet("{id:int}/info")]
-        public async Task<IActionResult> GetInfo(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<GroupInfoDetailsDTO>> GetInfoDetailDTO(int id, [FromQuery] string? include = null)
         {
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
