@@ -1,4 +1,5 @@
-﻿using NexusUserTest.Common;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using NexusUserTest.Common;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services
@@ -9,7 +10,7 @@ namespace NexusUserTest.Shared.Services
         Task<ApiResponse<List<SelectItem>>> GetSpecializationSelect();
         Task<ApiResponse<SpecializationDTO>> GetSpecialization(int id, string? include = null);
         Task<ApiResponse<SpecializationDTO>> AddSpecialization(SpecializationDTO item, string? include = null);
-        Task<ApiResponse<SpecializationDTO>> UpdateSpecialization(SpecializationDTO item, string? include = null);
+        Task<ApiResponse<Unit>> UpdateSpecialization(SpecializationDTO item, string? include = null);
         Task<ApiResponse<bool>> DeleteSpecialization(int id);
     }
 
@@ -19,34 +20,57 @@ namespace NexusUserTest.Shared.Services
         private readonly IApiResponseHandler _responseHandler = responseHandler;
 
         public async Task<ApiResponse<List<SpecializationDTO>>> GetAllSpecialization(string? include = null)
-            => await _responseHandler.ExecuteHttpAsync<List<SpecializationDTO>>(async () =>
+        {
+            if (include != null)
             {
-                return await _httpClient.GetAsync($"api/specializations?include={include}");
-            }, "GetAllSpecialization");
+                var url = QueryHelpers.AddQueryString("api/specializations", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<List<SpecializationDTO>>(() =>
+                    _httpClient.GetAsync(url), "GetAllSpecialization");
+            }
+            return await _responseHandler.ExecuteHttpAsync<List<SpecializationDTO>>(() =>
+                    _httpClient.GetAsync("api/specializations"), "GetAllSpecialization");
+        }
 
         public async Task<ApiResponse<List<SelectItem>>> GetSpecializationSelect()
-            => await _responseHandler.ExecuteHttpAsync<List<SelectItem>>(async () =>
-            {
-                return await _httpClient.GetAsync($"api/specializations/select");
-            }, "GetAllSpecialization");
+            => await _responseHandler.ExecuteHttpAsync<List<SelectItem>>(() =>
+                _httpClient.GetAsync("api/specializations/select"), "GetAllSpecialization");
 
         public async Task<ApiResponse<SpecializationDTO>> GetSpecialization(int id, string? include = null)
-            => await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(async () =>
+        {
+            if (include != null)
             {
-                return await _httpClient.GetAsync($"api/specializations/{id}?include={include}");
-            }, "GetSpecialization");
+                var url = QueryHelpers.AddQueryString($"api/specializations/{id}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(() =>
+                    _httpClient.GetAsync(url), "GetSpecialization");
+            }
+            return await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(() =>
+                _httpClient.GetAsync($"api/specializations/{id}"), "GetSpecialization");
+        }
 
         public async Task<ApiResponse<SpecializationDTO>> AddSpecialization(SpecializationDTO item, string? include = null)
-            => await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(async () =>
+        {
+            if (include != null)
             {
-                return await _httpClient.PostAsJsonAsync($"api/specializations?include={include}", item);
-            }, "AddSpecialization");
+                var url = QueryHelpers.AddQueryString("api/specializations", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(() =>
+                    _httpClient.PostAsJsonAsync(url, item), "AddSpecialization");
+            }
+            return await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(() =>
+                _httpClient.PostAsJsonAsync("api/specializations", item), "AddSpecialization");
+        }            
 
-        public async Task<ApiResponse<SpecializationDTO>> UpdateSpecialization(SpecializationDTO item, string? include = null)
-            => await _responseHandler.ExecuteHttpAsync<SpecializationDTO>(async () =>
+        public async Task<ApiResponse<Unit>> UpdateSpecialization(SpecializationDTO item, string? include = null)
+        {
+            if (include != null)
             {
-                return await _httpClient.PutAsJsonAsync($"api/specializations/{item.Id}?include={include}", item);
-            }, "UpdateSpecialization");
+                var url = QueryHelpers.AddQueryString($"api/specializations/{item.Id}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.PutAsJsonAsync(url, item), "UpdateSpecialization");
+            }
+            return await _responseHandler.ExecuteHttpAsync(() =>
+                _httpClient.PutAsJsonAsync($"api/specializations/{item.Id}", item), "UpdateSpecialization");
+        }
+            
 
         public async Task<ApiResponse<bool>> DeleteSpecialization(int id)
             => await _responseHandler.ExecuteAsync<bool>(async () =>
