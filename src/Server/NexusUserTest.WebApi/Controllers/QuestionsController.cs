@@ -12,14 +12,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuestionDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<QuestionAdminDTO>>> GetAll(string? include = null)
         {
             var questions = await _service.QuestionRepository.GetAllQuestionAsync(includeProperties: include);
             return Ok(questions.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<QuestionDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<QuestionAdminDTO>> Get(int id, string? include = null)
         {
             var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == id, include);
             if (question == null)
@@ -28,7 +28,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionDTO>> Add(QuestionCreateDTO questionCreateDTO, string? include = null)
+        public async Task<ActionResult<QuestionAdminDTO>> Add(QuestionAdminDTO questionCreateDTO, string? include = null)
         {
             if (questionCreateDTO == null)
                 return BadRequest("Данные для добавления вопроса пустые.");
@@ -38,17 +38,17 @@ namespace SibCCSPETest.WebApi.Controllers
             return CreatedAtAction(nameof(Get), new { id = questionDTO!.Id }, questionDTO);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<QuestionDTO>> Update(QuestionDTO questionDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, QuestionAdminDTO questionDTO, string? include = null)
         {
             if (questionDTO == null)
                 return BadRequest("Данные для обновления вопроса пустые.");
-            var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == questionDTO.Id, include);
+            var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == id, include);
             if (question == null)
                 return NotFound(new { Message = $"Вопрос с id {questionDTO.Id} не найден." });
             question.UpdateFromDto(questionDTO);
             await _service.QuestionRepository.UpdateQuestionAsync(question, include);
-            return Ok(question.ToAdminDto());
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
