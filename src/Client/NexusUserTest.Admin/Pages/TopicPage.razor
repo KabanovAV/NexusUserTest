@@ -4,20 +4,11 @@
 
 <PageTitle>Темы</PageTitle>
 
-@if (Items == null)
+<LoadDataView TItem="List<TopicDTO>" Data="ApiResponse" />
+
+@if (ApiResponse != null && ApiResponse.Success)
 {
-    <div class="" style=@($"height: 100%; width:100%; display: flex; align-items: center; justify-content: center;")>
-        <div style="">
-            <Wave Color="blue" Center="true" Size="2rem" style="opacity:1" />
-            <h5 class="mt-3" style="color:blue">
-                Загрузка данных
-            </h5>
-        </div>
-    </div>
-}
-else
-{
-    <NexusTableGrid @ref="NexusTable" TItem="TopicDTO" Data="Items" SelectionMode="SelectMode"
+    <NexusTableGrid @ref="NexusTable" TItem="TopicDTO" Data="ApiResponse.Data" SelectionMode="SelectMode"
                     EditMode="EditMode" AllowSorting="true" AllowFiltering="true"
                     ShowEmptyMessage="true" EmptyMessage="Нет тем">
         <ToolTemplate>
@@ -34,7 +25,7 @@ else
         <Columns>
             <NexusTableGridColumn Title="#">
                 <CellTemplate>
-                    @(Items.IndexOf(context) + 1)
+                    @(ApiResponse.Data!.IndexOf(context) + 1)
                 </CellTemplate>
             </NexusTableGridColumn>
             <NexusTableGridColumn Title="Название" Property="t => t.Title" Sortable="true" Filterable="true">

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Common;
-using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using NexusUserTest.Shared.Services;
 
@@ -19,7 +18,7 @@ namespace NexusUserTest.Admin.Pages
         private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Single;
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
-        private List<TopicDTO>? Items;
+        private ApiResponse<List<TopicDTO>>? ApiResponse;
         private IEnumerable<SelectItem>? SpecializationSelects;
 
         public bool IsCrud => NexusTable != null
@@ -36,30 +35,23 @@ namespace NexusUserTest.Admin.Pages
             }
         }
         private async Task LoadData()
-        {
-            var t = await ServiceAPI!.TopicService.GetAllTopic("Specialization");
-            Items = t.ToList();
-        }
+            => ApiResponse = await ServiceAPI!.TopicService.GetAllTopic("Specialization");
 
         public async Task Insert()
         {
-            var selects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
-            SpecializationSelects = selects.Data;
-            await NexusTable!.InsertRow(new TopicDTO());
+            if (await FillSelecItems())
+                await NexusTable!.InsertRow(new TopicDTO());
         }
 
         public async Task Edit()
         {
-            if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
+            if (NexusTable != null && NexusTable.SelectedRows.Count != 0 && await FillSelecItems())
             {
-                //SpecializationSelects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
                 if (EditMode == NexusTableGridEditMode.Multiple
                     && SelectMode == NexusTableGridSelectionMode.Multiple)
                 {
                     foreach (var selectRow in NexusTable.SelectedRows)
-                    {
                         NexusTable.EditRow(selectRow);
-                    }
                 }
                 else
                 {
@@ -67,6 +59,18 @@ namespace NexusUserTest.Admin.Pages
                     NexusTable.EditRow(data);
                 }
             }
+        }
+
+        public async Task<bool> FillSelecItems()
+        {
+            var selects = await ServiceAPI!.SpecializationService.GetSpecializationSelect();
+            if (!selects.Success)
+            {
+                NotificationService!.ShowError($"{selects.Error}", "Ошибка");
+                return false;
+            }
+            SpecializationSelects = selects.Data;
+            return true;
         }
 
         public async Task Save()
@@ -86,25 +90,29 @@ namespace NexusUserTest.Admin.Pages
 
         public async Task Add(TopicDTO item)
         {
-            var data = await ServiceAPI!.TopicService.AddTopic(item);
-            if (data != null)
+            var response = await ServiceAPI!.TopicService.AddTopic(item);
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                NexusTable!.Data.Add(data);
-                await NexusTable.SelectRow(data);
+                NexusTable!.Data.Add(response.Data!);
+                await NexusTable.SelectRow(response.Data!);
                 NotificationService!.ShowSuccess("Тема добавлена", "Успех");
             }
         }
 
         public async Task Update(TopicDTO item)
         {
-            var data = await ServiceAPI!.TopicService.UpdateTopic(item);
-            if (data != null)
+            var response = await ServiceAPI!.TopicService.UpdateTopic(item);
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == item.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = data;
-                await NexusTable.SelectRow(data);
-                await NexusTable.CancelEditRow(data);
+                    NexusTable.Data[index] = item;
+                await NexusTable.SelectRow(item);
+                await NexusTable.CancelEditRow(item);
                 NotificationService!.ShowSuccess("Тема изменена", "Успех");
             }
         }
@@ -118,9 +126,14 @@ namespace NexusUserTest.Admin.Pages
                 var result = await DialogService!.Show(settings);
                 if (result?.Canceled == false)
                 {
-                    await ServiceAPI!.TopicService.DeleteTopic(data.Id);
-                    NexusTable.RemoveRow(data);
-                    NotificationService!.ShowSuccess("Тема удалена", "Успех");
+                    var response = await ServiceAPI!.TopicService.DeleteTopic(data.Id);
+                    if (!response.Success)
+                        NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                    else
+                    {
+                        NexusTable.RemoveRow(data);
+                        NotificationService!.ShowSuccess("Тема удалена", "Успех");
+                    }
                 }
             }
         }
