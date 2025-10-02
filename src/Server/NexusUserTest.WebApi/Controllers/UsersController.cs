@@ -13,23 +13,28 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAll([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAllAdminDTO([FromQuery] string? include = null)
         {
             var users = await _service.UserRepository.GetAllUserAsync(includeProperties: include);
             return Ok(users.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id, [FromQuery] string view = "info", [FromQuery] string? include = null)
+        public async Task<ActionResult<UserAdminDTO>> GetAdminDTO(int id, [FromQuery] string? include = null)
         {
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            return view.ToLower() switch
-            {
-                "test" => Ok(user.ToTestDto()),
-                _ => Ok(user.ToAdminDto())
-            };
+            return Ok(user.ToAdminDto());
+        }
+
+        [HttpGet("{id:int}/test")]
+        public async Task<ActionResult<UserInfoTestDTO>> Get(int id, [FromQuery] string? include = null)
+        {
+            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
+            if (user == null)
+                return NotFound(new { Message = $"Пользователь с id {id} не найден." });
+            return Ok(user.ToTestDto());
         }
 
         [HttpPost]
@@ -44,7 +49,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<UserAdminDTO>> Update(int id, UserAdminDTO userDTO, [FromQuery] string? include = null)
+        public async Task<IActionResult> Update(int id, UserAdminDTO userDTO, [FromQuery] string? include = null)
         {
             if (userDTO == null)
                 return BadRequest("Данные для обновления пользователя пустые.");
@@ -52,8 +57,8 @@ namespace SibCCSPETest.WebApi.Controllers
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {userDTO.Id} не найден." });
             user.UpdateFromAdminDto(userDTO);
-            await _service.UserRepository.UpdateUserAsync(user, include);
-            return Ok(user.ToAdminDto());
+            await _service.UserRepository.UpdateUserAsync(user);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
