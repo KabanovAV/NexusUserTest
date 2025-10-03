@@ -10,8 +10,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Answer</param>
         /// <returns>AnswerDTO</returns>
-        public static AnswerDTO? ToAdminDto(this Answer entity)
-            => entity == null ? null : new AnswerDTO
+        public static AnswerAdminDTO? ToDto(this Answer entity)
+            => entity == null ? null : new AnswerAdminDTO
             {
                 Id = entity.Id,
                 Title = entity.Title,
@@ -25,15 +25,15 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список обьектов Answer</param>
         /// <returns>Список AnswerDTO</returns>
-        public static List<AnswerDTO> ToAdminDto(this IEnumerable<Answer> entities)
-            => [.. entities.Where(e => e != null).Select(e => e.ToAdminDto())];
+        public static List<AnswerAdminDTO> ToDto(this IEnumerable<Answer> entities)
+            => [.. entities.Where(e => e != null).Select(e => e.ToDto())];
 
         /// <summary>
         /// Маппинг из AnswerDTO в обьект Answer
         /// </summary>
         /// <param name="dto">AnswerDTO</param>
         /// <returns>Answer</returns>
-        public static Answer? ToEntity(this AnswerDTO dto)
+        public static Answer? ToEntity(this AnswerAdminDTO dto)
             => dto == null ? null : new Answer
             {
                 Id = dto.Id,
@@ -47,28 +47,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список AnswerDTO</param>
         /// <returns>Список обьектов Answer</returns>
-        public static List<Answer> ToEntity(this IEnumerable<AnswerDTO> dtos)
-            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
-
-        /// <summary>
-        /// Маппинг из AnswerCreateDTO создание в обьект Answer
-        /// </summary>
-        /// <param name="dto">AnswerCreateDTO</param>
-        /// <returns>Обьект Answer</returns>
-        public static Answer? ToEntity(this AnswerCreateDTO dto)
-            => dto == null ? null : new Answer
-            {
-                Title = dto.Title,
-                QuestionId = dto.QuestionId,
-                IsCorrect = dto.IsCorrect
-            };
-
-        /// <summary>
-        /// Маппинг из списка AnswerCreateDTO создание в список обьектов Answer
-        /// </summary>
-        /// <param name="dtos">Список AnswerCreateDTO</param>
-        /// <returns>Список обьектов Answer</returns>
-        public static List<Answer> ToEntity(this IEnumerable<AnswerCreateDTO> dtos)
+        public static List<Answer> ToEntity(this IEnumerable<AnswerAdminDTO> dtos)
             => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
@@ -76,7 +55,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Answer</param>
         /// <param name="dto">AnswerDTO</param>
-        public static void UpdateFromDto(this Answer entity, AnswerDTO dto)
+        public static void UpdateFromDto(this Answer entity, AnswerAdminDTO dto)
         {
             if (dto == null) return;
             if (dto.Title != null && !string.IsNullOrEmpty(dto.Title) && entity.Title != dto.Title)
