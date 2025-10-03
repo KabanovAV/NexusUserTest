@@ -20,7 +20,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 Organization = entity.Organization,
                 Position = entity.Position,
                 GroupUserItems = entity.GroupUser != null ? [.. entity.GroupUser
-                    .Select(gu => new GroupUserCreateDTO { GroupId = gu.GroupId })] : []
+                    .Select(gu => new GroupUserAdminDTO { GroupId = gu.GroupId })] : []
             };
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="items">GroupUserCreateDTO</param>
         /// <returns>Список GroupUser</returns>
-        private static List<GroupUser> GroupUserListConverter(List<GroupUserCreateDTO> items)
+        private static List<GroupUser> GroupUserListConverter(List<GroupUserAdminDTO> items)
         {
             List<GroupUser> groupUser = [];
             foreach (var item in items!)
