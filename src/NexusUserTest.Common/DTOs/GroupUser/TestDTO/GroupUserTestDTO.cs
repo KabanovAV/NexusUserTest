@@ -8,6 +8,6 @@
         public List<ResultTestDTO>? Results { get; set; }
         public int CountOfQuestion { get; set; }
         public TimeSpan Timer { get; set; }
-        public DateTime EndTest { get; set; }
+        public DateTime? EndTest { get; set; }
     }
 }
