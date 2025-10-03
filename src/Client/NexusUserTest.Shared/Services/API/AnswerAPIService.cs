@@ -1,109 +1,79 @@
-﻿using NexusUserTest.Common;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using NexusUserTest.Common;
+using System.Collections.Generic;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services
 {
     public interface IAnswerAPIService
     {
-        Task<List<AnswerDTO>> GetAllAnswer(string? include = null);
-        Task<AnswerDTO?> GetAnswer(int id, string? include = null);
-        Task<AnswerDTO?> AddAnswer(AnswerDTO item, string? include = null);
-        Task<List<AnswerDTO>?> AddRangeAnswer(IEnumerable<AnswerDTO> items, string? include = null);
-        Task<AnswerDTO?> UpdateAnswer(AnswerDTO item, string? include = null);
-        Task DeleteAnswer(int id);
+        Task<ApiResponse<List<AnswerAdminDTO>>> GetAllAnswer(string? include = null);
+        Task<ApiResponse<AnswerAdminDTO>> GetAnswer(int id, string? include = null);
+        Task<ApiResponse<AnswerAdminDTO>> AddAnswer(AnswerAdminDTO item, string? include = null);
+        Task<ApiResponse<List<AnswerAdminDTO>>> AddRangeAnswer(IEnumerable<AnswerAdminDTO> items, string? include = null);
+        Task<ApiResponse<Unit>> UpdateAnswer(AnswerAdminDTO item);
+        Task<ApiResponse<Unit>> DeleteAnswer(int id);
     }
 
-    public class AnswerAPIService(IHttpClientFactory httpClienFactory) : IAnswerAPIService
+    public class AnswerAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IAnswerAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<List<AnswerDTO>> GetAllAnswer(string? include = null)
+        public async Task<ApiResponse<List<AnswerAdminDTO>>> GetAllAnswer(string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/answers?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<AnswerDTO>>() ?? [];
+                var url = QueryHelpers.AddQueryString("api/answers", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<List<AnswerAdminDTO>>(() =>
+                    _httpClient.GetAsync(url), "GetAllAnswer");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
+            return await _responseHandler.ExecuteHttpAsync<List<AnswerAdminDTO>>(() =>
+                    _httpClient.GetAsync("api/answers"), "GetAllAnswer");
         }
 
-        public async Task<AnswerDTO?> GetAnswer(int id, string? include = null)
+        public async Task<ApiResponse<AnswerAdminDTO>> GetAnswer(int id, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/answers/{id}?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<AnswerDTO>();
+                var url = QueryHelpers.AddQueryString($"api/answers/{id}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<AnswerAdminDTO>(() =>
+                    _httpClient.GetAsync(url), "GetAnswer");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<AnswerAdminDTO>(() =>
+                    _httpClient.GetAsync($"api/answers/{id}"), "GetAnswer");
         }
 
-        public async Task<AnswerDTO?> AddAnswer(AnswerDTO item, string? include = null)
+        public async Task<ApiResponse<AnswerAdminDTO>> AddAnswer(AnswerAdminDTO item, string? include = null)
         {
-            try
+            if (include != null)
             {
-                using var response = await _httpClient.PostAsJsonAsync($"api/answers?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<AnswerDTO>();
+                var url = QueryHelpers.AddQueryString("api/answers", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<AnswerAdminDTO>(() =>
+                    _httpClient.PostAsJsonAsync(url, item), "AddAnswer");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<AnswerAdminDTO>(() =>
+                    _httpClient.PostAsJsonAsync("api/answers", item), "AddAnswer");
         }
 
-        public async Task<List<AnswerDTO>?> AddRangeAnswer(IEnumerable<AnswerDTO> items, string? include = null)
+        public async Task<ApiResponse<List<AnswerAdminDTO>>> AddRangeAnswer(IEnumerable<AnswerAdminDTO> items, string? include = null)
         {
-            try
+            if (include != null)
             {
-                using var response = await _httpClient.PostAsJsonAsync($"api/answers/batch?include={include}", items);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<AnswerDTO>>();
+                var url = QueryHelpers.AddQueryString("api/answers/batch", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<List<AnswerAdminDTO>>(() =>
+                    _httpClient.PostAsJsonAsync(url, items), "AddRangeAnswer");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
+            return await _responseHandler.ExecuteHttpAsync<List<AnswerAdminDTO>>(() =>
+                    _httpClient.PostAsJsonAsync("api/answers/batch", items), "AddRangeAnswer");
         }
 
-        public async Task<AnswerDTO?> UpdateAnswer(AnswerDTO item, string? include = null)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync($"api/answers?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<AnswerDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+        public async Task<ApiResponse<Unit>> UpdateAnswer(AnswerAdminDTO item)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                _httpClient.PutAsJsonAsync($"api/answers/{item.Id}", item), "UpdateAnswer");
 
-        public async Task DeleteAnswer(int id)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync("api/answers");
-                response.EnsureSuccessStatusCode();
-                await _httpClient.DeleteAsync($"api/answers/{id}");
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-            }
-        }
+        public async Task<ApiResponse<Unit>> DeleteAnswer(int id)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                _httpClient.DeleteAsync($"api/answers/{id}"), "DeleteAnswer");
     }
 }
