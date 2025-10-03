@@ -25,7 +25,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                         IsCorrect = a.IsCorrect
                     })] : [],
                 TopicQuestionItems = entity.TopicQuestion != null ? [.. entity.TopicQuestion
-                    .Select(gu => new TopicQuestionCreateDTO { TopicId = gu.TopicId })] : []
+                    .Select(gu => new TopicQuestionDTO { TopicId = gu.TopicId })] : []
             };
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="items">TopicQuestionCreateDTO</param>
         /// <returns>Список TopicQuestion</returns>
-        private static List<TopicQuestion> TopicQuestionListConverter(List<TopicQuestionCreateDTO> items)
+        private static List<TopicQuestion> TopicQuestionListConverter(List<TopicQuestionDTO> items)
         {
             List<TopicQuestion> topicQuestion = [];
             foreach (var item in items!)
