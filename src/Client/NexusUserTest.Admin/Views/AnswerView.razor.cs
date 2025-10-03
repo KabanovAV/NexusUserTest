@@ -9,12 +9,15 @@ namespace NexusUserTest.Admin.Views
     {
         [Inject]
         public IAPIService? ServiceAPI { get; set; }
+        [Inject]
+        public INexusNotificationService? NotificationService { get; set; }
+
         [Parameter]
-        public List<AnswerDTO>? Items { get; set; }
+        public List<AnswerAdminDTO>? Items { get; set; }
         [Parameter]
         public int QuestionId { get; set; }
 
-        private NexusTableGrid<AnswerDTO>? NexusTable;
+        private NexusTableGrid<AnswerAdminDTO>? NexusTable;
         private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Multiple;
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
@@ -23,7 +26,7 @@ namespace NexusUserTest.Admin.Views
         public bool IsSaveCancel => NexusTable.InsertedItems.Count == 0 && NexusTable.EditedItems.Count == 0;
 
         public async Task Insert()
-            => await NexusTable!.InsertRow(new AnswerDTO { QuestionId = QuestionId });
+            => await NexusTable!.InsertRow(new AnswerAdminDTO { QuestionId = QuestionId });
 
         public void Edit()
         {
@@ -33,9 +36,7 @@ namespace NexusUserTest.Admin.Views
                     && SelectMode == NexusTableGridSelectionMode.Multiple)
                 {
                     foreach (var selectRow in NexusTable.SelectedRows)
-                    {
                         NexusTable.EditRow(selectRow);
-                    }
                 }
                 else
                 {
@@ -65,36 +66,42 @@ namespace NexusUserTest.Admin.Views
             await NexusTable.Reload();
         }
 
-        public async Task Add(AnswerDTO item)
+        public async Task Add(AnswerAdminDTO item)
         {
-            var data = await ServiceAPI!.AnswerService.AddAnswer(item);
-            if (data != null)
+            var response = await ServiceAPI!.AnswerService.AddAnswer(item);
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                NexusTable!.Data.Add(data);
-                await NexusTable.SelectRow(data);
+                NexusTable!.Data.Add(response.Data!);
+                await NexusTable.SelectRow(response.Data!);
             }
         }
 
-        public async Task AddRange(List<AnswerDTO> item)
+        public async Task AddRange(List<AnswerAdminDTO> item)
         {
-            var data = await ServiceAPI!.AnswerService.AddRangeAnswer(item);
-            if (data != null)
+            var response = await ServiceAPI!.AnswerService.AddRangeAnswer(item);
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                NexusTable!.Data.AddRange(data);
-                await NexusTable.SelectRow(data.Last());
+                NexusTable!.Data.AddRange(response.Data!);
+                await NexusTable.SelectRow(response.Data!.Last());
             }
         }
 
-        public async Task Update(AnswerDTO item)
+        public async Task Update(AnswerAdminDTO item)
         {
-            var data = await ServiceAPI!.AnswerService.UpdateAnswer(item);
-            if (data != null)
+            var response = await ServiceAPI!.AnswerService.UpdateAnswer(item);
+            if (!response.Success)
+                NotificationService!.ShowError($"{response.Error}", "Ошибка");
+            else
             {
-                var index = NexusTable!.Data.FindIndex(s => s.Id == data.Id);
+                var index = NexusTable!.Data.FindIndex(s => s.Id == item.Id);
                 if (index >= 0)
-                    NexusTable.Data[index] = data;
-                await NexusTable.SelectRow(data);
-                await NexusTable.CancelEditRow(data);
+                    NexusTable.Data[index] = item;
+                await NexusTable.SelectRow(item);
+                await NexusTable.CancelEditRow(item);
             }
         }
 
@@ -103,8 +110,11 @@ namespace NexusUserTest.Admin.Views
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
             {
                 var data = NexusTable.SelectedRows.First();
-                await ServiceAPI!.AnswerService.DeleteAnswer(data.Id);
-                NexusTable.RemoveRow(data);
+                var response = await ServiceAPI!.AnswerService.DeleteAnswer(data.Id);
+                if (!response.Success)
+                    NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                else
+                    NexusTable.RemoveRow(data);
             }
         }
 
