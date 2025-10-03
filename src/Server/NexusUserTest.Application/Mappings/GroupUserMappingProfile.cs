@@ -52,18 +52,6 @@ namespace SibCCSPETest.WebApi.MappingProfiles
             => [.. entities.Where(e => e != null).Select(e => e.ToInfoAdminDto())];
 
         /// <summary>
-        /// Маппинг обновления обьекта GroupUser
-        /// </summary>
-        /// <param name="entity">Обьект GroupUser</param>
-        /// <param name="dto">GroupUserTestDTO</param>
-        public static void UpdateFromInfoDto(this GroupUser entity, GroupUserInfoAdminDTO dto)
-        {
-            if (dto == null) return;
-            if (entity.Status != dto.Status)
-                entity.Status = dto.Status;
-        }
-
-        /// <summary>
         /// Маппинг из обьекта GroupUser в GroupUserTestDTO
         /// </summary>
         /// <param name="entity">Обьект GroupUser</param>
@@ -110,12 +98,12 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="entity">Обьект GroupUser</param>
         /// <param name="dto">GroupUserTestDTO</param>
-        public static void UpdateFromTestDto(this GroupUser entity, GroupUserTestDTO dto)
+        public static void UpdateFromDto(this GroupUser entity, GroupUserUpdateDTO dto)
         {
             if (dto == null) return;
-            if (entity.Status != dto.Status)
+            if (dto.Status != 0 && entity.Status != dto.Status)
                 entity.Status = dto.Status;
-            if (entity.EndTest != dto.EndTest)
+            if (entity.EndTest == null)
                 entity.EndTest = dto.EndTest;
         }
     }
