@@ -10,7 +10,7 @@ namespace NexusUserTest.Domain.Entities
         public int GroupId { get; set; }
         public int UserId { get; set; }
         public int Status { get; set; } // 1 Недопущен; 2 Допущен; 3 Пройден
-        public DateTime EndTest { get; set; }
+        public DateTime? EndTest { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ChangedDate { get; set; }
 
