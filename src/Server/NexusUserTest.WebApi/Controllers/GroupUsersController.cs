@@ -37,30 +37,17 @@ namespace SibCCSPETest.WebApi.Controllers
             return Ok(groupUser.ToTestDto());
         }
 
-        [HttpPut("info")]
-        public async Task<ActionResult<GroupUserInfoAdminDTO>> UpdateInfo(GroupUserInfoAdminDTO groupUserDTO, string? include = null)
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Update(int id, GroupUserUpdateDTO groupUserUpdateDTO)
         {
-            if (groupUserDTO == null)
+            if (groupUserUpdateDTO == null)
                 return BadRequest("Данные для обновления группыльзователя пустые.");
-            var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == groupUserDTO.Id, include);
+            var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == id);
             if (groupUser == null)
-                return NotFound(new { Message = $"Группа пользователя с id {groupUserDTO.Id} не найдена." });
-            groupUser.UpdateFromInfoDto(groupUserDTO);
-            await _service.GroupUserRepository.UpdateGroupUserAsync(groupUser, include);
-            return Ok(groupUser.ToInfoAdminDto());
-        }
-
-        [HttpPut("test")]
-        public async Task<ActionResult<GroupUserTestDTO>> UpdateTest(GroupUserTestDTO groupUserDTO, string? include = null)
-        {
-            if (groupUserDTO == null)
-                return BadRequest("Данные для обновления группыльзователя пустые.");
-            var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == groupUserDTO.Id, include);
-            if (groupUser == null)
-                return NotFound(new { Message = $"Группа пользователя с id {groupUserDTO.Id} не найдена." });
-            groupUser.UpdateFromTestDto(groupUserDTO);
-            await _service.GroupUserRepository.UpdateGroupUserAsync(groupUser, include);
-            return Ok(groupUser.ToTestDto());
+                return NotFound(new { Message = $"Группа пользователя с id {id} не найдена." });
+            groupUser.UpdateFromDto(groupUserUpdateDTO);
+            await _service.GroupUserRepository.UpdateGroupUserAsync(groupUser);
+            return NoContent();
         }
     }
 }
