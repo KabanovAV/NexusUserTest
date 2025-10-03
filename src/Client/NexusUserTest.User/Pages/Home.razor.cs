@@ -45,25 +45,32 @@ namespace NexusUserTest.User.Pages
 
             if (UserTest.Data!.Results != null && UserTest.Data.Results.Count == 0)
             {
-                SecondsRemain = (int)UserTest.Data!.Timer.TotalSeconds;
-                UserTest.Data.EndTest = DateTime.Now + UserTest.Data.Timer;
-                await ServiceAPI!.GroupUserService.UpdateGroupUser(UserTest.Data.Id, new() { EndTest = UserTest.Data.EndTest });
-
-                Questions = await ServiceAPI!.TopicQuestionService.GetAllQuestionsBySpecializationId(UserTest.Data.SpecializationId, "Topics.TopicQuestion.Question.Answers");
-                Shuffle(Questions);
-
-                foreach (var question in Questions.GetRange(0, UserTest.Data.CountOfQuestion))
+                var response = await ServiceAPI!.TopicQuestionService.GetAllQuestionsBySpecializationId(UserTest.Data.SpecializationId, "Topics.TopicQuestion.Question.Answers");
+                if (!response.Success)
+                    NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                else
                 {
-                    Shuffle(question.AnswerItems!);
-                    var result = new ResultTestDTO
+                    Questions = response.Data;
+                    Shuffle(Questions!);
+
+                    foreach (var question in Questions!.GetRange(0, UserTest.Data.CountOfQuestion))
                     {
-                        GroupUserId = groupUserId,
-                        Question = question,
-                        AnswerId = null
-                    };
-                    TestQuestions.Add(result);
-                }
-                TestQuestions = await ServiceAPI!.ResultService.AddRangeTestResultAsync(TestQuestions, "Question.Answers");
+                        Shuffle(question.AnswerItems!);
+                        var result = new ResultTestDTO
+                        {
+                            GroupUserId = groupUserId,
+                            Question = question,
+                            AnswerId = null
+                        };
+                        TestQuestions.Add(result);
+                    }
+                    TestQuestions = await ServiceAPI!.ResultService.AddRangeTestResultAsync(TestQuestions, "Question.Answers");
+
+                    SecondsRemain = (int)UserTest.Data!.Timer.TotalSeconds;
+                    UserTest.Data.EndTest = DateTime.Now + UserTest.Data.Timer;
+                    await ServiceAPI!.GroupUserService.UpdateGroupUser(UserTest.Data.Id, new() { EndTest = UserTest.Data.EndTest });
+                    await StartTest();
+                }                
             }
             else
             {
@@ -71,7 +78,12 @@ namespace NexusUserTest.User.Pages
                 SecondsRemain = (int)interval.TotalSeconds;
                 foreach (var result in UserTest.Data.Results!)
                     TestQuestions.Add(result);
-            }
+                await StartTest();
+            }            
+        }
+
+        private async Task StartTest()
+        {
             IsTesting = true;
             await InvokeAsync(StateHasChanged);
             Timer.Start(SecondsRemain);
