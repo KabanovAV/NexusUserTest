@@ -16,14 +16,14 @@ namespace NexusUserTest.User.Pages
         public INexusDialogService? DialogService { get; set; }
 
         private ApiResponse<UserInfoTestDTO>? UserInfo;
-        private GroupUserTestDTO? UserTest;
+        private ApiResponse<GroupUserTestDTO>? UserTest;
         private List<QuestionTestDTO>? Questions;
         private List<ResultTestDTO>? TestQuestions;
 
         private Countdown Timer = default!;
         private int SecondsRemain = 0;
         private int CurrentQuestionIndex = 0;
-        private int TestProgressPercent => (int)((double)(TestQuestions.Count(t => t.AnswerId != null)) / TestQuestions!.Count * 100);
+        private int TestProgressPercent => (int)((double)(TestQuestions!.Count(t => t.AnswerId != null)) / TestQuestions!.Count * 100);
         private bool IsTesting;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -43,16 +43,16 @@ namespace NexusUserTest.User.Pages
             UserTest = await ServiceAPI!.GroupUserService.GetTestGroupUser(groupUserId, "Group.Setting,Results.Question.Answers");
             TestQuestions = [];
 
-            if (UserTest!.Results != null && UserTest!.Results.Count == 0)
+            if (UserTest.Data!.Results != null && UserTest.Data.Results.Count == 0)
             {
-                SecondsRemain = (int)UserTest!.Timer.TotalSeconds;
-                UserTest.EndTest = DateTime.Now + UserTest!.Timer;
-                await ServiceAPI!.GroupUserService.UpdateTestGroupUser(UserTest);
+                SecondsRemain = (int)UserTest.Data!.Timer.TotalSeconds;
+                UserTest.Data.EndTest = DateTime.Now + UserTest.Data.Timer;
+                await ServiceAPI!.GroupUserService.UpdateGroupUser(UserTest.Data.Id, new() { EndTest = UserTest.Data.EndTest });
 
-                Questions = await ServiceAPI!.TopicQuestionService.GetAllQuestionsBySpecializationId(UserTest.SpecializationId, "Topics.TopicQuestion.Question.Answers");
+                Questions = await ServiceAPI!.TopicQuestionService.GetAllQuestionsBySpecializationId(UserTest.Data.SpecializationId, "Topics.TopicQuestion.Question.Answers");
                 Shuffle(Questions);
 
-                foreach (var question in Questions.GetRange(0, UserTest.CountOfQuestion))
+                foreach (var question in Questions.GetRange(0, UserTest.Data.CountOfQuestion))
                 {
                     Shuffle(question.AnswerItems!);
                     var result = new ResultTestDTO
@@ -67,9 +67,9 @@ namespace NexusUserTest.User.Pages
             }
             else
             {
-                TimeSpan interval = UserTest!.EndTest - DateTime.Now;
+                TimeSpan interval = UserTest.Data.EndTest!.Value - DateTime.Now;
                 SecondsRemain = (int)interval.TotalSeconds;
-                foreach (var result in UserTest.Results!)
+                foreach (var result in UserTest.Data.Results!)
                     TestQuestions.Add(result);
             }
             IsTesting = true;
@@ -141,12 +141,12 @@ namespace NexusUserTest.User.Pages
 
         private async Task SaveResults()
         {
-            UserTest!.Status = 3;
-            await ServiceAPI!.GroupUserService.UpdateTestGroupUser(UserTest);
+            UserTest!.Data!.Status = 3;
+            await ServiceAPI!.GroupUserService.UpdateGroupUser(UserTest.Data.Id, new() { Status = 3 });
 
-            var group = UserInfo!.Data.GroupUsers!.First(u => u.Id == UserTest.Id);
+            var group = UserInfo!.Data!.GroupUsers!.First(u => u.Id == UserTest.Data.Id);
             group.Status = 3;
-            group.Results = await ServiceAPI!.ResultService.GetAllTestInfoResultsync(UserTest.Id, "Answer");
+            group.Results = await ServiceAPI!.ResultService.GetAllTestInfoResultsync(UserTest.Data.Id, "Answer");
 
             UserTest = null;
             IsTesting = false;

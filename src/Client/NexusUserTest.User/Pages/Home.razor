@@ -5,7 +5,7 @@
 
 @if (UserInfo != null && UserInfo.Success)
 {
-    <h4>Пользователь - @UserInfo.Data.FullName</h4>
+    <h4>Пользователь - @UserInfo.Data!.FullName</h4>
 
     <div style="display:@(IsTesting ? "none" : "");">
         <div class="card mt-2">
@@ -14,7 +14,7 @@
             </div>
             <div class="card-body p-2">
                 <div class="d-flex flex-row">
-                    @foreach (var group in UserInfo.Data.GroupUsers)
+                    @foreach (var group in UserInfo.Data!.GroupUsers)
                     {
                         if (group.Status == 2)
                         {
@@ -62,17 +62,17 @@
                             <NexusTableGridColumn Title="Наименование" Property="gu => gu.GroupTitle" />
                             <NexusTableGridColumn Title="Кол-во вопросов">
                                 <CellTemplate>
-                                    @(context.Results.Count)
+                                    @(context.Results!.Count)
                                 </CellTemplate>
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="Кол-во пр. ответов">
                                 <CellTemplate>
-                                    @(context.Results.Count(r => r.IsCorrect))
+                                    @(context.Results!.Count(r => r.IsCorrect))
                                 </CellTemplate>
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="% пр. ответов">
                                 <CellTemplate>
-                                    @((context.Results.Count(r => r.IsCorrect) * 100) / context.Results.Count)
+                                    @((context.Results!.Count(r => r.IsCorrect) * 100) / context.Results.Count)
                                 </CellTemplate>
                             </NexusTableGridColumn>
                         </Columns>

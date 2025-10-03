@@ -17,9 +17,9 @@
                                     @(GroupInfo.User.IndexOf(context) + 1)
                                 </CellTemplate>
                             </NexusTableGridColumn>
-                            <NexusTableGridColumn Title="ФИО" Property="u => u.User.FullName" />
-                            <NexusTableGridColumn Title="Логин" Property="u => u.User.Login" />
-                            <NexusTableGridColumn Title="Организация" Property="u => u.User.Organization" />
+                            <NexusTableGridColumn Title="ФИО" Property="u => u.User!.FullName" />
+                            <NexusTableGridColumn Title="Логин" Property="u => u.User!.Login" />
+                            <NexusTableGridColumn Title="Организация" Property="u => u.User!.Organization" />
                             <NexusTableGridColumn Title="Статус" Property="g => g.Status">
                                 <CellTemplate>
                                     <select class="form-select border border-black" value="@context.Status" @onchange="@((arg) => ChangeStatus(context, arg))">
@@ -46,20 +46,20 @@
                                     @(GroupInfo.User.IndexOf(context) + 1)
                                 </CellTemplate>
                             </NexusTableGridColumn>
-                            <NexusTableGridColumn Title="ФИО" Property="u => u.User.FullName" />
+                            <NexusTableGridColumn Title="ФИО" Property="u => u.User!.FullName" />
                             <NexusTableGridColumn Title="Кол-во вопросов">
                                 <CellTemplate>
-                                    @(context.Results.Count)
+                                    @(context.Results!.Count)
                                 </CellTemplate>
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="Кол-во пр. ответов">
                                 <CellTemplate>
-                                    @(context.Results.Count(r => r.Question.AnswerItems.First(a => a.Id == r.AnswerId).IsCorrect))
+                                    @(context.Results!.Count(r => r.Question!.AnswerItems!.First(a => a.Id == r.AnswerId).IsCorrect))
                                 </CellTemplate>
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="% пр. ответов">
                                 <CellTemplate>
-                                    @(context.Results.Count != 0 ? (context.Results.Count(r => r.Question.AnswerItems.First(a => a.Id == r.AnswerId).IsCorrect) * 100) / context.Results.Count : 0)
+                                    @(context.Results!.Count != 0 ? (context.Results.Count(r => r.Question!.AnswerItems!.First(a => a.Id == r.AnswerId).IsCorrect) * 100) / context.Results.Count : 0)
                                 </CellTemplate>
                             </NexusTableGridColumn>
                         </Columns>

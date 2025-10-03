@@ -38,28 +38,25 @@ namespace NexusUserTest.Admin.Views
                 if (result?.Canceled == false)
                 {
                     await ServiceAPI!.ResultService.DeleteInfoResult(user.Id);
-                    GroupInfo.User.First(u => u == user).Results.Clear();
+                    GroupInfo!.User.First(u => u == user).Results!.Clear();
                     await InvokeAsync(StateHasChanged);
-                }                    
+                }
             }
-            user.Status = status;
-            await ServiceAPI!.GroupUserService.UpdateInfoGroupUser(user, "User");
+            GroupUserUpdateDTO userUpdate = new() { Status = status };
+            await ServiceAPI!.GroupUserService.UpdateGroupUser(user.Id, userUpdate);
         }
 
-        private async void ChangeTimer()
-        {
-            GroupInfo.Setting.Timer = new TimeSpan(hour, minute, 0);
-        }
+        private void ChangeTimer() => GroupInfo!.Setting.Timer = new TimeSpan(hour, minute, 0);
 
         private async void SubmitSetting()
         {
-            if (GroupInfo.Setting.Id == 0)
+            if (GroupInfo!.Setting.Id == 0)
             {
                 GroupInfo.Setting.GroupId = GroupInfo.Id;
-                GroupInfo.Setting = await ServiceAPI.SettingService.AddSetting(GroupInfo.Setting);
+                GroupInfo.Setting = await ServiceAPI!.SettingService.AddSetting(GroupInfo.Setting);
             }
             else
-                await ServiceAPI.SettingService.UpdateSetting(GroupInfo.Setting);
+                await ServiceAPI!.SettingService.UpdateSetting(GroupInfo.Setting);
         }
     }
 }
