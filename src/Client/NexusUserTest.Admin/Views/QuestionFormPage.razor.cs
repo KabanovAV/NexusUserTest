@@ -38,11 +38,11 @@ namespace NexusUserTest.Admin.Views
         }
         private void CheckboxChange(int args)
         {
-            if (Data.TopicQuestionItems!.FirstOrDefault(x => x.TopicId == args) is TopicQuestionCreateDTO topic && topic != null)
+            if (Data.TopicQuestionItems!.FirstOrDefault(x => x.TopicId == args) is TopicQuestionDTO topic && topic != null)
                 Data.TopicQuestionItems!.Remove(topic);
             else
             {
-                var topicQuestion = new TopicQuestionCreateDTO { TopicId = args };
+                var topicQuestion = new TopicQuestionDTO { TopicId = args };
                 Data.TopicQuestionItems!.Add(topicQuestion);
             }
         }
