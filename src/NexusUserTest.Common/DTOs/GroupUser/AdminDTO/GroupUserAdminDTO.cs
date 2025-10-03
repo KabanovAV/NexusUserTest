@@ -1,6 +1,6 @@
 ﻿namespace NexusUserTest.Common
 {
-    public class GroupUserCreateDTO
+    public class GroupUserAdminDTO
     {
         public int GroupId { get; set; }
         public int Status { get; set; }
