@@ -1,76 +1,52 @@
-﻿using NexusUserTest.Common;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using NexusUserTest.Common;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services
 {
     public interface ISettingAPIService
     {
-        Task<SettingDTO?> GetSetting(int id, string? include = null);
-        Task<SettingDTO?> AddSetting(SettingDTO item, string? include = null);
-        Task<SettingDTO?> UpdateSetting(SettingDTO item, string? include = null);
-        Task DeleteSetting(int id);
+        Task<ApiResponse<SettingDTO>> GetSetting(int id, string? include = null);
+        Task<ApiResponse<SettingDTO>> AddSetting(SettingDTO item, string? include = null);
+        Task<ApiResponse<Unit>> UpdateSetting(SettingDTO item);
+        Task<ApiResponse<Unit>> DeleteSetting(int id);
     }
 
-    public class SettingAPIService(IHttpClientFactory httpClienFactory) : ISettingAPIService
+    public class SettingAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : ISettingAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<SettingDTO?> GetSetting(int id, string? include = null)
+        public async Task<ApiResponse<SettingDTO>> GetSetting(int id, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/settings/{id}?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<SettingDTO>();
+                var url = QueryHelpers.AddQueryString($"api/settings/{id}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<SettingDTO>(() =>
+                    _httpClient.GetAsync(url), "GetSetting");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<SettingDTO>(() =>
+                    _httpClient.GetAsync($"api/settings/{id}"), "GetSetting");
         }
 
-        public async Task<SettingDTO?> AddSetting(SettingDTO item, string? include = null)
+        public async Task<ApiResponse<SettingDTO>> AddSetting(SettingDTO item, string? include = null)
         {
-            try
+            if (include != null)
             {
-                using var response = await _httpClient.PostAsJsonAsync($"api/settings?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<SettingDTO>();
+                var url = QueryHelpers.AddQueryString("api/settings", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<SettingDTO>(() =>
+                    _httpClient.PostAsJsonAsync(url, item), "AddSetting");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<SettingDTO>(() =>
+                    _httpClient.PostAsJsonAsync("api/settings", item), "AddSetting");
         }
 
-        public async Task<SettingDTO?> UpdateSetting(SettingDTO item, string? include = null)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync($"api/settings?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<SettingDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+        public async Task<ApiResponse<Unit>> UpdateSetting(SettingDTO item)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.PutAsJsonAsync($"api/settings/{item.Id}", item), "UpdateSetting");
 
-        public async Task DeleteSetting(int id)
-        {
-            try
-            {
-                var response = await _httpClient.DeleteAsync($"api/settings/{id}");
-                response.EnsureSuccessStatusCode();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-            }
-        }
+        public async Task<ApiResponse<Unit>> DeleteSetting(int id)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.DeleteAsync($"api/settings/{id}"), "DeleteSetting");
     }
 }
