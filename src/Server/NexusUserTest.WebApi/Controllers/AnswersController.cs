@@ -12,54 +12,54 @@ namespace NexusUserTest.WebApi
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AnswerDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> GetAll(string? include = null)
         {
             var answers = await _service.AnswerRepository.GetAllAnswerAsync(includeProperties: include);
-            return Ok(answers.ToAdminDto());
+            return Ok(answers.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AnswerDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<AnswerAdminDTO>> Get(int id, string? include = null)
         {
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id, include);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {id} не найден." });
-            return Ok(answer.ToAdminDto());
+            return Ok(answer.ToDto());
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnswerDTO>> Add(AnswerCreateDTO answerCreateDTO, string? include = null)
+        public async Task<ActionResult<AnswerAdminDTO>> Add(AnswerAdminDTO answerCreateDTO, string? include = null)
         {
             if (answerCreateDTO == null)
                 return BadRequest("Данные для добавления ответа пустые.");
             var answer = answerCreateDTO.ToEntity();
             await _service.AnswerRepository.AddAnswerAsync(answer!, include);
-            var answerDTO = answer!.ToAdminDto();
+            var answerDTO = answer!.ToDto();
             return CreatedAtAction(nameof(Get), new { id = answerDTO!.Id }, answerDTO);
         }
 
-        [HttpPost("Batch")]
-        public async Task<ActionResult<IEnumerable<AnswerDTO>>> Add(IEnumerable<AnswerCreateDTO> answerCreateDTOs, string? include = null)
+        [HttpPost("batch")]
+        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> Add(IEnumerable<AnswerAdminDTO> answerCreateDTOs, string? include = null)
         {
             if (answerCreateDTOs == null)
                 return BadRequest("Данные для добавления ответов пустые.");
             var answers = answerCreateDTOs.ToEntity();
             await _service.AnswerRepository.AddRangeAnswerAsync([.. answers], include);
-            var answerDTOs = answers.ToAdminDto();
+            var answerDTOs = answers.ToDto();
             return CreatedAtAction(nameof(GetAll), answerDTOs);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<AnswerDTO>> Update(AnswerDTO answerDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, AnswerAdminDTO answerDTO)
         {
             if (answerDTO == null)
                 return BadRequest("Данные для обновления ответа пустые.");
-            var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == answerDTO.Id, include);
+            var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {answerDTO.Id} не найден." });
             answer.UpdateFromDto(answerDTO);
-            await _service.AnswerRepository.UpdateAnswerAsync(answer, include);
-            return Ok(answer.ToAdminDto());
+            await _service.AnswerRepository.UpdateAnswerAsync(answer);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
