@@ -35,11 +35,11 @@ namespace NexusUserTest.Admin.Views
 
         private void CheckboxChange(int args)
         {
-            if (Data.GroupUserItems!.FirstOrDefault(x => x.GroupId == args) is GroupUserCreateDTO group && group != null)
+            if (Data.GroupUserItems!.FirstOrDefault(x => x.GroupId == args) is GroupUserAdminDTO group && group != null)
                 Data.GroupUserItems!.Remove(group);
             else
             {
-                var groupUser = new GroupUserCreateDTO { GroupId = args, Status = 1 };
+                var groupUser = new GroupUserAdminDTO { GroupId = args, Status = 1 };
                 Data.GroupUserItems!.Add(groupUser);
             }
         }
