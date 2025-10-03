@@ -1,30 +1,28 @@
-﻿using NexusUserTest.Common;
-using System.Net.Http.Json;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using NexusUserTest.Common;
 
 namespace NexusUserTest.Shared.Services
 {
     public interface ITopicQuestionAPIService
     {
-        Task<List<QuestionTestDTO>> GetAllQuestionsBySpecializationId(int specializationId, string? include = null);
+        Task<ApiResponse<List<QuestionTestDTO>>> GetAllQuestionsBySpecializationId(int specializationId, string? include = null);
     }
 
-    public class TopicQuestionAPIService(IHttpClientFactory httpClienFactory) : ITopicQuestionAPIService
+    public class TopicQuestionAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : ITopicQuestionAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<List<QuestionTestDTO>> GetAllQuestionsBySpecializationId(int specializationId, string? include = null)
+        public async Task<ApiResponse<List<QuestionTestDTO>>> GetAllQuestionsBySpecializationId(int specializationId, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/topicquestions/specialization/{specializationId}?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<QuestionTestDTO>>() ?? [];
+                var url = QueryHelpers.AddQueryString($"api/topicquestions/specialization/{specializationId}", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<List<QuestionTestDTO>>(() =>
+                    _httpClient.GetAsync(url), "GetAllQuestionsBySpecializationId");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
+            return await _responseHandler.ExecuteHttpAsync<List<QuestionTestDTO>>(() =>
+                    _httpClient.GetAsync($"api/topicquestions/specialization/{specializationId}"), "GetAllQuestionsBySpecializationId");
         }
     }
 }
