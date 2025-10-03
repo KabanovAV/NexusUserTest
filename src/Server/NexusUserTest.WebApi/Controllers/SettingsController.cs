@@ -18,7 +18,7 @@ namespace SibCCSPETest.WebApi.Controllers
             var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id, include);
             if (setting == null)
                 return NotFound(new { Message = $"Настройка с id {id} не найдена." });
-            return Ok(setting.ToAdminDto());
+            return Ok(setting.ToDto());
         }
 
         [HttpPost]
@@ -28,25 +28,25 @@ namespace SibCCSPETest.WebApi.Controllers
                 return BadRequest("Данные для добавления настройки пустые.");
             var setting = settingCreateDTO.ToEntity();
             await _service.SettingRepository.AddSettingAsync(setting!, include);
-            var settingDTO = setting!.ToAdminDto();
+            var settingDTO = setting!.ToDto();
             return CreatedAtAction(nameof(Get), new { id = settingDTO!.Id }, settingDTO);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<SettingDTO>> Update(SettingDTO settingDTO, string? include = null)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, SettingDTO settingDTO)
         {
             if (settingDTO == null)
                 return BadRequest("Данные для обновления настройки пустые.");
-            var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == settingDTO.Id, include);
+            var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id);
             if (setting == null)
                 return NotFound(new { Message = $"Настройка с id {settingDTO.Id} не найдена." });
             setting.UpdateFromDto(settingDTO);
-            await _service.SettingRepository.UpdateSettingAsync(setting, include);
-            return Ok(setting.ToAdminDto());
+            await _service.SettingRepository.UpdateSettingAsync(setting);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<bool>> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id);
             if (setting == null)
