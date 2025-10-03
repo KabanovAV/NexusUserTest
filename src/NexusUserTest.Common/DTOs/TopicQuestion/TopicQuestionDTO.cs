@@ -1,6 +1,6 @@
 ﻿namespace NexusUserTest.Common
 {
-    public class TopicQuestionCreateDTO
+    public class TopicQuestionDTO
     {
         public int TopicId { get; set; }
     }
