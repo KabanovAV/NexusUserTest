@@ -16,7 +16,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                 Id = entity.Id,
                 Title = entity.Title,
                 AnswerItems = entity.Answers != null ? [.. entity.Answers
-                    .Select(a => new AnswerDTO
+                    .Select(a => new AnswerAdminDTO
                     {
                         Id = a.Id,
                         Title = a.Title,
@@ -81,7 +81,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// </summary>
         /// <param name="items">AnswerDTO</param>
         /// <returns>Список Answer</returns>
-        private static List<Answer> AnswerListConverter(List<AnswerDTO> items)
+        private static List<Answer> AnswerListConverter(List<AnswerAdminDTO> items)
         {
             List<Answer> answer = [];
             foreach (var item in items!)
