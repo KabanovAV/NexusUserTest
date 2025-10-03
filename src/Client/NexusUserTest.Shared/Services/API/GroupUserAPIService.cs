@@ -1,94 +1,60 @@
-﻿using NexusUserTest.Common;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using NexusUserTest.Common;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services
 {
     public interface IGroupUserAPIService
     {
-        Task<List<GroupUserInfoAdminDTO>> GetAllInfoUsersByGroupId(int groupId, string? include = null);        
-        Task<GroupUserInfoAdminDTO?> GetInfoGroupUser(int id, string? include = null);
-        Task<GroupUserTestDTO?> GetTestGroupUser(int id, string? include = null);
-        Task<GroupUserInfoAdminDTO?> UpdateInfoGroupUser(GroupUserInfoAdminDTO item, string? include = null);
-        Task<GroupUserTestDTO?> UpdateTestGroupUser(GroupUserTestDTO item, string? include = null);
+        Task<ApiResponse<List<GroupUserInfoAdminDTO>>> GetAllInfoUsersByGroupId(int groupId, string? include = null);
+        Task<ApiResponse<GroupUserInfoAdminDTO>> GetInfoGroupUser(int id, string? include = null);
+        Task<ApiResponse<GroupUserTestDTO>> GetTestGroupUser(int id, string? include = null);
+        Task<ApiResponse<Unit>> UpdateGroupUser(int id, GroupUserUpdateDTO item);
     }
 
-    public class GroupUserAPIService(IHttpClientFactory httpClienFactory) : IGroupUserAPIService
+    public class GroupUserAPIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IGroupUserAPIService
     {
         private readonly HttpClient _httpClient = httpClienFactory.CreateClient("HttpClient");
+        private readonly IApiResponseHandler _responseHandler = responseHandler;
 
-        public async Task<List<GroupUserInfoAdminDTO>> GetAllInfoUsersByGroupId(int groupId, string? include = null)
+        public async Task<ApiResponse<List<GroupUserInfoAdminDTO>>> GetAllInfoUsersByGroupId(int groupId, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/groupusers/group/{groupId}/info?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<List<GroupUserInfoAdminDTO>>() ?? [];
+                var url = QueryHelpers.AddQueryString($"api/groupusers/group/{groupId}/info", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<List<GroupUserInfoAdminDTO>>(() =>
+                    _httpClient.GetAsync(url), "GetAllInfoUsersByGroupId");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return [];
-            }
+            return await _responseHandler.ExecuteHttpAsync<List<GroupUserInfoAdminDTO>>(() =>
+                    _httpClient.GetAsync($"api/groupusers/group/{groupId}/info"), "GetAllInfoUsersByGroupId");
         }
 
-        public async Task<GroupUserInfoAdminDTO?> GetInfoGroupUser(int id, string? include = null)
+        public async Task<ApiResponse<GroupUserInfoAdminDTO>> GetInfoGroupUser(int id, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/groupusers/{id}/info?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupUserInfoAdminDTO>();
+                var url = QueryHelpers.AddQueryString($"api/groupusers/{id}/info", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<GroupUserInfoAdminDTO>(() =>
+                    _httpClient.GetAsync(url), "GetInfoGroupUser");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<GroupUserInfoAdminDTO>(() =>
+                    _httpClient.GetAsync($"api/groupusers/{id}/info"), "GetInfoGroupUser");
         }
 
-        public async Task<GroupUserTestDTO?> GetTestGroupUser(int id, string? include = null)
+        public async Task<ApiResponse<GroupUserTestDTO>> GetTestGroupUser(int id, string? include = null)
         {
-            try
+            if (include != null)
             {
-                var response = await _httpClient.GetAsync($"api/groupusers/{id}/test?include={include}");
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupUserTestDTO>();
+                var url = QueryHelpers.AddQueryString($"api/groupusers/{id}/test", "include", include);
+                return await _responseHandler.ExecuteHttpAsync<GroupUserTestDTO>(() =>
+                    _httpClient.GetAsync(url), "GetTestGroupUser");
             }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
+            return await _responseHandler.ExecuteHttpAsync<GroupUserTestDTO>(() =>
+                    _httpClient.GetAsync($"api/groupusers/{id}/test"), "GetTestGroupUser");
         }
 
-        public async Task<GroupUserInfoAdminDTO?> UpdateInfoGroupUser(GroupUserInfoAdminDTO item, string? include = null)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync($"api/groupusers/info?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupUserInfoAdminDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task<GroupUserTestDTO?> UpdateTestGroupUser(GroupUserTestDTO item, string? include = null)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync($"api/groupusers/test?include={include}", item);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadFromJsonAsync<GroupUserTestDTO>();
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"API Error: {ex.Message}");
-                return null;
-            }
-        }
+        public async Task<ApiResponse<Unit>> UpdateGroupUser(int id, GroupUserUpdateDTO item)
+            => await _responseHandler.ExecuteHttpAsync(() =>
+                    _httpClient.PatchAsJsonAsync($"api/groupusers/{id}", item), "UpdateGroupUser");
     }
 }
