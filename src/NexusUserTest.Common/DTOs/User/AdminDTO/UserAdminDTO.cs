@@ -8,6 +8,6 @@
         public string Password { get; set; } = string.Empty;
         public string? Organization { get; set; }
         public string? Position { get; set; }
-        public List<GroupUserCreateDTO>? GroupUserItems { get; set; }
+        public List<GroupUserAdminDTO>? GroupUserItems { get; set; }
     }
 }
