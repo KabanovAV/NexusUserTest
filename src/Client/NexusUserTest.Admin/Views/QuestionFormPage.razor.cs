@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using NexusUserTest.Common;
-using NexusUserTest.Shared;
 using NexusUserTest.Shared.NexusBlazor;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -11,15 +10,15 @@ namespace NexusUserTest.Admin.Views
     public partial class QuestionFormPage
     {
         [Parameter, EditorRequired]
-        public QuestionDTO Data { get; set; }
+        public QuestionAdminDTO Data { get; set; }
         [Parameter]
         public IEnumerable<SelectItem> TopicSelects { get; set; }
         [Parameter]
         public EventCallback OnCancel { get; set; }
         [Parameter]
-        public EventCallback<QuestionDTO> OnSave { get; set; }
+        public EventCallback<QuestionAdminDTO> OnSave { get; set; }
 
-        private NexusTableGrid<AnswerDTO>? NexusTable;
+        private NexusTableGrid<AnswerAdminDTO>? NexusTable;
         private NexusTableGridEditMode EditMode = NexusTableGridEditMode.Multiple;
         private NexusTableGridSelectionMode SelectMode = NexusTableGridSelectionMode.Single;
 
@@ -33,7 +32,7 @@ namespace NexusUserTest.Admin.Views
         }
         private string GetDisplayName(string propertyName)
         {
-            var property = typeof(QuestionDTO).GetProperty(propertyName);
+            var property = typeof(QuestionAdminDTO).GetProperty(propertyName);
             var displayAttribute = property?.GetCustomAttribute<DisplayAttribute>();
             return displayAttribute?.Name ?? propertyName;
         }
@@ -48,7 +47,7 @@ namespace NexusUserTest.Admin.Views
             }
         }
         public async Task AddAnwser()
-            => await NexusTable!.InsertRow(new AnswerDTO());
+            => await NexusTable!.InsertRow(new AnswerAdminDTO());
         public void EditAnwser()
         {
             if (NexusTable != null && NexusTable.SelectedRows.Count != 0)
