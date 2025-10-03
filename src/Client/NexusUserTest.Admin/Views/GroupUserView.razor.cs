@@ -10,7 +10,10 @@ namespace NexusUserTest.Admin.Views
         [Inject]
         public IAPIService? ServiceAPI { get; set; }
         [Inject]
+        public INexusNotificationService? NotificationService { get; set; }
+        [Inject]
         public INexusDialogService? DialogService { get; set; }
+
         [Parameter]
         public GroupInfoDetailsDTO? GroupInfo { get; set; }
 
@@ -53,7 +56,11 @@ namespace NexusUserTest.Admin.Views
             if (GroupInfo!.Setting.Id == 0)
             {
                 GroupInfo.Setting.GroupId = GroupInfo.Id;
-                GroupInfo.Setting = await ServiceAPI!.SettingService.AddSetting(GroupInfo.Setting);
+                var response = await ServiceAPI!.SettingService.AddSetting(GroupInfo.Setting);
+                if (!response.Success)
+                    NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                else
+                    GroupInfo.Setting = response.Data!;
             }
             else
                 await ServiceAPI!.SettingService.UpdateSetting(GroupInfo.Setting);
