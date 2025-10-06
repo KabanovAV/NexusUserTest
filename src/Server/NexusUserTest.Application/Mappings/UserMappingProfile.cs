@@ -47,7 +47,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
                         Id = gu.Id,
                         GroupTitle = gu.Group != null ? gu.Group.Title : "",
                         Status = gu.Status,
-                        Results = gu.Results != null ? [.. gu.Results.Select(r => new ResultInfoTestDTO{ IsCorrect = r.Answer.IsCorrect })] : []
+                        Results = gu.Results != null ? [.. gu.Results.Select(r => new ResultInfoTestDTO{ IsCorrect = r.Answer?.IsCorrect == true })] : []
                     })] : []
             };
 
