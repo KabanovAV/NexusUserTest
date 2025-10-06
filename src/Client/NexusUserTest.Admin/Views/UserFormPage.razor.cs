@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using NexusUserTest.Common;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -29,8 +30,8 @@ namespace NexusUserTest.Admin.Views
         private string GetDisplayName(string propertyName)
         {
             var property = typeof(UserAdminDTO).GetProperty(propertyName);
-            var displayAttribute = property?.GetCustomAttribute<DisplayAttribute>();
-            return displayAttribute?.Name ?? propertyName;
+            var displayAttribute = property?.GetCustomAttribute<DisplayNameAttribute>();
+            return displayAttribute?.DisplayName ?? propertyName;
         }
 
         private void CheckboxChange(int args)
