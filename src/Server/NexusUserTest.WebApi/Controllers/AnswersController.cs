@@ -12,14 +12,14 @@ namespace NexusUserTest.WebApi
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> GetAllAnswerAdmin(string? include = null)
         {
             var answers = await _service.AnswerRepository.GetAllAnswerAsync(includeProperties: include);
             return Ok(answers.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AnswerAdminDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<AnswerAdminDTO>> GetAnswerAdmin(int id, string? include = null)
         {
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id, include);
             if (answer == null)
@@ -28,29 +28,29 @@ namespace NexusUserTest.WebApi
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnswerAdminDTO>> Add(AnswerAdminDTO answerCreateDTO, string? include = null)
+        public async Task<ActionResult<AnswerAdminDTO>> AddAnswer(AnswerAdminDTO answerCreateDTO, string? include = null)
         {
             if (answerCreateDTO == null)
                 return BadRequest("Данные для добавления ответа пустые.");
             var answer = answerCreateDTO.ToEntity();
             await _service.AnswerRepository.AddAnswerAsync(answer!, include);
             var answerDTO = answer!.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = answerDTO!.Id }, answerDTO);
+            return CreatedAtAction(nameof(GetAnswerAdmin), new { id = answerDTO!.Id }, answerDTO);
         }
 
         [HttpPost("batch")]
-        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> Add(IEnumerable<AnswerAdminDTO> answerCreateDTOs, string? include = null)
+        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> AddRangeAnswer(IEnumerable<AnswerAdminDTO> answerCreateDTOs, string? include = null)
         {
             if (answerCreateDTOs == null)
                 return BadRequest("Данные для добавления ответов пустые.");
             var answers = answerCreateDTOs.ToEntity();
             await _service.AnswerRepository.AddRangeAnswerAsync([.. answers], include);
             var answerDTOs = answers.ToDto();
-            return CreatedAtAction(nameof(GetAll), answerDTOs);
+            return CreatedAtAction(nameof(GetAllAnswerAdmin), answerDTOs);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, AnswerAdminDTO answerDTO)
+        public async Task<IActionResult> UpdateAnswer(int id, AnswerAdminDTO answerDTO)
         {
             if (answerDTO == null)
                 return BadRequest("Данные для обновления ответа пустые.");
@@ -63,7 +63,7 @@ namespace NexusUserTest.WebApi
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAnswer(int id)
         {
             var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id);
             if (answer == null)

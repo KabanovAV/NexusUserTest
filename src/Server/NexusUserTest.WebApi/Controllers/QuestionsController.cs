@@ -12,14 +12,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<QuestionAdminDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<QuestionAdminDTO>>> GetAllQuestionAdmin(string? include = null)
         {
             var questions = await _service.QuestionRepository.GetAllQuestionAsync(includeProperties: include);
             return Ok(questions.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<QuestionAdminDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<QuestionAdminDTO>> GetQuestionAdmin(int id, string? include = null)
         {
             var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == id, include);
             if (question == null)
@@ -28,18 +28,18 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionAdminDTO>> Add(QuestionAdminDTO questionCreateDTO, string? include = null)
+        public async Task<ActionResult<QuestionAdminDTO>> AddQuestion(QuestionAdminDTO questionCreateDTO, string? include = null)
         {
             if (questionCreateDTO == null)
                 return BadRequest("Данные для добавления вопроса пустые.");
             var question = questionCreateDTO.ToEntity();
             await _service.QuestionRepository.AddQuestionAsync(question!, include);
             var questionDTO = question!.ToAdminDto();
-            return CreatedAtAction(nameof(Get), new { id = questionDTO!.Id }, questionDTO);
+            return CreatedAtAction(nameof(GetQuestionAdmin), new { id = questionDTO!.Id }, questionDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, QuestionAdminDTO questionDTO, string? include = null)
+        public async Task<IActionResult> UpdateQuestion(int id, QuestionAdminDTO questionDTO, string? include = null)
         {
             if (questionDTO == null)
                 return BadRequest("Данные для обновления вопроса пустые.");
@@ -52,7 +52,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteQuestion(int id)
         {
             var question = await _service.QuestionRepository.GetQuestionAsync(q => q.Id == id);
             if (question == null)

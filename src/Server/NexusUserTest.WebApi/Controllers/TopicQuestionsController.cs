@@ -12,7 +12,7 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet("specialization/{id:int}")]
-        public async Task<ActionResult<IEnumerable<QuestionTestDTO>>> GetAll(int id, string? include = null)
+        public async Task<ActionResult<IEnumerable<QuestionTestDTO>>> GetAllQuestionTest(int id, string? include = null)
         {
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             return Ok(specialization.Topics.ToTestDto());

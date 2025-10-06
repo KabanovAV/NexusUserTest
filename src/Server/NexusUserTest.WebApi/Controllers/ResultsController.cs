@@ -11,29 +11,29 @@ namespace NexusUserTest.WebApi
     {
         private readonly IRepoServiceManager _service = service;
 
-        [HttpGet("groupuser/{id:int}/info")]
-        public async Task<ActionResult<IEnumerable<ResultInfoAdminDTO>>> GetInfoAll(int id, string? include = null)
+        [HttpGet("groupuser/{groupUserId:int}/info")]
+        public async Task<ActionResult<IEnumerable<ResultInfoAdminDTO>>> GetAllResultInfoAdmin(int groupUserId, string? include = null)
         {
-            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == id, includeProperties: include);
+            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == groupUserId, includeProperties: include);
             return Ok(results.ToInfoAdminDto());
         }
 
-        [HttpGet("groupuser/{id:int}/test")]
-        public async Task<ActionResult<IEnumerable<ResultTestDTO>>> GetTestAll(int id, string? include = null)
+        [HttpGet("groupuser/{groupUserId:int}/test-info")]
+        public async Task<ActionResult<IEnumerable<ResultInfoTestDTO>>> GetAllResultInfoTest(int groupUserId, string? include = null)
         {
-            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == id, includeProperties: include);
-            return Ok(results.ToTestDto());
-        }
-
-        [HttpGet("info/groupuser/{id:int}/test")]
-        public async Task<ActionResult<IEnumerable<ResultTestDTO>>> GetTestInfoAll(int id, string? include = null)
-        {
-            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == id, includeProperties: include);
+            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == groupUserId, includeProperties: include);
             return Ok(results.ToTestInfoDto());
         }
 
+        [HttpGet("groupuser/{groupUserId:int}/test")]
+        public async Task<ActionResult<IEnumerable<ResultTestDTO>>> GetAllResultTest(int groupUserId, string? include = null)
+        {
+            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == groupUserId, includeProperties: include);
+            return Ok(results.ToTestDto());
+        }        
+
         [HttpGet("{id:int}/test")]
-        public async Task<ActionResult<ResultTestDTO>> GetTest(int id, string? include = null)
+        public async Task<ActionResult<ResultTestDTO>> GetResultTest(int id, string? include = null)
         {
             var result = await _service.ResultRepository.GetResultAsync(a => a.Id == id, include);
             if (result == null)
@@ -42,46 +42,46 @@ namespace NexusUserTest.WebApi
         }
 
         [HttpPost("test")]
-        public async Task<ActionResult<ResultTestDTO>> Add(ResultTestDTO resultTestDTO, string? include = null)
+        public async Task<ActionResult<ResultTestDTO>> AddResult(ResultTestDTO resultTestDTO, string? include = null)
         {
             if (resultTestDTO == null)
                 return BadRequest("Данные для добавления результата пустые.");
             var result = resultTestDTO.ToTestEntity();
             await _service.ResultRepository.AddResultAsync(result, include);
             var resultDTO = result.ToTestDto();
-            return CreatedAtAction(nameof(GetTest), new { id = resultDTO.Id }, resultDTO);
+            return CreatedAtAction(nameof(GetResultTest), new { id = resultDTO.Id }, resultDTO);
         }
 
         [HttpPost("test/batch")]
-        public async Task<ActionResult<List<ResultTestDTO>>> Add(IEnumerable<ResultTestDTO> resultTestDTOs, string? include = null)
+        public async Task<ActionResult<List<ResultTestDTO>>> AddRangeResult(IEnumerable<ResultTestDTO> resultTestDTOs, string? include = null)
         {
             if (resultTestDTOs == null)
                 return BadRequest("Данные для добавления результатов пустые.");
             var results = resultTestDTOs.ToTestEntity();
             await _service.ResultRepository.AddRangeResultAsync(results, include);
             var resultDTOs = results.ToTestDto();
-            return CreatedAtAction(nameof(GetTestAll), new { id = resultDTOs.First().GroupUserId }, resultDTOs);
+            return CreatedAtAction(nameof(GetAllResultTest), new { id = resultDTOs.First().GroupUserId }, resultDTOs);
         }
 
-        [HttpPut("test")]
-        public async Task<ActionResult<ResultTestDTO>> Update(ResultTestDTO resultDTO, string? include = null)
+        [HttpPatch("{id:int}/test")]
+        public async Task<IActionResult> UpdateResult(int id, ResultTestDTO resultDTO)
         {
             if (resultDTO == null)
                 return BadRequest("Данные для обновления результата пустые.");
-            var result = await _service.ResultRepository.GetResultAsync(r => r.Id == resultDTO.Id, include);
+            var result = await _service.ResultRepository.GetResultAsync(r => r.Id == id);
             if (result == null)
                 return NotFound(new { Message = $"Результат с id {resultDTO.Id} не найден." });
             result.UpdateFromDto(resultDTO);
-            await _service.ResultRepository.UpdateResultAsync(result, include);
-            return Ok(result.ToTestDto());
+            await _service.ResultRepository.UpdateResultAsync(result);
+            return NoContent();
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{groupUserId:int}")]
+        public async Task<IActionResult> DeleteResult(int groupUserId)
         {
-            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == id);
+            var results = await _service.ResultRepository.GetAllResultAsync(r => r.GroupUserId == groupUserId);
             if (results == null)
-                return NotFound(new { Message = $"Результаты с id пользователя группы {id} не найдены." });
+                return NotFound(new { Message = $"Результаты с id пользователя группы {groupUserId} не найдены." });
             await _service.ResultRepository.DeleteResultAsync([.. results]);
             return NoContent();
         }

@@ -13,7 +13,7 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<SettingDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<SettingDTO>> GetSetting(int id, string? include = null)
         {
             var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id, include);
             if (setting == null)
@@ -22,18 +22,18 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SettingDTO>> Add(SettingCreateDTO settingCreateDTO, string? include = null)
+        public async Task<ActionResult<SettingDTO>> AddSetting(SettingCreateDTO settingCreateDTO, string? include = null)
         {
             if (settingCreateDTO == null)
                 return BadRequest("Данные для добавления настройки пустые.");
             var setting = settingCreateDTO.ToEntity();
             await _service.SettingRepository.AddSettingAsync(setting!, include);
             var settingDTO = setting!.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = settingDTO!.Id }, settingDTO);
+            return CreatedAtAction(nameof(GetSetting), new { id = settingDTO!.Id }, settingDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, SettingDTO settingDTO)
+        public async Task<IActionResult> UpdateSetting(int id, SettingDTO settingDTO)
         {
             if (settingDTO == null)
                 return BadRequest("Данные для обновления настройки пустые.");
@@ -46,7 +46,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteSetting(int id)
         {
             var setting = await _service.SettingRepository.GetSettingAsync(s => s.Id == id);
             if (setting == null)

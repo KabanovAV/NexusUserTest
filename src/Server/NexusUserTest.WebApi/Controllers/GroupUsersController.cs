@@ -13,14 +13,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet("group/{id:int}/info")]
-        public async Task<ActionResult<IEnumerable<GroupUserInfoAdminDTO>>> GetInfoAll(int id, string? include = null)
+        public async Task<ActionResult<IEnumerable<GroupUserInfoAdminDTO>>> GetAllGroupUserInfoAdmin(int id, string? include = null)
         {
             var groupUser = await _service.GroupUserRepository.GetAllGroupUserAsync(gu => gu.GroupId == id, include);
             return Ok(groupUser.ToInfoAdminDto());
         }
 
         [HttpGet("{id:int}/info")]
-        public async Task<ActionResult<GroupUserInfoAdminDTO>> GetInfo(int id, string? include = null)
+        public async Task<ActionResult<GroupUserInfoAdminDTO>> GetGroupUserInfoAdmin(int id, string? include = null)
         {
             var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == id, include);
             if (groupUser == null)
@@ -29,7 +29,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("{id:int}/test")]
-        public async Task<ActionResult<GroupUserTestDTO>> GetTest(int id, string? include = null)
+        public async Task<ActionResult<GroupUserTestDTO>> GetGroupUserTest(int id, string? include = null)
         {
             var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == id, include);
             if (groupUser == null)
@@ -38,7 +38,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> Update(int id, GroupUserUpdateDTO groupUserUpdateDTO)
+        public async Task<IActionResult> UpdateGroupUser(int id, GroupUserUpdateDTO groupUserUpdateDTO)
         {
             if (groupUserUpdateDTO == null)
                 return BadRequest("Данные для обновления группыльзователя пустые.");

@@ -13,14 +13,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAllAdminDTO([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAllUserAdmin([FromQuery] string? include = null)
         {
             var users = await _service.UserRepository.GetAllUserAsync(includeProperties: include);
             return Ok(users.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<UserAdminDTO>> GetAdminDTO(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<UserAdminDTO>> GetUserAdmin(int id, [FromQuery] string? include = null)
         {
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
             if (user == null)
@@ -29,7 +29,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("{id:int}/test")]
-        public async Task<ActionResult<UserInfoTestDTO>> Get(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<UserInfoTestDTO>> GetUserInfoTest(int id, [FromQuery] string? include = null)
         {
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
             if (user == null)
@@ -38,18 +38,18 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserAdminDTO>> Add(UserAdminDTO userAdminDTO, [FromQuery] string? include = null)
+        public async Task<ActionResult<UserAdminDTO>> AddUser(UserAdminDTO userAdminDTO, [FromQuery] string? include = null)
         {
             if (userAdminDTO == null)
                 return BadRequest("Данные для добавления пользователя пустые.");
             var user = userAdminDTO.ToEntity();
             await _service.UserRepository.AddUserAsync(user!, include);
             var userDTO = user!.ToAdminDto();
-            return CreatedAtAction(nameof(Get), new { id = userDTO!.Id }, userDTO);
+            return CreatedAtAction(nameof(GetUserAdmin), new { id = userDTO!.Id }, userDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, UserAdminDTO userDTO, [FromQuery] string? include = null)
+        public async Task<IActionResult> UpdateUser(int id, UserAdminDTO userDTO, [FromQuery] string? include = null)
         {
             if (userDTO == null)
                 return BadRequest("Данные для обновления пользователя пустые.");
@@ -62,7 +62,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _service.UserRepository.GetUserAsync(u => u.Id == id);
             if (user == null)

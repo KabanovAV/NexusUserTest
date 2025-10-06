@@ -12,14 +12,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAll([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAllSpecialization([FromQuery] string? include = null)
         {
             var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
             return Ok(specializations.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<SpecializationDTO>> Get(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<SpecializationDTO>> GetSpecialization(int id, [FromQuery] string? include = null)
         {
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
             if (specialization == null)
@@ -35,18 +35,18 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<SpecializationDTO>> Add(SpecializationDTO specializationCreateDTO, [FromQuery] string? include = null)
+        public async Task<ActionResult<SpecializationDTO>> AddSpecialization(SpecializationDTO specializationCreateDTO, [FromQuery] string? include = null)
         {
             if (specializationCreateDTO == null)
                 return BadRequest("Данные для добавления специализации пустые.");
             var specialization = specializationCreateDTO.ToEntity();
             await _service.SpecializationRepository.AddSpecializationAsync(specialization!, include);
             var specializationDTO = specialization!.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = specializationDTO!.Id }, specializationDTO);
+            return CreatedAtAction(nameof(GetSpecialization), new { id = specializationDTO!.Id }, specializationDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, SpecializationDTO specializationDTO)
+        public async Task<IActionResult> UpdateSpecialization(int id, SpecializationDTO specializationDTO)
         {
             if (specializationDTO == null)
                 return BadRequest("Данные для обновления специализации пустые.");
@@ -59,7 +59,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<bool>> Delete(int id)
+        public async Task<ActionResult<bool>> DeleteSpecialization(int id)
         {
             var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, "Groups,Topics");
             if (specialization == null)

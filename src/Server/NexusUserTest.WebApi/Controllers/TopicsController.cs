@@ -13,14 +13,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TopicDTO>>> GetAll(string? include = null)
+        public async Task<ActionResult<IEnumerable<TopicDTO>>> GetAllTopic(string? include = null)
         {
             var topics = await _service.TopicRepository.GetAllTopicAsync(includeProperties: include);
             return Ok(topics.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<TopicDTO>> Get(int id, string? include = null)
+        public async Task<ActionResult<TopicDTO>> GetTopic(int id, string? include = null)
         {
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id, include);
             if (topic == null)
@@ -36,18 +36,18 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TopicDTO>> Add(TopicCreateDTO topicCreateDTO, string? include = null)
+        public async Task<ActionResult<TopicDTO>> AddTopic(TopicCreateDTO topicCreateDTO, string? include = null)
         {
             if (topicCreateDTO == null)
                 return BadRequest("Данные для добавления темы пустые.");
             var topic = topicCreateDTO.ToEntity();
             await _service.TopicRepository.AddTopicAsync(topic!, include);
             var topicDTO = topic!.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = topicDTO!.Id }, topicDTO);
+            return CreatedAtAction(nameof(GetTopic), new { id = topicDTO!.Id }, topicDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, TopicDTO topicDTO)
+        public async Task<IActionResult> UpdateTopic(int id, TopicDTO topicDTO)
         {
             if (topicDTO == null)
                 return BadRequest("Данные для обновления темы пустые.");
@@ -60,7 +60,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteTopic(int id)
         {
             var topic = await _service.TopicRepository.GetTopicAsync(t => t.Id == id);
             if (topic == null)

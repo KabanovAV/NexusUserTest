@@ -13,14 +13,14 @@ namespace SibCCSPETest.WebApi.Controllers
         private readonly IRepoServiceManager _service = service;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAll([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAllGroup([FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return Ok(groups.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GroupDTO>> Get(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<GroupDTO>> GetGroup(int id, [FromQuery] string? include = null)
         {
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
@@ -29,14 +29,14 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpGet("info")]
-        public async Task<ActionResult<IEnumerable<GroupInfoDTO>>> GetAllInfoDTO([FromQuery] string? include = null)
+        public async Task<ActionResult<IEnumerable<GroupInfoDTO>>> GetAllGroupInfo([FromQuery] string? include = null)
         {
             var groups = await _service.GroupRepository.GetAllGroupAsync(includeProperties: include);
             return Ok(groups.ToInfoDto());
         }
 
         [HttpGet("{id:int}/info")]
-        public async Task<ActionResult<GroupInfoDetailsDTO>> GetInfoDetailDTO(int id, [FromQuery] string? include = null)
+        public async Task<ActionResult<GroupInfoDetailsDTO>> GetGroupInfoDetails(int id, [FromQuery] string? include = null)
         {
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id, include);
             if (group == null)
@@ -52,18 +52,18 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GroupDTO>> Add(GroupDTO groupEditDTO, [FromQuery] string? include = null)
+        public async Task<ActionResult<GroupDTO>> AddGroup(GroupDTO groupEditDTO, [FromQuery] string? include = null)
         {
             if (groupEditDTO == null)
                 return BadRequest("Данные для добавления группы пустые.");
             var group = groupEditDTO.ToEntity();
             await _service.GroupRepository.AddGroupAsync(group!, include);
             var groupDTO = group!.ToDto();
-            return CreatedAtAction(nameof(Get), new { id = groupDTO!.Id }, groupDTO);
+            return CreatedAtAction(nameof(GetGroup), new { id = groupDTO!.Id }, groupDTO);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, GroupDTO groupDTO)
+        public async Task<IActionResult> UpdateGroup(int id, GroupDTO groupDTO)
         {
             if (groupDTO == null)
                 return BadRequest("Данные для обновления группы пустые.");
@@ -76,7 +76,7 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteGroup(int id)
         {
             var group = await _service.GroupRepository.GetGroupAsync(g => g.Id == id);
             if (group == null)
