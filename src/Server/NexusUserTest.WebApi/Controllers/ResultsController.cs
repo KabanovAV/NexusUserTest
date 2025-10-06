@@ -60,7 +60,7 @@ namespace NexusUserTest.WebApi
             var results = resultTestDTOs.ToTestEntity();
             await _service.ResultRepository.AddRangeResultAsync(results, include);
             var resultDTOs = results.ToTestDto();
-            return CreatedAtAction(nameof(GetAllResultTest), new { id = resultDTOs.First().GroupUserId }, resultDTOs);
+            return CreatedAtAction(nameof(GetAllResultTest), new { groupUserId = resultDTOs.First().GroupUserId }, resultDTOs);
         }
 
         [HttpPatch("{id:int}/test")]
