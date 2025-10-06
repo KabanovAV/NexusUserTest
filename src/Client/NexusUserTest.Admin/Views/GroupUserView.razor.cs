@@ -60,10 +60,19 @@ namespace NexusUserTest.Admin.Views
                 if (!response.Success)
                     NotificationService!.ShowError($"{response.Error}", "Ошибка");
                 else
+                {
                     GroupInfo.Setting = response.Data!;
+                    NotificationService!.ShowSuccess("Настройки теста добавлены", "Успех");
+                }                    
             }
             else
-                await ServiceAPI!.SettingService.UpdateSetting(GroupInfo.Setting);
+            {
+                var response = await ServiceAPI!.SettingService.UpdateSetting(GroupInfo.Setting);
+                if (!response.Success)
+                    NotificationService!.ShowError($"{response.Error}", "Ошибка");
+                else
+                    NotificationService!.ShowSuccess("Настройки теста обновлена", "Успех");
+            }                
         }
     }
 }
