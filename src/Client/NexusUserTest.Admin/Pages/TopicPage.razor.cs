@@ -90,7 +90,7 @@ namespace NexusUserTest.Admin.Pages
 
         public async Task Add(TopicDTO item)
         {
-            var response = await ServiceAPI!.TopicService.AddTopic(item);
+            var response = await ServiceAPI!.TopicService.AddTopic(item, "Specialization");
             if (!response.Success)
                 NotificationService!.ShowError($"{response.Error}", "Ошибка");
             else
@@ -110,7 +110,10 @@ namespace NexusUserTest.Admin.Pages
             {
                 var index = NexusTable!.Data.FindIndex(s => s.Id == item.Id);
                 if (index >= 0)
+                {
+                    item.SpecializationTitle = SpecializationSelects.First(s => s.Value == item.SpecializationId).Text;
                     NexusTable.Data[index] = item;
+                }                    
                 await NexusTable.SelectRow(item);
                 await NexusTable.CancelEditRow(item);
                 NotificationService!.ShowSuccess("Тема изменена", "Успех");
