@@ -54,12 +54,12 @@
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="Кол-во пр. ответов">
                                 <CellTemplate>
-                                    @(context.Results!.Count(r => r.Question!.AnswerItems!.First(a => a.Id == r.AnswerId).IsCorrect))
+                                    @(context.Results!.Count(r => r.AnswerId != null && r.Question!.AnswerItems!.FirstOrDefault(a => a.Id == r.AnswerId)?.IsCorrect == true))
                                 </CellTemplate>
                             </NexusTableGridColumn>
                             <NexusTableGridColumn Title="% пр. ответов">
                                 <CellTemplate>
-                                    @(context.Results!.Count != 0 ? (context.Results.Count(r => r.Question!.AnswerItems!.First(a => a.Id == r.AnswerId).IsCorrect) * 100) / context.Results.Count : 0)
+                                    @(context.Results!.Count(r => r.AnswerId != null && r.Question!.AnswerItems!.FirstOrDefault(a => a.Id == r.AnswerId)?.IsCorrect == true) * 100 / context.Results!.Count)
                                 </CellTemplate>
                             </NexusTableGridColumn>
                         </Columns>
@@ -97,7 +97,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn" @onclick="SubmitSetting">Сохранить</button>
+                    <button class="btn border border-black" @onclick="SubmitSetting">Сохранить</button>
                 </div>
             </div>
         </div>
