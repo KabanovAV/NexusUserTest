@@ -17,15 +17,15 @@
     public class APIService(IHttpClientFactory httpClienFactory, IApiResponseHandler responseHandler) : IAPIService
     {
         private readonly Lazy<ISpecializationAPIService> _specializationService = new (() => new SpecializationAPIService(httpClienFactory, responseHandler));
-        private readonly Lazy<IGroupAPIService> _groupService = new (() => new GroupAPIService(httpClienFactory));
-        private readonly Lazy<IUserAPIService> _userService = new (() => new UserAPIService(httpClienFactory));
-        private readonly Lazy<ITopicAPIService> _topicService = new (() => new TopicAPIService(httpClienFactory));
-        private readonly Lazy<IQuestionAPIService> _questionService = new (() => new QuestionAPIService(httpClienFactory));
-        private readonly Lazy<IAnswerAPIService> _answerService = new (() => new AnswerAPIService(httpClienFactory));
-        private readonly Lazy<IGroupUserAPIService> _groupUserService = new (() => new GroupUserAPIService(httpClienFactory));
-        private readonly Lazy<ISettingAPIService> _settingService = new (() => new SettingAPIService(httpClienFactory));
-        private readonly Lazy<ITopicQuestionAPIService> _topicQuestionService = new (() => new TopicQuestionAPIService(httpClienFactory));
-        private readonly Lazy<IResultAPIService> _resultService = new(() => new ResultAPIService(httpClienFactory));
+        private readonly Lazy<IGroupAPIService> _groupService = new (() => new GroupAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<IUserAPIService> _userService = new (() => new UserAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<ITopicAPIService> _topicService = new (() => new TopicAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<IQuestionAPIService> _questionService = new (() => new QuestionAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<IAnswerAPIService> _answerService = new (() => new AnswerAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<IGroupUserAPIService> _groupUserService = new (() => new GroupUserAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<ISettingAPIService> _settingService = new (() => new SettingAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<ITopicQuestionAPIService> _topicQuestionService = new (() => new TopicQuestionAPIService(httpClienFactory, responseHandler));
+        private readonly Lazy<IResultAPIService> _resultService = new(() => new ResultAPIService(httpClienFactory, responseHandler));
 
         public ISpecializationAPIService SpecializationService => _specializationService.Value;
         public IGroupAPIService GroupService => _groupService.Value;
