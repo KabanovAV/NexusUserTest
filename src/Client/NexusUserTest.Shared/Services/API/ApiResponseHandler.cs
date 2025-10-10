@@ -1,33 +1,32 @@
 ﻿using Serilog;
-using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace NexusUserTest.Shared.Services
 {
     public interface IApiResponseHandler
     {
-        Task<ApiResponse<T>> ExecuteAsync<T>(Func<Task<T?>> apiCall, string operationName);
-        Task<ApiResponse<Unit>> ExecuteAsync(Func<Task> apiCall, string operationName);
-
-        Task<ApiResponse<T>> ExecuteHttpAsync<T>(Func<Task<HttpResponseMessage>> httpCall, string operationName) where T : class;
+        Task<ApiResponse<T>> ExecuteHttpAsync<T>(Func<Task<HttpResponseMessage>> httpCall, string operationName);
         Task<ApiResponse<Unit>> ExecuteHttpAsync(Func<Task<HttpResponseMessage>> httpCall, string operationName);
     }
 
     public class ApiResponseHandler : IApiResponseHandler
     {
-        public async Task<ApiResponse<T>> ExecuteAsync<T>(Func<Task<T?>> apiCall, string operationName)
+        public async Task<ApiResponse<T>> ExecuteHttpAsync<T>(Func<Task<HttpResponseMessage>> httpCall, string operationName)
         {
             try
             {
-                var result = await apiCall();
-
-                if (result == null)
+                var response = await httpCall();
+                if (!response.IsSuccessStatusCode)
                 {
-                    Log.Warning("API call {OperationName} returned null", operationName);
-                    return ApiResponse<T>.ErrorResult($"Operation {operationName} returned no data", "NO_DATA");
-                }
+                    var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+                    var errorContent = result.GetProperty("message").GetString()!;
 
-                return ApiResponse<T>.SuccessResult(result);
+                    Log.Error("HTTP request failed in {OperationName}: {StatusCode} - {Content}",
+                        operationName, response.StatusCode, errorContent);
+                    return ApiResponse<T>.ErrorResult($"{errorContent}", $"{response.StatusCode}");
+                }
+                return ApiResponse<T>.SuccessResult(await response.Content.ReadFromJsonAsync<T>());
             }
             catch (HttpRequestException ex)
             {
@@ -46,11 +45,20 @@ namespace NexusUserTest.Shared.Services
             }
         }
 
-        public async Task<ApiResponse<Unit>> ExecuteAsync(Func<Task> apiCall, string operationName)
+        public async Task<ApiResponse<Unit>> ExecuteHttpAsync(Func<Task<HttpResponseMessage>> httpCall, string operationName)
         {
             try
             {
-                await apiCall();
+                var response = await httpCall();
+                if (!response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+                    var errorContent = result.GetProperty("message").GetString()!;
+
+                    Log.Error("HTTP request failed in {OperationName}: {StatusCode} - {Content}",
+                        operationName, response.StatusCode, errorContent);
+                    return ApiResponse<Unit>.ErrorResult($"{errorContent}", $"{response.StatusCode}");
+                }
                 return ApiResponse<Unit>.SuccessResult(Unit.Value);
             }
             catch (HttpRequestException ex)
@@ -68,50 +76,6 @@ namespace NexusUserTest.Shared.Services
                 Log.Error(ex, "Unexpected error in {OperationName}: {Message}", operationName, ex.Message);
                 return ApiResponse<Unit>.ErrorResult($"Unexpected error: {ex.Message}", "UNEXPECTED_ERROR");
             }
-        }
-
-        public async Task<ApiResponse<T>> ExecuteHttpAsync<T>(Func<Task<HttpResponseMessage>> httpCall, string operationName) where T : class
-        {
-            return await ExecuteAsync<T>(async () =>
-            {
-                var response = await httpCall();
-
-                if (response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return null; // Нет данных, но это не ошибка
-                }
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    Log.Warning("HTTP request failed in {OperationName}: {StatusCode} - {Content}",
-                        operationName, response.StatusCode, errorContent);
-
-                    return null;
-                }
-
-                return await response.Content.ReadFromJsonAsync<T>();
-            }, operationName);
-        }
-
-        public async Task<ApiResponse<Unit>> ExecuteHttpAsync(Func<Task<HttpResponseMessage>> httpCall, string operationName)
-        {
-            return await ExecuteAsync(async () =>
-            {
-                var response = await httpCall();
-
-                if (response.StatusCode == HttpStatusCode.NoContent ||
-                    response.StatusCode == HttpStatusCode.OK)
-                {
-                    return;
-                }
-
-                var errorContent = await response.Content.ReadAsStringAsync();
-                Log.Warning("HTTP request failed in {OperationName}: {StatusCode} - {Content}",
-                    operationName, response.StatusCode, errorContent);
-
-                throw new HttpRequestException($"Request failed: {response.StatusCode}");
-            }, operationName);
         }
     }
 }
