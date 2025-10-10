@@ -5,7 +5,10 @@
 
 @if (UserInfo != null && UserInfo.Success)
 {
-    <h4>Пользователь - @UserInfo.Data!.FullName</h4>
+    <div class="d-flex justify-content-between">
+        <h4>Пользователь - @UserInfo.Data!.FullName</h4>
+        <button class="btn btn-outline-secondary" @onclick="Logout">Выход</button>
+    </div>
 
     <div class="card mt-2">
         <div class="card-header">

@@ -10,6 +10,10 @@ namespace NexusUserTest.User.Pages
         public IAPIService? ServiceAPI { get; set; }
         [Inject]
         public NavigationManager? Navigation { get; set; }
+        [Inject]
+        public AuthenticationAPIService? AuthService { get; set; }
+        [Inject]
+        public UserSessionService? UserSession { get; set; }
 
         private ApiResponse<UserInfoTestDTO>? UserInfo;
 
@@ -23,9 +27,12 @@ namespace NexusUserTest.User.Pages
         }
 
         private async Task LoadData()
-            => UserInfo = await ServiceAPI!.UserService.GetUserTestInfo(1, "GroupUser.Group,GroupUser.Results.Answer");
+            => UserInfo = await ServiceAPI!.UserService.GetUserTestInfo(UserSession!.UserId, "GroupUser.Group,GroupUser.Results.Answer");
 
         private void OpenTest(int groupUserId)
             => Navigation!.NavigateTo($"/test/{groupUserId}");
+
+        private async Task Logout()
+            => await AuthService!.LogoutAsync();
     }
 }
