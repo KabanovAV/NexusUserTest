@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveServer" />
+    <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
     <NexusNotificationHub @rendermode="InteractiveServer" Position="NexusNotificationPosition.BottomRight" Timeout="5"
                           InfoIconClass="bi bi-info-circle-fill" SuccessIconClass="bi bi-check-circle-fill"
                           ErrorIconClass="bi bi-exclamation-circle-fill" WarningIconClass="bi bi-exclamation-triangle-fill" />
