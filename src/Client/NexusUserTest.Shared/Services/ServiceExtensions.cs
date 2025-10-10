@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 
 namespace NexusUserTest.Shared.Services
@@ -18,6 +19,13 @@ namespace NexusUserTest.Shared.Services
         {
             services.AddScoped<IAPIService, APIService>();
             services.AddScoped<IApiResponseHandler, ApiResponseHandler>();
+        }
+
+        public static void ConfigureAuth(this IServiceCollection services)
+        {
+            services.AddScoped<AuthenticationAPIService>();
+            services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+            services.AddScoped<UserSessionService>();
         }
     }
 }
