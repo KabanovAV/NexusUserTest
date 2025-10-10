@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 using NexusUserTest.Common;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace NexusUserTest.Admin.Views
