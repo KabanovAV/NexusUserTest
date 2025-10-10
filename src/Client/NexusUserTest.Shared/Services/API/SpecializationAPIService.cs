@@ -66,10 +66,7 @@ namespace NexusUserTest.Shared.Services
 
 
         public async Task<ApiResponse<bool>> DeleteSpecialization(int id)
-            => await _responseHandler.ExecuteAsync<bool>(async () =>
-            {
-                var response = await _httpClient.DeleteAsync($"api/specializations/{id}");
-                return await response.Content.ReadFromJsonAsync<bool>();
-            }, "DeleteSpecialization");
+            => await _responseHandler.ExecuteHttpAsync<bool>(() =>
+                _httpClient.DeleteAsync($"api/specializations/{id}"), "DeleteSpecialization");
     }
 }
