@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using NexusUserTest.Client.Components;
 using NexusUserTest.Shared.Services;
 using Serilog;
@@ -31,6 +32,10 @@ namespace NexusUserTest.Client
                 builder.Services.ConfigureHttpClient();
                 builder.Services.ConfigureAPI();
                 builder.Services.AddNexusBlazor();
+
+                builder.Services.AddBlazoredLocalStorage();
+                builder.Services.AddAuthorizationCore();
+                builder.Services.ConfigureAuth();
 
                 var app = builder.Build();
 
