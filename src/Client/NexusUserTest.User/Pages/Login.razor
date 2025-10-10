@@ -1,0 +1,21 @@
+﻿@page "/login"
+
+<div class="row shadow-lg rounded-4 bg-white overflow-hidden position-absolute top-50 start-50 translate-middle" style="max-width: 800px;">
+    <div class="col py-4 px-4 bg-light d-flex flex-column justify-content-center">
+        <h3 class="mb-2 text-center fw-bold text-primary">Вход в <span class="text-dark">систему тестирования</span></h3>
+        <EditForm EditContext="editContext">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label class="form-label">@GetDisplayName(nameof(loginDto.UserLogin))</label>
+                <NexusTextBox @bind-Value="loginDto!.UserLogin" NexusValueExpression="@(() => loginDto!.UserLogin)" Placeholder="Введите логин" />
+                <ValidationMessage For="@(() => loginDto.UserLogin)" class="invalid-feedback" />
+            </div>
+            <div class="form-group pt-1">
+                <label class="form-label">@GetDisplayName(nameof(loginDto.Password))</label>
+                <NexusPassword @bind-Value="loginDto!.Password" NexusValueExpression="@(() => loginDto!.Password)" Placeholder="Введите пароль" />
+                <ValidationMessage For="@(() => loginDto!.Password)" class="invalid-feedback" />
+            </div>
+        </EditForm>
+        <button type="submit" class="btn btn-primary w-100 fw-semibold py-2 mt-3" @onclick="LogIn">Войти</button>
+    </div>
+</div>
