@@ -3,6 +3,8 @@
 
 <PageTitle>Страница пользователя</PageTitle>
 
+<LoadDataView TItem="UserInfoTestDTO" Data="UserInfo" />
+
 @if (UserInfo != null && UserInfo.Success)
 {
     <div class="d-flex justify-content-between">
