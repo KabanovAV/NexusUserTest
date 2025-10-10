@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NexusUserTest.Shared.Services;
 
-namespace NexusUserTest.Admin.Views
+namespace NexusUserTest.Shared.Views
 {
     public partial class LoadDataView<TItem>
     {
