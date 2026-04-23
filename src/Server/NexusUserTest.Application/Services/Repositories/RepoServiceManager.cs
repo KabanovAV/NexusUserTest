@@ -1,4 +1,4 @@
-﻿using NexusUserTest.Domain.Repositories;
+﻿using NexusUserTest.Domain.Common;
 
 namespace NexusUserTest.Application.Services
 {

@@ -1,5 +1,5 @@
-﻿using NexusUserTest.Domain.Entities;
-using NexusUserTest.Domain.Repositories;
+﻿using NexusUserTest.Domain.Common;
+using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.Infrastructure
 {

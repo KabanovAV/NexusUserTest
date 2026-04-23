@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NexusUserTest.Domain.Repositories;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Infrastructure;
 
 namespace NexusUserTest.Application.Services

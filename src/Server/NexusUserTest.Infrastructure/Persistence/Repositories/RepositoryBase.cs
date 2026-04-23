@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NexusUserTest.Domain.Repositories;
+using NexusUserTest.Domain.Common;
 using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
