@@ -1,0 +1,19 @@
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Entities;
+
+namespace NexusUserTest.Application.Common.Interfaces.Database
+{
+    public interface IDbDataContext
+    {
+        DbSet<Specialization> Specializations { get; }
+        DbSet<Group> Groups { get; }
+        DbSet<User> Users { get; }
+        DbSet<Topic> Topics { get; }
+        DbSet<Question> Questions { get; }
+        DbSet<Answer> Answers { get; }
+        DbSet<GroupUser> GroupUsers { get; }
+        DbSet<TopicQuestion> TopicQuestions { get; }
+        DbSet<Result> Results { get; }
+        DbSet<Setting> Settings { get; }
+    }
+}
