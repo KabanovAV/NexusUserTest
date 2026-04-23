@@ -24,7 +24,7 @@
         /// </summary>
         /// <param name="id">Id объекта</param>
         /// <returns>Возвращает объект из набора данных</returns>
-        Task<TEntity> GetAsync(int id);
+        Task<TEntity?> GetAsync(int id);
 
         /// <summary>
         /// Добавить один объект в набор данных
