@@ -1,4 +1,4 @@
-﻿namespace NexusUserTest.Domain.Repositories
+﻿namespace NexusUserTest.Domain.Common
 {
     public interface IRepositoryManager
     {

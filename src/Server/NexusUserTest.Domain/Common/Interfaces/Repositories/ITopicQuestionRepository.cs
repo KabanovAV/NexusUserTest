@@ -1,6 +1,6 @@
 ﻿using NexusUserTest.Domain.Entities;
 
-namespace NexusUserTest.Domain.Repositories
+namespace NexusUserTest.Domain.Common
 {
     public interface ITopicQuestionRepository : IRepositoryBase<TopicQuestion>
     {
