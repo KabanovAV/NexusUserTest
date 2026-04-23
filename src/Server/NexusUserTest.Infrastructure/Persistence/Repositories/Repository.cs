@@ -2,9 +2,8 @@
 
 namespace NexusUserTest.Infrastructure
 {
-    public class RepositoryManager(DbDataContext db) : IRepositoryManager
+    public class Repository(ApplicationDbContext db) : IRepository
     {
-        private readonly DbDataContext _db = db;
         public IAnswerRepository Answer { get; private set; } = new AnswerRepository(db);
         public IGroupRepository Group { get; private set; } = new GroupRepository(db);
         public IGroupUserRepository GroupUser { get; private set; } = new GroupUserRepository(db);
@@ -15,8 +14,5 @@ namespace NexusUserTest.Infrastructure
         public ISpecializationRepository Specialization { get; private set; } = new SpecializationRepository(db);
         public ITopicRepository Topic { get; private set; } = new TopicRepository(db);
         public IUserRepository User { get; private set; } = new UserRepository(db);
-
-        public void Save() => _db.SaveChanges();
-        public async Task SaveAsync() => await _db.SaveChangesAsync();
     }
 }
