@@ -1,14 +1,23 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface IUserRepository : IRepositoryBase<User>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория пользователь
+    /// </summary>
+    public interface IUserRepository : IRepositoryOperations<User>
     {
-        Task<IEnumerable<User>> GetAllUserAsync(Expression<Func<User, bool>>? expression = null, string? includeProperties = null);
-        Task<User> GetUserAsync(Expression<Func<User, bool>> expression, string? includeProperties = null);
-        Task AddUserAsync(User entity);
-        void UpdateUser(User entity);
-        void DeleteUser(User entity);
+        /// <summary>
+        /// Получение всех пользователей из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех пользователей из набора данных</returns>
+        Task<IEnumerable<User>> GetAllUserAsync();
+
+        /// <summary>
+        /// Получение одного пользователя из набора данных
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <returns>Возвращает одного пользователя из набора данных</returns>
+        Task<User> GetUserByIdAsync(int id);
     }
 }

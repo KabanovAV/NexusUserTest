@@ -1,14 +1,23 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface ISpecializationRepository : IRepositoryBase<Specialization>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория специализации
+    /// </summary>
+    public interface ISpecializationRepository : IRepositoryOperations<Specialization>
     {
-        Task<IEnumerable<Specialization>> GetAllSpecializationAsync(Expression<Func<Specialization, bool>>? expression = null, string? includeProperties = null);
-        Task<Specialization> GetSpecializationAsync(Expression<Func<Specialization, bool>> expression, string? includeProperties = null);
-        Task AddSpecializationAsync(Specialization entity);
-        void UpdateSpecialization(Specialization entity);
-        void DeleteSpecialization(Specialization entity);
+        /// <summary>
+        /// Получение всех специализаций из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех специализаций из набора данных</returns>
+        Task<IEnumerable<Specialization>> GetAllSpecializationAsync();
+
+        /// <summary>
+        /// Получение одной специализации из набора данных
+        /// </summary>
+        /// <param name="id">Id специализации</param>
+        /// <returns>Возвращает одной специализации из набора данных</returns>
+        Task<Specialization> GetSpecializationByIdAsync(int id);
     }
 }

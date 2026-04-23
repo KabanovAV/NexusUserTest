@@ -1,15 +1,23 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface IResultRepository : IRepositoryBase<Result>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория результат
+    /// </summary>
+    public interface IResultRepository : IRepositoryOperations<Result>
     {
-        Task<IEnumerable<Result>> GetAllResultAsync(Expression<Func<Result, bool>>? expression = null, string? includeProperties = null);
-        Task<Result> GetResultAsync(Expression<Func<Result, bool>> expression, string? includeProperties = null);
-        Task AddResultAsync(Result entity);
-        Task AddRangeResultAsync(List<Result> entities);
-        void UpdateResult(Result entity);
-        void DeleteResult(IEnumerable<Result> entity);
+        /// <summary>
+        /// Получение всех результатов из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех результатов из набора данных</returns>
+        Task<IEnumerable<Result>> GetAllResultAsync();
+
+        /// <summary>
+        /// Получение одного результата из набора данных
+        /// </summary>
+        /// <param name="id">Id результата</param>
+        /// <returns>Возвращает один результат из набора данных</returns>
+        Task<Result> GetResultByIdAsync(int id);
     }
 }

@@ -2,10 +2,8 @@
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface ITopicQuestionRepository : IRepositoryBase<TopicQuestion>
+    public interface ITopicQuestionRepository : IRepositoryOperations<TopicQuestion>
     {
-        Task AddTopicQuestionAsync(TopicQuestion entity);
-        void UpdateTopicQuestion(TopicQuestion entity);
-        void DeleteTopicQuestion(TopicQuestion entity);
+
     }
 }

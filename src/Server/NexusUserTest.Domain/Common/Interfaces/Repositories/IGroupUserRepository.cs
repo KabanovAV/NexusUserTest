@@ -1,12 +1,23 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface IGroupUserRepository : IRepositoryBase<GroupUser>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория группа пользователь
+    /// </summary>
+    public interface IGroupUserRepository : IRepositoryOperations<GroupUser>
     {
-        Task<IEnumerable<GroupUser>> GetAllGroupUserAsync(Expression<Func<GroupUser, bool>>? expression = null, string? includeProperties = null);
-        Task<GroupUser> GetGroupUserAsync(Expression<Func<GroupUser, bool>> expression, string? includeProperties = null);
-        void UpdateGroupUser(GroupUser entity);
+        /// <summary>
+        /// Получение всех группа пользователей из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех группа пользователей из набора данных</returns>
+        Task<IEnumerable<GroupUser>> GetAllGroupUserAsync();
+
+        /// <summary>
+        /// Получение одной группа пользователя из набора данных
+        /// </summary>
+        /// <param name="id">Id группы пользователя</param>
+        /// <returns>Возвращает одну группу пользователь из набора данных</returns>
+        Task<GroupUser> GetGroupUserByIdAsync(int id);
     }
 }

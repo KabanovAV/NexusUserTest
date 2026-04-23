@@ -1,14 +1,23 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface ITopicRepository : IRepositoryBase<Topic>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория темы
+    /// </summary>
+    public interface ITopicRepository : IRepositoryOperations<Topic>
     {
-        Task<IEnumerable<Topic>> GetAllTopicAsync(Expression<Func<Topic, bool>>? expression = null, string? includeProperties = null);
-        Task<Topic> GetTopicAsync(Expression<Func<Topic, bool>> expression, string? includeProperties = null);
-        Task AddTopicAsync(Topic entity);
-        void UpdateTopic(Topic entity);
-        void DeleteTopic(Topic entity);
+        /// <summary>
+        /// Получение всех тем из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех тем из набора данных</returns>
+        Task<IEnumerable<Topic>> GetAllTopicAsync();
+
+        /// <summary>
+        /// Получение одной темы из набора данных
+        /// </summary>
+        /// <param name="id">Id темы</param>
+        /// <returns>Возвращает одной темы из набора данных</returns>
+        Task<Topic> GetTopicByIdAsync(int id);
     }
 }

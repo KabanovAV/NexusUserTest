@@ -1,14 +1,23 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface IGroupRepository : IRepositoryBase<Group>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория групп
+    /// </summary>
+    public interface IGroupRepository : IRepositoryOperations<Group>
     {
-        Task<IEnumerable<Group>> GetAllGroupAsync(Expression<Func<Group, bool>>? expression = null, string? includeProperties = null);
-        Task<Group> GetGroupAsync(Expression<Func<Group, bool>> expression, string? includeProperties = null);
-        Task AddGroupAsync(Group entity);
-        void UpdateGroup(Group entity);
-        void DeleteGroup(Group entity);
+        /// <summary>
+        /// Получение всех групп из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех групп из набора данных</returns>
+        Task<IEnumerable<Group>> GetAllGroupAsync();
+
+        /// <summary>
+        /// Получение одной группы из набора данных
+        /// </summary>
+        /// <param name="id">Id группы</param>
+        /// <returns>Возвращает одной группы из набора данных</returns>
+        Task<Group> GetGroupByIdAsync(int id);
     }
 }

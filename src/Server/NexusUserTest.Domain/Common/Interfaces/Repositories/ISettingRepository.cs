@@ -1,13 +1,17 @@
 ﻿using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Domain.Common
 {
-    public interface ISettingRepository : IRepositoryBase<Setting>
+    /// <summary>
+    /// Интерфейс с операциями для репозитория настройки теста
+    /// </summary>
+    public interface ISettingRepository : IRepositoryOperations<Setting>
     {
-        Task<Setting> GetSettingAsync(Expression<Func<Setting, bool>> expression, string? includeProperties = null);
-        Task AddSettingAsync(Setting entity);
-        void UpdateSetting(Setting entity);
-        void DeleteSetting(Setting entity);
+        /// <summary>
+        /// Получение настройки теста из набора данных
+        /// </summary>
+        /// <param name="id">Id настройки</param>
+        /// <returns>Возвращает настройки теста из набора данных</returns>
+        Task<Setting> GetSettingByIdAsync(int id);
     }
 }
