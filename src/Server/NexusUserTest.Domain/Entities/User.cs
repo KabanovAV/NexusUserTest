@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NexusUserTest.Domain.Common;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace NexusUserTest.Domain.Entities
 {
-    public class User
+    public class User : AuditableEntityBase
     {
-        [Key]
-        public int Id { get; set; }
         [Display(Name = "Фамилия")]
         [Required(ErrorMessage = "Обязательное поле для заполнения")]
         [StringLength(30, ErrorMessage = "Количество символов до 30")]
@@ -25,8 +24,6 @@ namespace NexusUserTest.Domain.Entities
         public string Password { get; set; } = string.Empty;
         public string? Organization { get; set; }
         public string? Position { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime ChangedDate { get; set; }
 
         [JsonIgnore]
         public List<GroupUser>? GroupUser { get; set; }

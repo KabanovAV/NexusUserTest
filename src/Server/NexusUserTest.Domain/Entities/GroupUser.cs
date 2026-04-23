@@ -1,18 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NexusUserTest.Domain.Common;
 using System.Text.Json.Serialization;
 
 namespace NexusUserTest.Domain.Entities
 {
-    public class GroupUser
+    public class GroupUser : AuditableEntityBase
     {
-        [Key]
-        public int Id { get; set; }
         public int GroupId { get; set; }
         public int UserId { get; set; }
         public int Status { get; set; } // 1 Недопущен; 2 Допущен; 3 Пройден
         public DateTime? EndTest { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime ChangedDate { get; set; }
 
         [JsonIgnore]
         public Group? Group { get; set; }

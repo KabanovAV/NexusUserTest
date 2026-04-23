@@ -1,16 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NexusUserTest.Domain.Common;
 using System.Text.Json.Serialization;
 
 namespace NexusUserTest.Domain.Entities
 {
-    public class TopicQuestion
+    public class TopicQuestion : AuditableEntityBase
     {
-        [Key]
-        public int Id { get; set; }
         public int TopicId { get; set; }
         public int QuestionId { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime ChangedDate { get; set; }
 
         [JsonIgnore]
         public Topic? Topic { get; set; }
