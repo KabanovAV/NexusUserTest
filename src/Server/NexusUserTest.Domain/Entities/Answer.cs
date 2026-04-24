@@ -6,11 +6,10 @@ namespace NexusUserTest.Domain.Entities
 {
     public class Answer : AuditableEntityBase
     {
-        [Display(Name = "Название")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
+        [Required]
         public string Title { get; set; } = string.Empty;
+        [Required]
         public int QuestionId { get; set; }
-        [Display(Name = "Верный ответ")]
         public bool IsCorrect { get; set; }
 
         [JsonIgnore]

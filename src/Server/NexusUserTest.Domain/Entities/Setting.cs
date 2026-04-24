@@ -6,12 +6,11 @@ namespace NexusUserTest.Domain.Entities
 {
     public class Setting : AuditableEntityBase
     {
+        [Required]
         public int GroupId { get; set; }
-        [Display(Name = "Количество вопросов")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
+        [Required]
         public int CountOfQuestion { get; set; }
-        [Display(Name = "Время на прохождение теста")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
+        [Required]
         public TimeSpan Timer { get; set; }
 
         [JsonIgnore]

@@ -6,8 +6,7 @@ namespace NexusUserTest.Domain.Entities
 {
     public class Question : AuditableEntityBase
     {
-        [Display(Name = "Название")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
+        [Required]
         public string Title { get; set; } = string.Empty;
 
         [JsonIgnore]

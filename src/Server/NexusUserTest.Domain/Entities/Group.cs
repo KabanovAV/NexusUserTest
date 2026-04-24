@@ -6,16 +6,13 @@ namespace NexusUserTest.Domain.Entities
 {
     public class Group : AuditableEntityBase
     {
-        [Display(Name = "Название")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
-        [StringLength(200, ErrorMessage = "Количество до 200 символов")]
+        [Required, StringLength(200)]
         public string Title { get; set; } = string.Empty;
+        [Required]
         public int SpecializationId { get; set; }
-        [Display(Name = "Начало курсов")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
+        [Required]
         public DateTime Begin { get; set; }
-        [Display(Name = "Окончание курсов")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
+        [Required]
         public DateTime End { get; set; }
 
         [JsonIgnore]

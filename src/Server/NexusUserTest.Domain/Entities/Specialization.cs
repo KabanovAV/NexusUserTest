@@ -6,9 +6,7 @@ namespace NexusUserTest.Domain.Entities
 {
     public class Specialization : AuditableEntityBase
     {
-        [Display(Name = "Название")]
-        [Required(ErrorMessage = "Обязательное поле для заполнения")]
-        [StringLength(100, ErrorMessage = "Количество до 100 символов")]
+        [Required, StringLength(100)]
         public string Title { get; set; } = string.Empty;
 
         [JsonIgnore]
