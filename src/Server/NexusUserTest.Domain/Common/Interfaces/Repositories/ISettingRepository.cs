@@ -12,6 +12,6 @@ namespace NexusUserTest.Domain.Common
         /// </summary>
         /// <param name="id">Id настройки</param>
         /// <returns>Возвращает настройки теста из набора данных</returns>
-        Task<Setting> GetSettingByIdAsync(int id);
+        Task<Setting?> GetSettingByIdAsync(int id);
     }
 }

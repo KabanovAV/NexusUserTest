@@ -18,6 +18,6 @@ namespace NexusUserTest.Domain.Common
         /// </summary>
         /// <param name="id">Id группы пользователя</param>
         /// <returns>Возвращает одну группу пользователь из набора данных</returns>
-        Task<GroupUser> GetGroupUserByIdAsync(int id);
+        Task<GroupUser?> GetGroupUserByIdAsync(int id);
     }
 }

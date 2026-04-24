@@ -18,6 +18,6 @@ namespace NexusUserTest.Domain.Common
         /// </summary>
         /// <param name="id">Id темы</param>
         /// <returns>Возвращает одной темы из набора данных</returns>
-        Task<Topic> GetTopicByIdAsync(int id);
+        Task<Topic?> GetTopicByIdAsync(int id);
     }
 }

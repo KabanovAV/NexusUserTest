@@ -18,6 +18,6 @@ namespace NexusUserTest.Domain.Common
         /// </summary>
         /// <param name="id">Id специализации</param>
         /// <returns>Возвращает одной специализации из набора данных</returns>
-        Task<Specialization> GetSpecializationByIdAsync(int id);
+        Task<Specialization?> GetSpecializationByIdAsync(int id);
     }
 }

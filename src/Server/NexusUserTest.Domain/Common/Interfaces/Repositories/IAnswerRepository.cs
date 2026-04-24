@@ -18,6 +18,6 @@ namespace NexusUserTest.Domain.Common
         /// </summary>
         /// <param name="id">Id ответа</param>
         /// <returns>Возвращает один ответ из набора данных</returns>
-        Task<Answer> GetAnswerByIdAsync(int id);
+        Task<Answer?> GetAnswerByIdAsync(int id);
     }
 }
