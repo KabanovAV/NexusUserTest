@@ -20,7 +20,7 @@ namespace NexusUserTest.Infrastructure
             return services;
         }
 
-        public static IServiceCollection AddRepository(this IServiceCollection services)
-            => services.AddScoped<IRepository, RepositoryManager>();
+        private static IServiceCollection AddRepository(this IServiceCollection services)
+            => services.AddScoped<IRepository, Repository>();
     }
 }
