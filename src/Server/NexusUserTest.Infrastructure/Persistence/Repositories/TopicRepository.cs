@@ -1,19 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    internal class TopicRepository(DbDataContext db) : RepositoryBase<Topic>(db), ITopicRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория темы
+    /// </summary>
+    internal class TopicRepository(ApplicationDbContext db) : RepositoryOperations<Topic>(db), ITopicRepository
     {
-        public async Task<IEnumerable<Topic>> GetAllTopicAsync(Expression<Func<Topic, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех тем из набора данных
+        /// </summary>
+        /// <returns>Возвращает список тем из набора данных</returns>
+        public async Task<IEnumerable<Topic>> GetAllTopicAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<Topic> GetTopicAsync(Expression<Func<Topic, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-
-        public async Task AddTopicAsync(Topic entity) => await AddAsync(entity);
-        public void UpdateTopic(Topic entity) => Update(entity);
-        public void DeleteTopic(Topic entity) => Delete(entity);
+        /// <summary>
+        /// Получение одной темы из набора данных
+        /// </summary>
+        /// <param name="id">Id темы</param>
+        /// <returns>Возвращает тему из набора данных</returns>
+        public async Task<Topic?> GetTopicByIdAsync(int id)
+            => await GetAsync(id);
     }
 }

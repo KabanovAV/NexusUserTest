@@ -1,19 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class QuestionRepository(DbDataContext db) : RepositoryBase<Question>(db), IQuestionRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория вопросов
+    /// </summary>
+    public class QuestionRepository(ApplicationDbContext db) : RepositoryOperations<Question>(db), IQuestionRepository
     {
-        public async Task<IEnumerable<Question>> GetAllQuestionAsync(Expression<Func<Question, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех вопросов из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех вопросов из набора данных</returns>
+        public async Task<IEnumerable<Question>> GetAllQuestionAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<Question> GetQuestionAsync(Expression<Func<Question, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-
-        public async Task AddQuestionAsync(Question entity) => await AddAsync(entity);
-        public void UpdateQuestion(Question entity) => Update(entity);
-        public void DeleteQuestion(Question entity) => Delete(entity);
+        /// <summary>
+        /// Получение одного вопроса из набора данных
+        /// </summary>
+        /// <param name="id">Id вопроса</param>
+        /// <returns>Возвращает вопрос из набора данных</returns>
+        public async Task<Question?> GetQuestionByIdAsync(int id)
+            => await GetAsync(id);
     }
 }

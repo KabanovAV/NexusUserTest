@@ -1,17 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class GroupUserRepository(DbDataContext db) : RepositoryBase<GroupUser>(db), IGroupUserRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория группа пользователя
+    /// </summary>
+    public class GroupUserRepository(ApplicationDbContext db) : RepositoryOperations<GroupUser>(db), IGroupUserRepository
     {
-        public async Task<IEnumerable<GroupUser>> GetAllGroupUserAsync(Expression<Func<GroupUser, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех групп пользователей из набора данных
+        /// </summary>
+        /// <returns>Возвращает список групп пользователей из набора данных</returns>
+        public async Task<IEnumerable<GroupUser>> GetAllGroupUserAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<GroupUser> GetGroupUserAsync(Expression<Func<GroupUser, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-
-        public void UpdateGroupUser(GroupUser entity) => Update(entity);
+        /// <summary>
+        /// Получение группы пользователя из набора данных
+        /// </summary>
+        /// <param name="id">Id группа пользователя</param>
+        /// <returns>Возвращает группу пользователя из набора данных</returns>
+        public async Task<GroupUser?> GetGroupUserByIdAsync(int id)
+            => await GetAsync(id);
     }
 }

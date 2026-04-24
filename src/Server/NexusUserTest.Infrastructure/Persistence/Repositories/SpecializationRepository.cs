@@ -1,19 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class SpecializationRepository(DbDataContext db) : RepositoryBase<Specialization>(db), ISpecializationRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория специализация
+    /// </summary>
+    public class SpecializationRepository(ApplicationDbContext db) : RepositoryOperations<Specialization>(db), ISpecializationRepository
     {
-        public async Task<IEnumerable<Specialization>> GetAllSpecializationAsync(Expression<Func<Specialization, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех специализаций из набора данных
+        /// </summary>
+        /// <returns>Возвращает список специализаций из набора данных</returns>
+        public async Task<IEnumerable<Specialization>> GetAllSpecializationAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<Specialization> GetSpecializationAsync(Expression<Func<Specialization, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-
-        public async Task AddSpecializationAsync(Specialization entity) => await AddAsync(entity);
-        public void UpdateSpecialization(Specialization entity) => Update(entity);
-        public void DeleteSpecialization(Specialization entity) => Delete(entity);
+        /// <summary>
+        /// Получение одной специализации из набора данных
+        /// </summary>
+        /// <param name="id">Id специализации</param>
+        /// <returns>Возвращает специализацию из набора данных</returns>
+        public async Task<Specialization?> GetSpecializationByIdAsync(int id)
+            => await GetAsync(id);
     }
 }

@@ -1,19 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class UserRepository(DbDataContext db) : RepositoryBase<User>(db), IUserRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория пользователь
+    /// </summary>
+    public class UserRepository(ApplicationDbContext db) : RepositoryOperations<User>(db), IUserRepository
     {
-        public async Task<IEnumerable<User>> GetAllUserAsync(Expression<Func<User, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех пользователей из набора данных
+        /// </summary>
+        /// <returns>Возвращает список всех пользователей из набора данных</returns>
+        public async Task<IEnumerable<User>> GetAllUserAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<User> GetUserAsync(Expression<Func<User, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-
-        public async Task AddUserAsync(User entity) => await AddAsync(entity);
-        public void UpdateUser(User entity) => Update(entity);
-        public void DeleteUser(User entity) => Delete(entity);
+        /// <summary>
+        /// Получение одного пользователя из набора данных
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <returns>Возвращает одного пользователя из набора данных</returns>
+        public async Task<User?> GetUserByIdAsync(int id)
+            => await GetAsync(id);
     }
 }

@@ -1,19 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class ResultRepository(DbDataContext db) : RepositoryBase<Result>(db), IResultRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория результат
+    /// </summary>
+    public class ResultRepository(ApplicationDbContext db) : RepositoryOperations<Result>(db), IResultRepository
     {
-        public async Task<IEnumerable<Result>> GetAllResultAsync(Expression<Func<Result, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех результатов из набора данных
+        /// </summary>
+        /// <returns>Возвращает список результатов из набора данных</returns>
+        public async Task<IEnumerable<Result>> GetAllResultAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<Result> GetResultAsync(Expression<Func<Result, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-        public async Task AddResultAsync(Result entity) => await AddAsync(entity);
-        public async Task AddRangeResultAsync(List<Result> entities) => await AddRangeAsync(entities);
-        public void UpdateResult(Result entity) => Update(entity);
-        public void DeleteResult(IEnumerable<Result> entity) => DeleteRange(entity);
+        /// <summary>
+        /// Получение одного результата из набора данных
+        /// </summary>
+        /// <param name="id">Id результата</param>
+        /// <returns>Возвращает результат из набора данных</returns>
+        public async Task<Result?> GetResultByIdAsync(int id)
+            => await GetAsync(id);
     }
 }

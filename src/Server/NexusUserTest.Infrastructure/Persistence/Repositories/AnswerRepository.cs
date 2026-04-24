@@ -1,20 +1,27 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using NexusUserTest.Domain.Common;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Infrastructure
 {
-    public class AnswerRepository(DbDataContext db) : RepositoryBase<Answer>(db), IAnswerRepository
+    /// <summary>
+    /// Базовые операциии доступные для репозитория ответы
+    /// </summary>
+    public class AnswerRepository(ApplicationDbContext db) : RepositoryOperations<Answer>(db), IAnswerRepository
     {
-        public async Task<IEnumerable<Answer>> GetAllAnswerAsync(Expression<Func<Answer, bool>>? expression = null, string? includeProperties = null)
-            => await GetAllAsync(expression, includeProperties);
+        /// <summary>
+        /// Получение всех ответов из набора данных
+        /// </summary>
+        /// <returns>Возвращает список ответов из набора данных</returns>
+        public async Task<IEnumerable<Answer>> GetAllAnswerAsync()
+            => await PlainData.ToListAsync();
 
-        public async Task<Answer> GetAnswerAsync(Expression<Func<Answer, bool>> expression, string? includeProperties = null)
-            => await GetAsync(expression, includeProperties);
-
-        public async Task AddAnswerAsync(Answer entity) => await AddAsync(entity);
-        public async Task AddRangeAnswerAsync(List<Answer> entities) => await AddRangeAsync(entities);
-        public void UpdateAnswer(Answer entity) => Update(entity);
-        public void DeleteAnswer(Answer entity) => Delete(entity);
+        /// <summary>
+        /// Получение ответа из набора данных
+        /// </summary>
+        /// <param name="id">Id ответа</param>
+        /// <returns>Возвращает ответ из набора данных</returns>
+        public async Task<Answer?> GetAnswerByIdAsync(int id)
+            => await GetAsync(id);
     }
 }
