@@ -1,50 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Common;
 using NexusUserTest.Application.Mappings;
-using NexusUserTest.Application.Services;
 using NexusUserTest.Common;
 
 namespace NexusUserTest.WebApi
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AnswersController(IRepoServiceManager service) : ControllerBase
+    public class AnswersController(IAnswerService service) : ControllerBase
     {
-        private readonly IRepoServiceManager _service = service;
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> GetAllAnswerAdmin(string? include = null)
+        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> GetAllAnswerAdmin()
         {
-            var answers = await _service.AnswerRepository.GetAllAnswerAsync(includeProperties: include);
+            var answers = await service.GetAllAnswerAsync();
             return Ok(answers.ToDto());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AnswerAdminDTO>> GetAnswerAdmin(int id, string? include = null)
+        public async Task<ActionResult<AnswerAdminDTO>> GetAnswerAdmin(int id)
         {
-            var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id, include);
+            var answer = await service.GetAnswerByIdAsync(id);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {id} не найден." });
             return Ok(answer.ToDto());
         }
 
         [HttpPost]
-        public async Task<ActionResult<AnswerAdminDTO>> AddAnswer(AnswerAdminDTO answerCreateDTO, string? include = null)
+        public async Task<ActionResult<AnswerAdminDTO>> AddAnswer(AnswerAdminDTO answerCreateDTO)
         {
             if (answerCreateDTO == null)
                 return BadRequest("Данные для добавления ответа пустые.");
             var answer = answerCreateDTO.ToEntity();
-            await _service.AnswerRepository.AddAnswerAsync(answer!, include);
+            await service.AddAnswerAsync(answer);
             var answerDTO = answer!.ToDto();
             return CreatedAtAction(nameof(GetAnswerAdmin), new { id = answerDTO!.Id }, answerDTO);
         }
 
         [HttpPost("batch")]
-        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> AddRangeAnswer(IEnumerable<AnswerAdminDTO> answerCreateDTOs, string? include = null)
+        public async Task<ActionResult<IEnumerable<AnswerAdminDTO>>> AddRangeAnswer(IEnumerable<AnswerAdminDTO> answerCreateDTOs)
         {
             if (answerCreateDTOs == null)
                 return BadRequest("Данные для добавления ответов пустые.");
             var answers = answerCreateDTOs.ToEntity();
-            await _service.AnswerRepository.AddRangeAnswerAsync([.. answers], include);
+            await service.AddRangeAnswerAsync([.. answers]);
             var answerDTOs = answers.ToDto();
             return CreatedAtAction(nameof(GetAllAnswerAdmin), answerDTOs);
         }
@@ -54,21 +52,21 @@ namespace NexusUserTest.WebApi
         {
             if (answerDTO == null)
                 return BadRequest("Данные для обновления ответа пустые.");
-            var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id);
+            var answer = await service.GetAnswerByIdAsync(id);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {answerDTO.Id} не найден." });
             answer.UpdateFromDto(answerDTO);
-            await _service.AnswerRepository.UpdateAnswerAsync(answer);
+            await service.UpdateAnswerAsync(answer);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAnswer(int id)
         {
-            var answer = await _service.AnswerRepository.GetAnswerAsync(a => a.Id == id);
+            var answer = await service.GetAnswerByIdAsync(id);
             if (answer == null)
                 return NotFound(new { Message = $"Ответ с id {id} не найден." });
-            await _service.AnswerRepository.DeleteAnswerAsync(answer);
+            await service.DeleteAnswerAsync(answer.Id);
             return NoContent();
         }
     }

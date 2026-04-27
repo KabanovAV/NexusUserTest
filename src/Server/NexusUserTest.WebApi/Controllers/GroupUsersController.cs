@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Common;
 using NexusUserTest.Application.Mappings;
-using NexusUserTest.Application.Services;
 using NexusUserTest.Common;
 using SibCCSPETest.WebApi.MappingProfiles;
 
@@ -8,30 +8,29 @@ namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupUsersController(IRepoServiceManager service) : ControllerBase
+    public class GroupUsersController(IGroupUserService service) : ControllerBase
     {
-        private readonly IRepoServiceManager _service = service;
-
         [HttpGet("group/{id:int}/info")]
-        public async Task<ActionResult<IEnumerable<GroupUserInfoAdminDTO>>> GetAllGroupUserInfoAdmin(int id, string? include = null)
+        public async Task<ActionResult<IEnumerable<GroupUserInfoAdminDTO>>> GetAllGroupUserInfoAdmin(int id)
         {
-            var groupUser = await _service.GroupUserRepository.GetAllGroupUserAsync(gu => gu.GroupId == id, include);
+            //var groupUser = await _service.GroupUserRepository.GetAllGroupUserAsync(gu => gu.GroupId == id, include);
+            var groupUser = await service.GetAllGroupUserAsync();
             return Ok(groupUser.ToInfoAdminDto());
         }
 
         [HttpGet("{id:int}/info")]
-        public async Task<ActionResult<GroupUserInfoAdminDTO>> GetGroupUserInfoAdmin(int id, string? include = null)
+        public async Task<ActionResult<GroupUserInfoAdminDTO>> GetGroupUserInfoAdmin(int id)
         {
-            var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == id, include);
+            var groupUser = await service.GetGroupUserByIdAsync(id);
             if (groupUser == null)
                 return NotFound(new { Message = $"Пользователя в группе с id {id} не найден." });
             return Ok(groupUser.ToInfoAdminDto());
         }
 
         [HttpGet("{id:int}/test")]
-        public async Task<ActionResult<GroupUserTestDTO>> GetGroupUserTest(int id, string? include = null)
+        public async Task<ActionResult<GroupUserTestDTO>> GetGroupUserTest(int id)
         {
-            var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == id, include);
+            var groupUser = await service.GetGroupUserByIdAsync(id);
             if (groupUser == null)
                 return NotFound(new { Message = $"Пользователя в группе с id {id} не найден." });
             return Ok(groupUser.ToTestDto());
@@ -42,11 +41,11 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (groupUserUpdateDTO == null)
                 return BadRequest("Данные для обновления группыльзователя пустые.");
-            var groupUser = await _service.GroupUserRepository.GetGroupUserAsync(gu => gu.Id == id);
+            var groupUser = await service.GetGroupUserByIdAsync(id);
             if (groupUser == null)
                 return NotFound(new { Message = $"Группа пользователя с id {id} не найдена." });
             groupUser.UpdateFromDto(groupUserUpdateDTO);
-            await _service.GroupUserRepository.UpdateGroupUserAsync(groupUser);
+            await service.UpdateGroupUserAsync(groupUser);
             return NoContent();
         }
     }

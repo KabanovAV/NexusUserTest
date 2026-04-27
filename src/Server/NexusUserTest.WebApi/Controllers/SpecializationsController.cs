@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NexusUserTest.Application.Services;
+using NexusUserTest.Application.Common;
 using NexusUserTest.Common;
 using SibCCSPETest.WebApi.MappingProfiles;
 
@@ -7,21 +7,19 @@ namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpecializationsController(IRepoServiceManager service) : ControllerBase
+    public class SpecializationsController(ISpecializationService service) : ControllerBase
     {
-        private readonly IRepoServiceManager _service = service;
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAllSpecialization([FromQuery] string? include = null)
         {
-            var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync(includeProperties: include);
+            var specializations = await service.GetAllSpecializationAsync();
             return Ok(specializations.ToDto());
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<SpecializationDTO>> GetSpecialization(int id, [FromQuery] string? include = null)
         {
-            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, include);
+            var specialization = await service.GetSpecializationByIdAsync(id);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {id} не найдена." });
             return Ok(specialization.ToDto());
@@ -30,7 +28,7 @@ namespace SibCCSPETest.WebApi.Controllers
         [HttpGet("select")]
         public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect()
         {
-            var specializations = await _service.SpecializationRepository.GetAllSpecializationAsync();
+            var specializations = await service.GetAllSpecializationAsync();
             return Ok(specializations.ToSelect());
         }
 
@@ -40,7 +38,7 @@ namespace SibCCSPETest.WebApi.Controllers
             if (specializationCreateDTO == null)
                 return BadRequest("Данные для добавления специализации пустые.");
             var specialization = specializationCreateDTO.ToEntity();
-            await _service.SpecializationRepository.AddSpecializationAsync(specialization!, include);
+            await service.AddSpecializationAsync(specialization);
             var specializationDTO = specialization!.ToDto();
             return CreatedAtAction(nameof(GetSpecialization), new { id = specializationDTO!.Id }, specializationDTO);
         }
@@ -50,22 +48,25 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (specializationDTO == null)
                 return BadRequest("Данные для обновления специализации пустые.");
-            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id);
+            var specialization = await service.GetSpecializationByIdAsync(id);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
             specialization.UpdateFromDto(specializationDTO);
-            await _service.SpecializationRepository.UpdateSpecializationAsync(specialization);
+            await service.UpdateSpecializationAsync(specialization);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<bool>> DeleteSpecialization(int id)
         {
-            var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, "Groups,Topics");
+            //var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, "Groups,Topics");
+            var specialization = await service.GetSpecializationByIdAsync(id);
             if (specialization == null)
                 return NotFound(new { Message = $"Специализация с id {id} не найдена." });
-            var result = await _service.SpecializationRepository.DeleteSpecializationAsync(specialization);
-            return Ok(result);
+            //var result = await service.DeleteSpecializationAsync(specialization.Id);
+            //return Ok(result);
+            await service.DeleteSpecializationAsync(specialization.Id);
+            return NoContent();
         }
     }
 }

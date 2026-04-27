@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NexusUserTest.Application.Common;
 using NexusUserTest.Application.Mappings;
-using NexusUserTest.Application.Services;
 using NexusUserTest.Common;
 using SibCCSPETest.WebApi.MappingProfiles;
 
@@ -8,21 +8,19 @@ namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(IRepoServiceManager service) : ControllerBase
+    public class UsersController(IUserService service) : ControllerBase
     {
-        private readonly IRepoServiceManager _service = service;
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAllUserAdmin([FromQuery] string? include = null)
         {
-            var users = await _service.UserRepository.GetAllUserAsync(includeProperties: include);
+            var users = await service.GetAllUserAsync();
             return Ok(users.ToAdminDto());
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<UserAdminDTO>> GetUserAdmin(int id, [FromQuery] string? include = null)
         {
-            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
+            var user = await service.GetUserByIdAsync(id);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {id} не найден." });
             return Ok(user.ToAdminDto());
@@ -31,7 +29,7 @@ namespace SibCCSPETest.WebApi.Controllers
         [HttpGet("{id:int}/test")]
         public async Task<ActionResult<UserInfoTestDTO>> GetUserInfoTest(int id, [FromQuery] string? include = null)
         {
-            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
+            var user = await service.GetUserByIdAsync(id);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {id} не найден." });
             return Ok(user.ToTestDto());
@@ -43,7 +41,7 @@ namespace SibCCSPETest.WebApi.Controllers
             if (userAdminDTO == null)
                 return BadRequest("Данные для добавления пользователя пустые.");
             var user = userAdminDTO.ToEntity();
-            await _service.UserRepository.AddUserAsync(user!, include);
+            await service.AddUserAsync(user);
             var userDTO = user!.ToAdminDto();
             return CreatedAtAction(nameof(GetUserAdmin), new { id = userDTO!.Id }, userDTO);
         }
@@ -53,21 +51,21 @@ namespace SibCCSPETest.WebApi.Controllers
         {
             if (userDTO == null)
                 return BadRequest("Данные для обновления пользователя пустые.");
-            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id, include);
+            var user = await service.GetUserByIdAsync(id);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {userDTO.Id} не найден." });
             user.UpdateFromAdminDto(userDTO);
-            await _service.UserRepository.UpdateUserAsync(user);
+            await service.UpdateUserAsync(user);
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _service.UserRepository.GetUserAsync(u => u.Id == id);
+            var user = await service.GetUserByIdAsync(id);
             if (user == null)
                 return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            await _service.UserRepository.DeleteUserAsync(user);
+            await service.DeleteUserAsync(user.Id);
             return NoContent();
         }
     }
