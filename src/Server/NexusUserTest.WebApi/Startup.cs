@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using NexusUserTest.Application.Services;
+using NexusUserTest.Application;
 using NexusUserTest.Infrastructure;
 using NexusUserTest.WebApi.Middlewares;
 using Serilog;
@@ -12,26 +12,26 @@ namespace NexusUserTest.WebApi
 {
     public class Startup(IConfiguration configuration)
     {
-        private IConfiguration _configuration = configuration;
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSerilog();
-            services.ConfigurateCors();
-            services.ConfigurateSwaggerGen();
-            services.ConfigurateAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddApplication();
+            services.AddInfrastructure(configuration);
+            //services.ConfigurateCors();
+            //services.ConfigurateSwaggerGen();
+            //services.ConfigurateAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddIdentityCore<IdentityUser>(options =>
             {
                 options.Password.RequireDigit = true;
-            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<DbDataContext>();
+            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-            var connection = _configuration.GetConnectionString("PostgreConnection");
-            services.AddDbContext<DbDataContext>(options => options.UseNpgsql(connection));
+            //var connection = configuration.GetConnectionString("PostgreConnection");
+            //services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connection));
 
-            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var jwtSettings = configuration.GetSection("JwtSettings");
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -50,8 +50,8 @@ namespace NexusUserTest.WebApi
                 };
             });
 
-            services.ConfigurateRepositoryManager();
-            services.ConfigurateRepositoryService();
+            //services.ConfigurateRepositoryManager();
+            //services.ConfigurateRepositoryService();
         }
 
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
