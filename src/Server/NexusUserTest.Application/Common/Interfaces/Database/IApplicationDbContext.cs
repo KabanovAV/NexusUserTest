@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NexusUserTest.Domain.Entities;
 
-namespace NexusUserTest.Application.Common.Interfaces.Database
+namespace NexusUserTest.Application.Common
 {
-    public interface IDbDataContext
+    public interface IApplicationDbContext
     {
         DbSet<Specialization> Specializations { get; }
         DbSet<Group> Groups { get; }
