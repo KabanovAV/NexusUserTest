@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace NexusUserTest.Infrastructure.Persistence.Migrations
 {
-    [DbContext(typeof(DbDataContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250922042527_ResultRemoveStatus")]
     partial class ResultRemoveStatus
     {
