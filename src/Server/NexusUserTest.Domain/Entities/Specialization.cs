@@ -1,17 +1,22 @@
 ﻿using NexusUserTest.Domain.Common;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace NexusUserTest.Domain.Entities
 {
     public class Specialization : AuditableEntityBase
     {
-        [Required, StringLength(100)]
-        public string Title { get; set; } = string.Empty;
-
-        [JsonIgnore]
+        public string Title { get; set; } = null!;
         public List<Group>? Groups { get; set; }
-        [JsonIgnore]
         public List<Topic>? Topics { get; set; }
+
+        public bool ApplyUpdate(string? title)
+        {
+            var hasChanges = false;
+            if (title != null && !Title.Equals(title.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                Title = title;
+                hasChanges = true;
+            }            
+            return hasChanges;
+        }
     }
 }
