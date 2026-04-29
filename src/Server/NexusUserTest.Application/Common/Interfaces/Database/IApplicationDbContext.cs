@@ -13,7 +13,7 @@ namespace NexusUserTest.Application.Common
         DbSet<Answer> Answers { get; }
         DbSet<GroupUser> GroupUsers { get; }
         DbSet<TopicQuestion> TopicQuestions { get; }
-        DbSet<Result> Results { get; }
-        DbSet<Setting> Settings { get; }
+        DbSet<TestResult> TestResults { get; }
+        DbSet<TestSetting> TestSettings { get; }
     }
 }
