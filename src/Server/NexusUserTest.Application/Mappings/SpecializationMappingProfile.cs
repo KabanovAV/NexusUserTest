@@ -1,7 +1,7 @@
 ﻿using NexusUserTest.Common;
 using NexusUserTest.Domain.Entities;
 
-namespace SibCCSPETest.WebApi.MappingProfiles
+namespace NexusUserTest.Application.Mappings
 {
     public static class SpecializationMappingProfile
     {
@@ -11,11 +11,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// <param name="entity">Обьект Specialization</param>
         /// <returns>SpecializationDTO</returns>
         public static SpecializationDTO? ToDto(this Specialization entity)
-            => entity == null ? null : new SpecializationDTO
-            {
-                Id = entity.Id,
-                Title = entity.Title
-            };
+            => new(entity.Id, entity.Title);
 
         /// <summary>
         /// Маппинг списка из обьектов Specialization в список SpecializationDTO
@@ -31,11 +27,7 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// <param name="entity">Обьект Specialization</param>
         /// <returns>SelectItem</returns>
         public static SelectItem? ToSelect(this Specialization entity)
-            => entity == null ? null : new SelectItem
-            {
-                Value = entity.Id,
-                Text = entity.Title
-            };
+            => new(entity.Id, entity.Title);
 
         /// <summary>
         /// Маппинг списка из обьектов Specialization в список SelectItem
@@ -44,37 +36,5 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// <returns>Список SelectItem</returns>
         public static List<SelectItem> ToSelect(this IEnumerable<Specialization> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToSelect())];
-
-        /// <summary>
-        /// Маппинг из SpecializationDTO в обьект Specialization
-        /// </summary>
-        /// <param name="dto">SpecializationDTO</param>
-        /// <returns>Обьект Specialization</returns>
-        public static Specialization? ToEntity(this SpecializationDTO dto)
-            => dto == null ? null : new Specialization
-            {
-                Id = dto.Id,
-                Title = dto.Title
-            };
-
-        /// <summary>
-        /// Маппинг списка из SpecializationDTO в список обьектов Specialization
-        /// </summary>
-        /// <param name="dtos">Список SpecializationDTO</param>
-        /// <returns>Список обьектов Specialization</returns>
-        public static List<Specialization> ToEntity(this IEnumerable<SpecializationDTO> dtos)
-            => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
-
-        /// <summary>
-        /// Маппинг обновления обьекта Specialization
-        /// </summary>
-        /// <param name="entity">Обьект Specialization</param>
-        /// <param name="dto">SpecializationDTO</param>
-        public static void UpdateFromDto(this Specialization entity, SpecializationDTO dto)
-        {
-            if (dto == null) return;
-            if (dto.Title != null && !string.IsNullOrEmpty(dto.Title) && entity.Title != dto.Title)
-                entity.Title = dto.Title;
-        }        
     }
 }
