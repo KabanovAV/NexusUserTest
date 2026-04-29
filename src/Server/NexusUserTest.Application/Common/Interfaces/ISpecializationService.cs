@@ -1,4 +1,4 @@
-﻿using NexusUserTest.Domain.Entities;
+﻿using NexusUserTest.Common;
 
 namespace NexusUserTest.Application.Common
 {
@@ -11,32 +11,39 @@ namespace NexusUserTest.Application.Common
         /// Получение всех специализаций из набора данных
         /// </summary>
         /// <returns>Возвращает список специализаций из набора данных</returns>
-        Task<IEnumerable<Specialization>> GetAllSpecializationAsync();
+        Task<Result<IEnumerable<SpecializationDTO>>> GetAllSpecializationAsync();
+
+        /// <summary>
+        /// Получение выпадающего списка специализаций из набора данных
+        /// </summary>
+        /// <returns>Возвращает список специализаций из набора данных</returns>
+        Task<Result<IEnumerable<SelectItem>>> GetSelectSpecializationAsync();
 
         /// <summary>
         /// Получение специализации из набора данных по Id
         /// </summary>
         /// <param name="id">Id специализации</param>
         /// <returns>Возвращает специализацию из набора данных</returns>
-        Task<Specialization?> GetSpecializationByIdAsync(int id);
+        Task<Result<SpecializationDTO>> GetSpecializationByIdAsync(int id);
 
         /// <summary>
         /// Добавить специализацию в набор данных
         /// </summary>
         /// <param name="entity">Специализация</param>
         /// <returns>Возвращает специализацию после добавления в БД</returns>
-        Task<Specialization> AddSpecializationAsync(Specialization entity);
+        Task<Result<SpecializationDTO>> AddSpecializationAsync(SpecializationDTO entity);
 
         /// <summary>
         /// Изменить специализацию в наборе данных
         /// </summary>
+        /// <param name="id">Id специализации</param>
         /// <param name="entity">Специализация</param>
-        Task<Specialization> UpdateSpecializationAsync(Specialization entity);
+        Task<Result> UpdateSpecializationAsync(int id, SpecializationDTO entity);
 
         /// <summary>
         /// Удалить специализацию из набора данных
         /// </summary>
         /// <param name="id">Id специализации</param>
-        Task DeleteSpecializationAsync(int id);
+        Task<Result<bool>> DeleteSpecializationAsync(int id);
     }
 }
