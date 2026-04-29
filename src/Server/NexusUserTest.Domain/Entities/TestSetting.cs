@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace NexusUserTest.Domain.Entities
 {
-    public class Setting : AuditableEntityBase
+    public class TestSetting : AuditableEntityBase
     {
         [Required]
         public int GroupId { get; set; }
