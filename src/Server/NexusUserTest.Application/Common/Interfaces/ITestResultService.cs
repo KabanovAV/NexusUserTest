@@ -5,7 +5,7 @@ namespace NexusUserTest.Application.Common
     /// <summary>
     /// Интерфейс сервиса операциями для обьекта результат
     /// </summary>
-    public interface IResultService
+    public interface ITestResultService
     {
         /// <summary>
         /// Получение всех результатов из набора данных
