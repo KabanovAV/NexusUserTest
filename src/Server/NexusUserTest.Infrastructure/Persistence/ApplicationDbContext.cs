@@ -15,8 +15,8 @@ namespace NexusUserTest.Infrastructure
         public DbSet<Answer> Answers { get; set; }
         public DbSet<GroupUser> GroupUsers { get; set; }
         public DbSet<TopicQuestion> TopicQuestions { get; set; }
-        public DbSet<Result> Results { get; set; }
-        public DbSet<Setting> Settings { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<TestSetting> TestSettings { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
