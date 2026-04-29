@@ -1,50 +1,50 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using NexusUserTest.Application.Common;
-using NexusUserTest.Common;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.IdentityModel.Tokens;
+//using NexusUserTest.Application.Common;
+//using NexusUserTest.Common;
+//using System.IdentityModel.Tokens.Jwt;
+//using System.Security.Claims;
+//using System.Text;
 
-namespace NexusUserTest.WebApi.Controllers
-{
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController(IUserService service, IConfiguration config) : ControllerBase
-    {
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
-        {
-            //var user = await _service.UserRepository.GetUserAsync(u => u.Login == dto.UserLogin && u.Password == dto.Password);
-            var user = await service.GetUserByIdAsync(dto.Id);
-            if (user == null)
-                return Unauthorized(new { message = "Введен неверный логин или пароль" });
+//namespace NexusUserTest.WebApi.Controllers
+//{
+//    [ApiController]
+//    [Route("api/[controller]")]
+//    public class AuthController(IUserService service, IConfiguration config) : ControllerBase
+//    {
+//        [HttpPost("login")]
+//        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+//        {
+//            //var user = await _service.UserRepository.GetUserAsync(u => u.Login == dto.UserLogin && u.Password == dto.Password);
+//            var user = await service.GetUserByIdAsync(dto.Id);
+//            if (user == null)
+//                return Unauthorized(new { message = "Введен неверный логин или пароль" });
 
-            var token = GenerateJwtToken(new LoginDto { Id = user.Id, UserLogin = user.Login, Password = user.Password });
-            return Ok(new { token });
-        }
+//            var token = GenerateJwtToken(new LoginDto { Id = user.Id, UserLogin = user.Login, Password = user.Password });
+//            return Ok(new { token });
+//        }
 
-        private string GenerateJwtToken(LoginDto user)
-        {
-            var claims = new List<Claim>
-            {
-                new ("UserId", user.Id.ToString()),
-                new (ClaimTypes.Name, user.UserLogin!),
-                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+//        private string GenerateJwtToken(LoginDto user)
+//        {
+//            var claims = new List<Claim>
+//            {
+//                new ("UserId", user.Id.ToString()),
+//                new (ClaimTypes.Name, user.UserLogin!),
+//                new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+//            };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+//            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!));
+//            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: config["JwtSettings:Issuer"],
-                audience: config["JwtSettings:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(60),
-                signingCredentials: creds
-            );
+//            var token = new JwtSecurityToken(
+//                issuer: config["JwtSettings:Issuer"],
+//                audience: config["JwtSettings:Audience"],
+//                claims: claims,
+//                expires: DateTime.UtcNow.AddMinutes(60),
+//                signingCredentials: creds
+//            );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-    }
-}
+//            return new JwtSecurityTokenHandler().WriteToken(token);
+//        }
+//    }
+//}

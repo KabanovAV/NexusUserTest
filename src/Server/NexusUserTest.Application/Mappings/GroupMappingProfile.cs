@@ -35,11 +35,7 @@ namespace NexusUserTest.Application.Mappings
         /// <param name="entity">Обьект Group</param>
         /// <returns>SelectItem</returns>
         public static SelectItem? ToSelect(this Group entity)
-            => entity == null ? null : new SelectItem
-            {
-                Value = entity.Id,
-                Text = entity.Title
-            };
+            => entity == null ? null : new(entity.Id, entity.Title);
 
         /// <summary>
         /// Маппинг списка из обьектов Group в список SelectItem

@@ -7,11 +7,11 @@ namespace NexusUserTest.Application.Services
     /// <summary>
     /// Сервис с операциями для обьекта настроки
     /// </summary>
-    public class SettingService : ISettingService
+    public class TestSettingService : ITestSettingService
     {
         private readonly IRepository _repository;
 
-        public SettingService(IRepository repository)
+        public TestSettingService(IRepository repository)
         {
             _repository = repository;
         }
@@ -21,7 +21,7 @@ namespace NexusUserTest.Application.Services
         /// </summary>
         /// <param name="id">Id настройки</param>
         /// <returns>Возвращает настройку из набора данных</returns>
-        public async Task<Setting?> GetSettingByIdAsync(int id)
+        public async Task<TestSetting?> GetSettingByIdAsync(int id)
             => await _repository.Setting.GetSettingByIdAsync(id);
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace NexusUserTest.Application.Services
         /// </summary>
         /// <param name="entity">Настройка</param>
         /// <returns>Возвращает настройку после добавления в БД</returns>
-        public async Task<Setting> AddSettingAsync(Setting entity)
+        public async Task<TestSetting> AddSettingAsync(TestSetting entity)
         {
             await _repository.Setting.AddAsync(entity);
             return await _repository.Setting.GetSettingByIdAsync(entity.Id);
@@ -39,7 +39,7 @@ namespace NexusUserTest.Application.Services
         /// Изменить настройки в наборе данных
         /// </summary>
         /// <param name="entity">Настройка</param>
-        public async Task<Setting> UpdateSettingAsync(Setting entity)
+        public async Task<TestSetting> UpdateSettingAsync(TestSetting entity)
         {
             await _repository.Setting.Update(entity);
             return await _repository.Setting.GetSettingByIdAsync(entity.Id);

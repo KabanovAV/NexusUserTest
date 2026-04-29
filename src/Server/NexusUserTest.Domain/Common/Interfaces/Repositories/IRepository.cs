@@ -33,12 +33,12 @@
         /// <summary>
         /// Результат
         /// </summary>
-        IResultRepository Result { get; }
+        ITestResultRepository Result { get; }
 
         /// <summary>
         /// Настройки теста
         /// </summary>
-        ISettingRepository Setting { get; }
+        ITestSettingRepository Setting { get; }
 
         /// <summary>
         /// Специализация

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NexusUserTest.Infrastructure;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NexusUserTest.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class DbDataContextModelSnapshot : ModelSnapshot
+    [Migration("20260427082146_UpdateTables")]
+    partial class UpdateTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -146,31 +149,7 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("NexusUserTest.Domain.Entities.Specialization", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("ChangedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Specializations");
-                });
-
-            modelBuilder.Entity("NexusUserTest.Domain.Entities.TestResult", b =>
+            modelBuilder.Entity("NexusUserTest.Domain.Entities.Result", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -201,10 +180,10 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("TestResults");
+                    b.ToTable("Results");
                 });
 
-            modelBuilder.Entity("NexusUserTest.Domain.Entities.TestSetting", b =>
+            modelBuilder.Entity("NexusUserTest.Domain.Entities.Setting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -232,7 +211,31 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                     b.HasIndex("GroupId")
                         .IsUnique();
 
-                    b.ToTable("TestSettings");
+                    b.ToTable("Settings");
+                });
+
+            modelBuilder.Entity("NexusUserTest.Domain.Entities.Specialization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ChangedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specializations");
                 });
 
             modelBuilder.Entity("NexusUserTest.Domain.Entities.Topic", b =>
@@ -380,7 +383,7 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NexusUserTest.Domain.Entities.TestResult", b =>
+            modelBuilder.Entity("NexusUserTest.Domain.Entities.Result", b =>
                 {
                     b.HasOne("NexusUserTest.Domain.Entities.Answer", "Answer")
                         .WithMany()
@@ -405,11 +408,11 @@ namespace NexusUserTest.Infrastructure.Persistence.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("NexusUserTest.Domain.Entities.TestSetting", b =>
+            modelBuilder.Entity("NexusUserTest.Domain.Entities.Setting", b =>
                 {
                     b.HasOne("NexusUserTest.Domain.Entities.Group", "Group")
                         .WithOne("Setting")
-                        .HasForeignKey("NexusUserTest.Domain.Entities.TestSetting", "GroupId")
+                        .HasForeignKey("NexusUserTest.Domain.Entities.Setting", "GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

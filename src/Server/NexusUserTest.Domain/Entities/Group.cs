@@ -20,6 +20,6 @@ namespace NexusUserTest.Domain.Entities
         [JsonIgnore]
         public List<GroupUser>? GroupUser { get; set; }
         [JsonIgnore]
-        public Setting? Setting { get; set; }
+        public TestSetting? Setting { get; set; }
     }
 }

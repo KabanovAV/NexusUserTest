@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.15" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,12 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="NexusUserTest.Common">
-      <HintPath>..\..\NexusUserTest.Common\bin\Debug\net9.0\NexusUserTest.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="NexusUserTest.Shared">
-      <HintPath>..\NexusUserTest.Shared\bin\Debug\net9.0\NexusUserTest.Shared.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\NexusUserTest.Common\NexusUserTest.Common.csproj" />
+    <ProjectReference Include="..\NexusUserTest.Shared\NexusUserTest.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,6 +19,6 @@ namespace NexusUserTest.Domain.Entities
         [JsonIgnore]
         public User? User { get; set; }
         [JsonIgnore]
-        public List<Result>? Results { get; set; }
+        public List<TestResult>? Results { get; set; }
     }
 }

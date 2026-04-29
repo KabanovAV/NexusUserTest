@@ -12,8 +12,9 @@ namespace SibCCSPETest.WebApi.Controllers
         [HttpGet("specialization/{id:int}")]
         public async Task<ActionResult<IEnumerable<QuestionTestDTO>>> GetAllQuestionTest(int id, string? include = null)
         {
-            var specialization = await service.GetSpecializationByIdAsync(id);
-            return Ok(specialization.Topics.ToTestDto());
+            //var specialization = await service.GetSpecializationByIdAsync(id);
+            //return Ok(specialization.Topics.ToTestDto());
+            return NoContent();
         }
     }
 }
