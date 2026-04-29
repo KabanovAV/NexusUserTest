@@ -7,14 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NexusUserTest.Common\NexusUserTest.Common.csproj" />
-    <ProjectReference Include="..\NexusUserTest.Domain\NexusUserTest.Domain.csproj" />
+    <Reference Include="NexusUserTest.Common">
+      <HintPath>..\..\NexusUserTest.Common\bin\Debug\net9.0\NexusUserTest.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="NexusUserTest.Domain">
+      <HintPath>..\NexusUserTest.Domain\bin\Debug\net9.0\NexusUserTest.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="NexusUserTest.Infrastructure">
+      <HintPath>..\NexusUserTest.Infrastructure\bin\Debug\net9.0\NexusUserTest.Infrastructure.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

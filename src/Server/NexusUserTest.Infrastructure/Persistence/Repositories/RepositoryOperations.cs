@@ -10,7 +10,7 @@ namespace NexusUserTest.Infrastructure
     /// <typeparam name="TEntity">Сущность</typeparam>
     public class RepositoryOperations<TEntity> : IRepositoryOperations<TEntity> where TEntity : class
     {
-        protected ApplicationDbContext Context { get; set; }
+        private ApplicationDbContext Context { get; set; }
         private DbSet<TEntity> DbSet;
 
         public RepositoryOperations(ApplicationDbContext context)

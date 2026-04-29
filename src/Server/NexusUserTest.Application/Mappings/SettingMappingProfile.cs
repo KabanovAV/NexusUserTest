@@ -10,7 +10,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Setting</param>
         /// <returns>SettingDTO</returns>
-        public static SettingDTO? ToDto(this TestSetting entity)
+        public static SettingDTO? ToDto(this Setting entity)
             => entity == null ? null : new SettingDTO
             {
                 Id = entity.Id,
@@ -24,7 +24,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список Group</param>
         /// <returns>Список GroupDTO</returns>
-        public static List<SettingDTO> ToDto(this IEnumerable<TestSetting> entities)
+        public static List<SettingDTO> ToDto(this IEnumerable<Setting> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToDto())];
 
         /// <summary>
@@ -32,8 +32,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dto">SettingDTO</param>
         /// <returns>Обьект Setting</returns>
-        public static TestSetting? ToEntity(this SettingDTO dto)
-            => dto == null ? null : new TestSetting
+        public static Setting? ToEntity(this SettingDTO dto)
+            => dto == null ? null : new Setting
             {
                 Id = dto.Id,
                 GroupId = dto.GroupId,
@@ -46,7 +46,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список SettingDTO</param>
         /// <returns>Список обьектов Setting</returns>
-        public static List<TestSetting> ToEntity(this IEnumerable<SettingDTO> dtos)
+        public static List<Setting> ToEntity(this IEnumerable<SettingDTO> dtos)
             => [.. dtos.Where(dto => dto != null).Select(dto => dto.ToEntity())];
 
         /// <summary>
@@ -54,8 +54,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dto">SettingCreateDTO</param>
         /// <returns>Setting</returns>
-        public static TestSetting? ToEntity(this SettingCreateDTO dto)
-            => dto == null ? null : new TestSetting
+        public static Setting? ToEntity(this SettingCreateDTO dto)
+            => dto == null ? null : new Setting
             {
                 GroupId = dto.GroupId,
                 CountOfQuestion = dto.CountOfQuestion,
@@ -67,7 +67,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Setting</param>
         /// <param name="dto">SettingDTO</param>
-        public static void UpdateFromDto(this TestSetting entity, SettingDTO dto)
+        public static void UpdateFromDto(this Setting entity, SettingDTO dto)
         {
             if (dto == null) return;
             if (entity.CountOfQuestion != 0 && entity.CountOfQuestion != dto.CountOfQuestion)

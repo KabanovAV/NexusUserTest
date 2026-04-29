@@ -9,8 +9,6 @@ namespace NexusUserTest.Infrastructure
     /// </summary>
     public class SpecializationRepository(ApplicationDbContext db) : RepositoryOperations<Specialization>(db), ISpecializationRepository
     {
-        public override IQueryable<Specialization> Data => Context.Specializations.Include(s => s.Groups).Include(s => s.Topics);
-
         /// <summary>
         /// Получение всех специализаций из набора данных
         /// </summary>
@@ -25,13 +23,5 @@ namespace NexusUserTest.Infrastructure
         /// <returns>Возвращает специализацию из набора данных</returns>
         public async Task<Specialization?> GetSpecializationByIdAsync(int id)
             => await GetAsync(id);
-
-        /// <summary>
-        /// Получение одной специализации из набора данных со связями
-        /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <returns>Возвращает специализацию из набора данных</returns>
-        public async Task<Specialization?> GetSpecializationByIdWithChildrenAsync(int id)
-            => await Data.FirstAsync(s => s.Id == id);
     }
 }

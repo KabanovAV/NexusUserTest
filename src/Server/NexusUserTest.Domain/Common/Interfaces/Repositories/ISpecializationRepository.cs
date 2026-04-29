@@ -10,21 +10,14 @@ namespace NexusUserTest.Domain.Common
         /// <summary>
         /// Получение всех специализаций из набора данных
         /// </summary>
-        /// <returns>Возвращает список специализаций из набора данных</returns>
+        /// <returns>Возвращает список всех специализаций из набора данных</returns>
         Task<IEnumerable<Specialization>> GetAllSpecializationAsync();
 
         /// <summary>
         /// Получение одной специализации из набора данных
         /// </summary>
         /// <param name="id">Id специализации</param>
-        /// <returns>Возвращает специализацию из набора данных</returns>
+        /// <returns>Возвращает одной специализации из набора данных</returns>
         Task<Specialization?> GetSpecializationByIdAsync(int id);
-
-        /// <summary>
-        /// Получение одной специализации из набора данных со связями
-        /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <returns>Возвращает специализацию из набора данных</returns>
-        Task<Specialization?> GetSpecializationByIdWithChildrenAsync(int id);
     }
 }

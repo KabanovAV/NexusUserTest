@@ -1,103 +1,72 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Common;
 using NexusUserTest.Common;
-using NexusUserTest.WebApi.Controllers;
+using SibCCSPETest.WebApi.MappingProfiles;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SpecializationsController(ISpecializationService service) : ApiController
+    public class SpecializationsController(ISpecializationService service) : ControllerBase
     {
-        /// <summary>
-        /// Получение списка специализаций
-        /// </summary>
-        /// <returns>Возвращает список специализаций</returns>
-        /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAllSpecialization()
+        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAllSpecialization([FromQuery] string? include = null)
         {
             var specializations = await service.GetAllSpecializationAsync();
-            return HandleOkResult(specializations);
+            return Ok(specializations.ToDto());
         }
 
-        /// <summary>
-        /// Получение специализации по Id
-        /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <returns>Возвращает специализацию</returns>
-        /// <response code="200">Успешное выполнение запроса</response>
-        /// <response code="404">Специализация не найдена</response>
         [HttpGet("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<SpecializationDTO>> GetSpecialization([FromRoute] int id)
+        public async Task<ActionResult<SpecializationDTO>> GetSpecialization(int id, [FromQuery] string? include = null)
         {
             var specialization = await service.GetSpecializationByIdAsync(id);
-            return HandleOkResult(specialization);
+            if (specialization == null)
+                return NotFound(new { Message = $"Специализация с id {id} не найдена." });
+            return Ok(specialization.ToDto());
         }
 
-        /// <summary>
-        /// Получение выпадающего списка специализаций
-        /// </summary>
-        /// <returns>Возвращает список специализаций</returns>
-        /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet("select")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect()
         {
-            var specializations = await service.GetSelectSpecializationAsync();
-            return HandleOkResult(specializations);
+            var specializations = await service.GetAllSpecializationAsync();
+            return Ok(specializations.ToSelect());
         }
 
-        /// <summary>
-        /// Добавить новую специализацию
-        /// </summary>
-        /// <param name="cSpecialization">Специализация</param>
-        /// <returns>Возвращает новую специализацию</returns>
-        /// <response code="201">Успешное выполнение запроса</response>
-        /// <response code="400">Ошибка валидации данных</response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<SpecializationDTO>> AddSpecialization([FromBody] SpecializationDTO cSpecialization)
+        public async Task<ActionResult<SpecializationDTO>> AddSpecialization(SpecializationDTO specializationCreateDTO, [FromQuery] string? include = null)
         {
-            var result = await service.AddSpecializationAsync(cSpecialization);
-            return HandleCreatedResult(result, nameof(GetSpecialization), new { id = result.Value.Id });
+            if (specializationCreateDTO == null)
+                return BadRequest("Данные для добавления специализации пустые.");
+            var specialization = specializationCreateDTO.ToEntity();
+            await service.AddSpecializationAsync(specialization);
+            var specializationDTO = specialization!.ToDto();
+            return CreatedAtAction(nameof(GetSpecialization), new { id = specializationDTO!.Id }, specializationDTO);
         }
 
-        /// <summary>
-        /// Обновление данных специализации
-        /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <param name="uSpecialization">Измененные данные специализации</param>
-        /// <response code="204">Успешное выполнение запроса</response>
-        /// <response code="400">Некорректный запрос</response>
-        /// <response code="404">Специализация не найдена</response>
-        [HttpPatch("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateSpecialization([FromRoute] int id, [FromBody] SpecializationDTO uSpecialization)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateSpecialization(int id, SpecializationDTO specializationDTO)
         {
-            var result = await service.UpdateSpecializationAsync(id, uSpecialization);
-            return HandleNoContentResult(result);
+            if (specializationDTO == null)
+                return BadRequest("Данные для обновления специализации пустые.");
+            var specialization = await service.GetSpecializationByIdAsync(id);
+            if (specialization == null)
+                return NotFound(new { Message = $"Специализация с id {specializationDTO.Id} не найдена." });
+            specialization.UpdateFromDto(specializationDTO);
+            await service.UpdateSpecializationAsync(specialization);
+            return NoContent();
         }
 
-        /// <summary>
-        /// Удаление данных о специализации
-        /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <response code="200">Успешное выполнение запроса</response>
-        /// <response code="404">Специализация не найдена</response>
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<bool>> DeleteSpecialization([FromRoute] int id)
+        public async Task<ActionResult<bool>> DeleteSpecialization(int id)
         {
-            var result = await service.DeleteSpecializationAsync(id);
-            return HandleOkResult(result);
+            //var specialization = await _service.SpecializationRepository.GetSpecializationAsync(s => s.Id == id, "Groups,Topics");
+            var specialization = await service.GetSpecializationByIdAsync(id);
+            if (specialization == null)
+                return NotFound(new { Message = $"Специализация с id {id} не найдена." });
+            //var result = await service.DeleteSpecializationAsync(specialization.Id);
+            //return Ok(result);
+            await service.DeleteSpecializationAsync(specialization.Id);
+            return NoContent();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using NexusUserTest.Common;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace NexusUserTest.Shared.Services

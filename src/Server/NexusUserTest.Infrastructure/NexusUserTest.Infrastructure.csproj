@@ -7,14 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.15" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NexusUserTest.Application\NexusUserTest.Application.csproj" />
-    <ProjectReference Include="..\NexusUserTest.Domain\NexusUserTest.Domain.csproj" />
+    <Reference Include="NexusUserTest.Application">
+      <HintPath>..\NexusUserTest.Application\bin\Debug\net9.0\NexusUserTest.Application.dll</HintPath>
+    </Reference>
+    <Reference Include="NexusUserTest.Domain">
+      <HintPath>..\NexusUserTest.Domain\bin\Debug\net9.0\NexusUserTest.Domain.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

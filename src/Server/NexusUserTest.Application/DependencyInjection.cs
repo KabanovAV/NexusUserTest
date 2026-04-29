@@ -1,15 +1,36 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using NexusUserTest.Application.Common;
 using NexusUserTest.Application.Services;
-using System.Reflection;
 
 namespace NexusUserTest.Application
 {
     public static class DependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
-            => services.AddServices().AddValidationService();
+            => services.ConfigurateCors().ConfigurateSwaggerGen().AddServices();
+
+        private static IServiceCollection ConfigurateCors(this IServiceCollection services)
+            => services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.WithOrigins("https://localhost:7113;http://localhost:5168")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
+        private static IServiceCollection ConfigurateSwaggerGen(this IServiceCollection services)
+            => services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("Version 1.0", new OpenApiInfo
+                {
+                    Version = "Version 1.0",
+                    Title = "Web API",
+                    Description = "Try repeat what I learn from DotNetTutorials"
+                });
+            });
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
@@ -17,22 +38,15 @@ namespace NexusUserTest.Application
             services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IGroupUserService, GroupUserService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            //services.AddScoped<ITestResultService, TestResultService>();
-            services.AddScoped<ITestSettingService, TestSettingService>();
+            services.AddScoped<IResultService, ResultService>();
+            services.AddScoped<ISettingService, SettingService>();
             services.AddScoped<ISpecializationService, SpecializationService>();
             services.AddScoped<ITopicQuestionService, TopicQuestionService>();
             services.AddScoped<ITopicService, TopicService>();
             services.AddScoped<IUserService, UserService>();
 
             return services;
-        }
-
-        private static IServiceCollection AddValidationService(this IServiceCollection services)
-        {
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddScoped<IValidationService, ValidationService>();
-            return services;
-        }
+        }            
 
         //public static IServiceCollection ConfigurateAutoMapper(this IServiceCollection services, Assembly[] assembly)
         //    => services.AddAutoMapper(assembly);

@@ -9,8 +9,8 @@ namespace NexusUserTest.Infrastructure
         public IGroupUserRepository GroupUser { get; private set; } = new GroupUserRepository(db);
         public ITopicQuestionRepository TopicQuestion { get; private set; } = new TopicQuestionRepository(db);
         public IQuestionRepository Question { get; private set; } = new QuestionRepository(db);
-        public ITestResultRepository Result { get; private set; } = new TestResultRepository(db);
-        public ITestSettingRepository Setting { get; private set; } = new TestSettingRepository(db);
+        public IResultRepository Result { get; private set; } = new ResultRepository(db);
+        public ISettingRepository Setting { get; private set; } = new SettingRepository(db);
         public ISpecializationRepository Specialization { get; private set; } = new SpecializationRepository(db);
         public ITopicRepository Topic { get; private set; } = new TopicRepository(db);
         public IUserRepository User { get; private set; } = new UserRepository(db);

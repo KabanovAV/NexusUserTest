@@ -10,7 +10,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Result</param>
         /// <returns>ResultInfoDTO</returns>
-        public static ResultInfoAdminDTO? ToInfoAdminDto(this TestResult entity)
+        public static ResultInfoAdminDTO? ToInfoAdminDto(this Result entity)
             => entity == null ? null : new ResultInfoAdminDTO
             {
                 Id = entity.Id,
@@ -34,7 +34,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список обьектов Result</param>
         /// <returns>Список ResultInfoDTO</returns>
-        public static List<ResultInfoAdminDTO> ToInfoAdminDto(this IEnumerable<TestResult> entities)
+        public static List<ResultInfoAdminDTO> ToInfoAdminDto(this IEnumerable<Result> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToInfoAdminDto())];
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Result</param>
         /// <returns>ResultTestDTO</returns>
-        public static ResultTestDTO? ToTestDto(this TestResult entity)
+        public static ResultTestDTO? ToTestDto(this Result entity)
             => entity == null ? null : new ResultTestDTO
             {
                 Id = entity.Id,
@@ -66,7 +66,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список обьектов Result</param>
         /// <returns>Список ResultTestDTO</returns>
-        public static List<ResultTestDTO> ToTestDto(this IEnumerable<TestResult> entities)
+        public static List<ResultTestDTO> ToTestDto(this IEnumerable<Result> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToTestDto())];
 
         /// <summary>
@@ -74,8 +74,8 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dto">ResultTestDTO</param>
         /// <returns>Result</returns>
-        public static TestResult? ToTestEntity(this ResultTestDTO dto)
-            => dto == null ? null : new TestResult
+        public static Result? ToTestEntity(this ResultTestDTO dto)
+            => dto == null ? null : new Result
             {
                 Id = dto.Id,
                 GroupUserId = dto.GroupUserId,
@@ -88,7 +88,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="dtos">Список ResultTestDTO</param>
         /// <returns>Список обьектов Result</returns>
-        public static List<TestResult> ToTestEntity(this IEnumerable<ResultTestDTO> dtos)
+        public static List<Result> ToTestEntity(this IEnumerable<ResultTestDTO> dtos)
             => [.. dtos.Where(dto => dto != null).Select(e => e.ToTestEntity())];
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Result</param>
         /// <param name="dto">ResultTestDTO</param>
-        public static void UpdateFromDto(this TestResult entity, ResultTestDTO dto)
+        public static void UpdateFromDto(this Result entity, ResultTestDTO dto)
         {
             if (dto == null) return;
             if (entity.GroupUserId != 0 && entity.GroupUserId != dto.GroupUserId)
@@ -112,7 +112,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Result</param>
         /// <returns>ResultInfoTestDTO</returns>
-        public static ResultInfoTestDTO? ToTestInfoDto(this TestResult entity)
+        public static ResultInfoTestDTO? ToTestInfoDto(this Result entity)
             => entity == null ? null : new ResultInfoTestDTO { IsCorrect = entity.Answer!.IsCorrect };
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entities">Список обьектов Result</param>
         /// <returns>Список ResultInfoTestDTO</returns>
-        public static List<ResultInfoTestDTO> ToTestInfoDto(this IEnumerable<TestResult> entities)
+        public static List<ResultInfoTestDTO> ToTestInfoDto(this IEnumerable<Result> entities)
             => [.. entities.Where(e => e != null).Select(e => e.ToTestInfoDto())];
     }
 }

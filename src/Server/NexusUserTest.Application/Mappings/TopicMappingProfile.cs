@@ -33,7 +33,11 @@ namespace SibCCSPETest.WebApi.MappingProfiles
         /// <param name="entity">Обьект Topic</param>
         /// <returns>SelectItem</returns>
         public static SelectItem? ToSelect(this Topic entity)
-            => entity == null ? null : new(entity.Id, entity.Title);
+            => entity == null ? null : new SelectItem
+            {
+                Value = entity.Id,
+                Text = entity.Title
+            };
 
         /// <summary>
         /// Маппинг списка из обьектов Topic в список SelectItem
