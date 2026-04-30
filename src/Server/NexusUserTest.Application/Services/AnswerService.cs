@@ -68,6 +68,6 @@ namespace NexusUserTest.Application.Services
         /// </summary>
         /// <param name="id">Id ответа</param>
         public async Task DeleteAnswerAsync(int id)
-            => await _repository.Answer.Delete(id);
+            => await _repository.Answer.Remove(id);
     }
 }

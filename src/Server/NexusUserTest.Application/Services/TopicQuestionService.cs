@@ -36,6 +36,6 @@ namespace NexusUserTest.Application.Services
         /// </summary>
         /// <param name="id">Id темы вопрос</param>
         public async Task DeleteTopicQuestionAsync(int id)
-            => await _repository.TopicQuestion.Delete(id);
+            => await _repository.TopicQuestion.Remove(id);
     }
 }

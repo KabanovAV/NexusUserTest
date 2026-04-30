@@ -57,6 +57,6 @@ namespace NexusUserTest.Application.Services
         /// </summary>
         /// <param name="id">Id пользователя</param>
         public async Task DeleteUserAsync(int id)
-            => await _repository.User.Delete(id);
+            => await _repository.User.Remove(id);
     }
 }
