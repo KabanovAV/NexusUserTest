@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using NexusUserTest.Application.Common;
-using NexusUserTest.Common;
+using NexusUserTest.Common.DTOs;
 
 namespace NexusUserTest.Application.Validators
 {
-    public class SpecializationBaseValidator<T> : AbstractValidator<T> where T : SpecializationDTO
+    public class SpecializationBaseValidator<T> : AbstractValidator<T> where T : SpecializationBaseDTO
     {
         public SpecializationBaseValidator()
         {
@@ -12,7 +12,7 @@ namespace NexusUserTest.Application.Validators
             {
                 RuleFor(s => s.Title)
                     .NotEmpty().WithMessage(x => string.Format(ValidationMessages.Required, "Название"))
-                    .Length(100).WithMessage(x => string.Format(ValidationMessages.Length, "Название", 100));
+                    .Length(1, 100).WithMessage(x => string.Format(ValidationMessages.LengthFromTo, "Название", 1, 100));
             });
         }
     }
