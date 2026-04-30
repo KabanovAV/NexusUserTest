@@ -1,4 +1,5 @@
 ﻿using NexusUserTest.Common;
+using NexusUserTest.Common.DTOs;
 
 namespace NexusUserTest.Application.Common
 {
@@ -11,13 +12,7 @@ namespace NexusUserTest.Application.Common
         /// Получение всех специализаций из набора данных
         /// </summary>
         /// <returns>Возвращает список специализаций из набора данных</returns>
-        Task<Result<IEnumerable<SpecializationDTO>>> GetAllSpecializationAsync();
-
-        /// <summary>
-        /// Получение выпадающего списка специализаций из набора данных
-        /// </summary>
-        /// <returns>Возвращает список специализаций из набора данных</returns>
-        Task<Result<IEnumerable<SelectItem>>> GetSelectSpecializationAsync();
+        Task<Result<IEnumerable<SpecializationDTO>>> GetAllSpecializationAsync();        
 
         /// <summary>
         /// Получение специализации из набора данных по Id
@@ -27,18 +22,24 @@ namespace NexusUserTest.Application.Common
         Task<Result<SpecializationDTO>> GetSpecializationByIdAsync(int id);
 
         /// <summary>
+        /// Получение выпадающего списка специализаций из набора данных
+        /// </summary>
+        /// <returns>Возвращает список специализаций из набора данных</returns>
+        Task<Result<IEnumerable<SelectItem>>> GetSelectSpecializationAsync();
+
+        /// <summary>
         /// Добавить специализацию в набор данных
         /// </summary>
         /// <param name="entity">Специализация</param>
         /// <returns>Возвращает специализацию после добавления в БД</returns>
-        Task<Result<SpecializationDTO>> AddSpecializationAsync(SpecializationDTO entity);
+        Task<Result<SpecializationDTO>> CreateSpecializationAsync(CreateSpecializationDTO entity);
 
         /// <summary>
         /// Изменить специализацию в наборе данных
         /// </summary>
         /// <param name="id">Id специализации</param>
         /// <param name="entity">Специализация</param>
-        Task<Result> UpdateSpecializationAsync(int id, SpecializationDTO entity);
+        Task<Result> UpdateSpecializationAsync(int id, UpdateSpecializationDTO entity);
 
         /// <summary>
         /// Удалить специализацию из набора данных
