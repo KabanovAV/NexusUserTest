@@ -1,5 +1,5 @@
 ﻿namespace NexusUserTest.Common.DTOs
 {
-    public record AddSpecializationDTO(string Title)
+    public record CreateSpecializationDTO(string Title)
         : SpecializationBaseDTO(Title);
 }
