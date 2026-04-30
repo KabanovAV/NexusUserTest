@@ -2,6 +2,7 @@
 using NexusUserTest.Application;
 using NexusUserTest.Infrastructure;
 using Serilog;
+using System.Reflection;
 
 namespace NexusUserTest.WebApi
 {
@@ -53,6 +54,10 @@ namespace NexusUserTest.WebApi
                         Url = new Uri("https://nexustest/about-us")
                     }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
             });
             return services;
         }
