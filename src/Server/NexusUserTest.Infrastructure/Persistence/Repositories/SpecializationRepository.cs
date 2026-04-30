@@ -16,7 +16,7 @@ namespace NexusUserTest.Infrastructure
         /// </summary>
         /// <returns>Возвращает список специализаций из набора данных</returns>
         public async Task<IEnumerable<Specialization>> GetAllSpecializationAsync()
-            => await PlainData.ToListAsync();
+            => await PlainData.ToListAsync() ?? [];
 
         /// <summary>
         /// Получение одной специализации из набора данных
