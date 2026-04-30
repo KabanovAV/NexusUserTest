@@ -1,4 +1,5 @@
 ﻿using NexusUserTest.Common;
+using NexusUserTest.Common.DTOs;
 using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.Application.Mappings
@@ -10,7 +11,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Specialization</param>
         /// <returns>SpecializationDTO</returns>
-        public static SpecializationDTO? ToDto(this Specialization entity)
+        public static SpecializationDTO ToDto(this Specialization entity)
             => new(entity.Id, entity.Title);
 
         /// <summary>
@@ -26,7 +27,7 @@ namespace NexusUserTest.Application.Mappings
         /// </summary>
         /// <param name="entity">Обьект Specialization</param>
         /// <returns>SelectItem</returns>
-        public static SelectItem? ToSelect(this Specialization entity)
+        public static SelectItem ToSelect(this Specialization entity)
             => new(entity.Id, entity.Title);
 
         /// <summary>
