@@ -56,24 +56,24 @@
         /// Удалить один объект из набора данных
         /// </summary>
         /// <param name="id">Id объекта</param> 
-        Task Delete(int id);
+        Task Remove(int id);
 
         /// <summary>
         /// Удалить коллекцию объектов из набора данных
         /// </summary>
         /// <param name="ids">Id объектов</param>
-        Task DeleteRange(IEnumerable<int> ids);
+        Task RemoveRange(IEnumerable<int> ids);
 
         /// <summary>
         /// Удалить один объект из набора данных
         /// </summary>
         /// <param name="entity">Удаляемый объект</param>
-        Task Delete(TEntity entity);
+        Task Remove(TEntity entity);
 
         /// <summary>
         /// Удалить коллекцию объектов из набора данных
         /// </summary>
         /// <param name="entities">Удаляемые объекты</param>
-        Task DeleteRange(IEnumerable<TEntity> entities);
+        Task RemoveRange(IEnumerable<TEntity> entities);
     }
 }

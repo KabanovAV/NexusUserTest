@@ -98,7 +98,7 @@ namespace NexusUserTest.Infrastructure
         /// Удалить один объект из набора данных
         /// </summary>
         /// <param name="id">Id объекта</param>
-        public virtual async Task Delete(int id)
+        public virtual async Task Remove(int id)
         {
             var entity = await GetAsync(id);
             if (entity == null)
@@ -111,7 +111,7 @@ namespace NexusUserTest.Infrastructure
         /// Удалить коллекцию объектов из набора данных
         /// </summary>
         /// <param name="ids">Id объектов</param>
-        public virtual async Task DeleteRange(IEnumerable<int> ids)
+        public virtual async Task RemoveRange(IEnumerable<int> ids)
         {
             List<int> idList = [.. ids];
             if (idList.Count == 0)
@@ -128,7 +128,7 @@ namespace NexusUserTest.Infrastructure
         /// Удалить один объект из набора данных
         /// </summary>
         /// <param name="entity">Удаляемый объект</param>
-        public virtual async Task Delete(TEntity entity)
+        public virtual async Task Remove(TEntity entity)
         {
             DbSet.Remove(entity);
             await Context.SaveChangesAsync();
@@ -138,7 +138,7 @@ namespace NexusUserTest.Infrastructure
         /// Удалить коллекцию объектов из набора данных
         /// </summary>
         /// <param name="entities">Удаляемые объекты</param>
-        public virtual async Task DeleteRange(IEnumerable<TEntity> entities)
+        public virtual async Task RemoveRange(IEnumerable<TEntity> entities)
         {
             List<TEntity> entityList = [.. entities];
             if (entityList.Count == 0)
