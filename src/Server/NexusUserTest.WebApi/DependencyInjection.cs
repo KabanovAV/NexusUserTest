@@ -65,7 +65,8 @@ namespace NexusUserTest.WebApi
 
         private static IServiceCollection AddExceptionHandler(this IServiceCollection services)
         {
-            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddExceptionHandler<ServerExceptionHandler>();
+            services.AddExceptionHandler<DomainExceptionHandler>();            
             return services;
         }
     }
