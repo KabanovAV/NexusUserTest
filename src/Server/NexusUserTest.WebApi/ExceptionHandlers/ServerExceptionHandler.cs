@@ -4,7 +4,7 @@ using Serilog;
 
 namespace NexusUserTest.WebApi
 {
-    internal sealed class GlobalExceptionHandler : IExceptionHandler
+    internal sealed class ServerExceptionHandler : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
