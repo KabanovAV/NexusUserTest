@@ -24,6 +24,7 @@ namespace NexusUserTest.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseExceptionHandler();
             app.UseNotFoundCustomMiddleware();
             app.UseLoggingCustomMiddleware();
 

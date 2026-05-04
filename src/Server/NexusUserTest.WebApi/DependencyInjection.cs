@@ -16,6 +16,7 @@ namespace NexusUserTest.WebApi
             services.AddInfrastructure(configuration);
             services.AddCorsConfiguration();
             services.AddSwagger();
+            services.AddExceptionHandler();
 
             return services;
         }
@@ -59,6 +60,12 @@ namespace NexusUserTest.WebApi
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
             });
+            return services;
+        }
+
+        private static IServiceCollection AddExceptionHandler(this IServiceCollection services)
+        {
+            services.AddExceptionHandler<GlobalExceptionHandler>();
             return services;
         }
     }
