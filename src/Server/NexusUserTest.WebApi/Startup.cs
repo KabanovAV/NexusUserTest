@@ -25,8 +25,6 @@ namespace NexusUserTest.WebApi
             app.UseAuthorization();
 
             app.UseExceptionHandler();
-            app.UseNotFoundCustomMiddleware();
-            app.UseLoggingCustomMiddleware();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
