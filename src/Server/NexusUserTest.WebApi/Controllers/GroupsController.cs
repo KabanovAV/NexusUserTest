@@ -1,86 +1,104 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Common;
-using NexusUserTest.Application.Mappings;
 using NexusUserTest.Common;
-using SibCCSPETest.WebApi.MappingProfiles;
+using NexusUserTest.Common.DTOs;
+using NexusUserTest.WebApi.Controllers;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupsController(IGroupService service) : ControllerBase
+    public class GroupsController(IGroupService service) : ApiController
     {
+        /// <summary>
+        /// Получение списка специализаций
+        /// </summary>
+        /// <returns>Возвращает список специализаций</returns>
+        /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAllGroup()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAll()
         {
             var groups = await service.GetAllGroupAsync();
-            return Ok(groups.ToDto());
+            return HandleOkResult(groups);
         }
 
+        /// <summary>
+        /// Получение специализации по Id
+        /// </summary>
+        /// <param name="id">Id специализации</param>
+        /// <returns>Возвращает специализацию</returns>
+        /// <response code="200">Успешное выполнение запроса</response>
+        /// <response code="404">Специализация не найдена</response>
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GroupDTO>> GetGroup(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<GroupDTO>> GetById([FromRoute] int id)
         {
             var group = await service.GetGroupByIdAsync(id);
-            if (group == null)
-                return NotFound(new { Message = $"Группа с id {id} не найдена." });
-            return Ok(group.ToDto());
+            return HandleOkResult(group);
         }
 
-        [HttpGet("info")]
-        public async Task<ActionResult<IEnumerable<GroupInfoDTO>>> GetAllGroupInfo()
-        {
-            var groups = await service.GetAllGroupAsync();
-            return Ok(groups.ToInfoDto());
-        }
-
-        [HttpGet("{id:int}/info")]
-        public async Task<ActionResult<GroupInfoDetailsDTO>> GetGroupInfoDetails(int id)
-        {
-            var group = await service.GetGroupByIdAsync(id);
-            if (group == null)
-                return NotFound(new { Message = $"Группа с id {id} не найдена." });
-            return Ok(group.ToInfoDetailDto());
-        }        
-
+        /// <summary>
+        /// Получение выпадающего списка специализаций
+        /// </summary>
+        /// <returns>Возвращает список специализаций</returns>
+        /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet("select")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<SelectItem>>> GetSelect()
         {
-            var groups = await service.GetAllGroupAsync();
-            return Ok(groups.ToSelect());
+            var groups = await service.GetSelectGroupAsync();
+            return HandleOkResult(groups);
         }
 
+        /// <summary>
+        /// Добавить новую специализацию
+        /// </summary>
+        /// <param name="cGroup">Специализация</param>
+        /// <returns>Возвращает новую специализацию</returns>
+        /// <response code="201">Успешное выполнение запроса</response>
+        /// <response code="400">Ошибка валидации данных</response>
         [HttpPost]
-        public async Task<ActionResult<GroupDTO>> AddGroup(GroupDTO groupEditDTO)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<GroupDTO>> Create([FromBody] CreateGroupDTO cGroup)
         {
-            if (groupEditDTO == null)
-                return BadRequest("Данные для добавления группы пустые.");
-            var group = groupEditDTO.ToEntity();
-            await service.AddGroupAsync(group);
-            var groupDTO = group!.ToDto();
-            return CreatedAtAction(nameof(GetGroup), new { id = groupDTO!.Id }, groupDTO);
+            var result = await service.CreateGroupAsync(cGroup);
+            return HandleCreatedResult(result, nameof(GetById), new { id = result.Value.Id });
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateGroup(int id, GroupDTO groupDTO)
+        /// <summary>
+        /// Обновление данных специализации
+        /// </summary>
+        /// <param name="id">Id специализации</param>
+        /// <param name="uGroup">Измененные данные специализации</param>
+        /// <response code="204">Успешное выполнение запроса</response>
+        /// <response code="400">Некорректный запрос</response>
+        /// <response code="404">Специализация не найдена</response>
+        [HttpPatch("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateGroupDTO uGroup)
         {
-            if (groupDTO == null)
-                return BadRequest("Данные для обновления группы пустые.");
-            var group = await service.GetGroupByIdAsync(id);
-            if (group == null)
-                return NotFound(new { Message = $"Группа с id {groupDTO.Id} не найдена." });
-            group.UpdateFromDto(groupDTO);
-            await service.UpdateGroupAsync(group);
-            return NoContent();
+            var result = await service.UpdateGroupAsync(id, uGroup);
+            return HandleNoContentResult(result);
         }
 
+        /// <summary>
+        /// Удаление данных о специализации
+        /// </summary>
+        /// <param name="id">Id специализации</param>
+        /// <response code="200">Успешное выполнение запроса</response>
+        /// <response code="404">Специализация не найдена</response>
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteGroup(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var group = await service.GetGroupByIdAsync(id);
-            if (group == null)
-                return NotFound(new { Message = $"Группа с id {id} не найдена." });
-            await service.DeleteGroupAsync(group.Id);
-            return NoContent();
+            var result = await service.DeleteGroupAsync(id);
+            return HandleNoContentResult(result);
         }
     }
 }
