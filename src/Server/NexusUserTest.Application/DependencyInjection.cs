@@ -13,16 +13,16 @@ namespace NexusUserTest.Application
 
         private static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IAnswerService, AnswerService>();
-            services.AddScoped<IGroupService, GroupService>();
-            services.AddScoped<IGroupUserService, GroupUserService>();
-            services.AddScoped<IQuestionService, QuestionService>();
-            //services.AddScoped<ITestResultService, TestResultService>();
-            services.AddScoped<ITestSettingService, TestSettingService>();
             services.AddScoped<ISpecializationService, SpecializationService>();
-            services.AddScoped<ITopicQuestionService, TopicQuestionService>();
-            services.AddScoped<ITopicService, TopicService>();
+            services.AddScoped<IGroupService, GroupService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGroupUserService, GroupUserService>();
+            services.AddScoped<ITopicService, TopicService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IAnswerService, AnswerService>();
+            services.AddScoped<ITopicQuestionService, TopicQuestionService>();
+            services.AddScoped<ITestSettingService, TestSettingService>();
+            //services.AddScoped<ITestResultService, TestResultService>();
 
             return services;
         }
@@ -33,11 +33,5 @@ namespace NexusUserTest.Application
             services.AddScoped<IValidationService, ValidationService>();
             return services;
         }
-
-        //public static IServiceCollection ConfigurateAutoMapper(this IServiceCollection services, Assembly[] assembly)
-        //    => services.AddAutoMapper(assembly);
-
-        //public static IServiceCollection ConfigurateRepositoryService(this IServiceCollection services)
-        //    => services.AddScoped<IRepoServiceManager, RepoServiceManager>();
     }
 }
