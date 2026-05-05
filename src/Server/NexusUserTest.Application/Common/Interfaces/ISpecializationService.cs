@@ -30,16 +30,16 @@ namespace NexusUserTest.Application.Common
         /// <summary>
         /// Добавить специализацию в набор данных
         /// </summary>
-        /// <param name="entity">Специализация</param>
+        /// <param name="createDto">Специализация</param>
         /// <returns>Возвращает специализацию после добавления в БД</returns>
-        Task<Result<SpecializationDTO>> CreateSpecializationAsync(CreateSpecializationDTO entity);
+        Task<Result<SpecializationDTO>> CreateSpecializationAsync(CreateSpecializationDTO createDto);
 
         /// <summary>
         /// Изменить специализацию в наборе данных
         /// </summary>
         /// <param name="id">Id специализации</param>
-        /// <param name="entity">Специализация</param>
-        Task<Result> UpdateSpecializationAsync(int id, UpdateSpecializationDTO entity);
+        /// <param name="updateDto">Специализация</param>
+        Task<Result> UpdateSpecializationAsync(int id, UpdateSpecializationDTO updateDto);
 
         /// <summary>
         /// Удалить специализацию из набора данных
