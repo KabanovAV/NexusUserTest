@@ -37,7 +37,7 @@ namespace NexusUserTest.Infrastructure
         /// </summary>
         /// <param name="id">Id объекта</param>
         /// <returns>Сущность</returns>
-        public virtual async Task<TEntity?> GetAsync(int id)
+        public virtual async Task<TEntity?> GetByIdAsync(int id)
             => await DbSet.FindAsync(id);
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id объекта</param>
         public virtual async Task Remove(int id)
         {
-            var entity = await GetAsync(id);
+            var entity = await GetByIdAsync(id);
             if (entity == null)
                 return;
             DbSet.Remove(entity);
@@ -160,7 +160,7 @@ namespace NexusUserTest.Infrastructure
                 switch (entity.State)
                 {
                     case EntityState.Modified:
-                        entity.Entity.CreatedDate = DateTime.UtcNow;
+                        entity.Entity.ChangedDate = DateTime.UtcNow;
                         break;
                     case EntityState.Added:
                         entity.Entity.CreatedDate = DateTime.UtcNow;

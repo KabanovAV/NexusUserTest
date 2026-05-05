@@ -14,6 +14,6 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id настройки теста</param>
         /// <returns>Возвращает настройки теста из набора данных</returns>
         public async Task<TestSetting?> GetSettingByIdAsync(int id)
-            => await GetAsync(id);
+            => await GetByIdAsync(id);
     }
 }

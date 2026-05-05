@@ -24,7 +24,7 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id специализации</param>
         /// <returns>Возвращает специализацию из набора данных</returns>
         public async Task<Specialization?> GetSpecializationByIdAsync(int id)
-            => await GetAsync(id);
+            => await GetByIdAsync(id);
 
         /// <summary>
         /// Получение одной специализации из набора данных со связями

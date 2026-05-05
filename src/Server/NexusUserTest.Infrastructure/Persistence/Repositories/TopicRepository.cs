@@ -22,6 +22,6 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id темы</param>
         /// <returns>Возвращает тему из набора данных</returns>
         public async Task<Topic?> GetTopicByIdAsync(int id)
-            => await GetAsync(id);
+            => await GetByIdAsync(id);
     }
 }

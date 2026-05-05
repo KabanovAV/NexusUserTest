@@ -22,6 +22,6 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id пользователя</param>
         /// <returns>Возвращает одного пользователя из набора данных</returns>
         public async Task<User?> GetUserByIdAsync(int id)
-            => await GetAsync(id);
+            => await GetByIdAsync(id);
     }
 }
