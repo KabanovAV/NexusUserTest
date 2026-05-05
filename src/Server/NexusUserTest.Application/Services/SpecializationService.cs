@@ -57,14 +57,14 @@ namespace NexusUserTest.Application.Services
         /// <summary>
         /// Добавить специализацию в набор данных
         /// </summary>
-        /// <param name="entity">Специализация</param>
+        /// <param name="createDto">Специализация</param>
         /// <returns>Возвращает специализацию после добавления в БД</returns>
-        public async Task<Result<SpecializationDTO>> CreateSpecializationAsync(CreateSpecializationDTO entity)
+        public async Task<Result<SpecializationDTO>> CreateSpecializationAsync(CreateSpecializationDTO createDto)
         {
-            var validation = await _validationService.ValidateAsync(entity);
+            var validation = await _validationService.ValidateAsync(createDto);
             if (validation.IsSuccess)
             {
-                var specialization = new Specialization() { Title = entity.Title };
+                var specialization = new Specialization() { Title = createDto.Title };
                 await _repository.Specialization.AddAsync(specialization);
                 return specialization.ToDto();
             }
@@ -75,20 +75,20 @@ namespace NexusUserTest.Application.Services
         /// Изменить специализацию в наборе данных
         /// </summary>
         /// <param name="id">Id специализации</param>
-        /// <param name="entity">Специализация</param>
-        public async Task<Result> UpdateSpecializationAsync(int id, UpdateSpecializationDTO entity)
+        /// <param name="updateDto">Специализация</param>
+        public async Task<Result> UpdateSpecializationAsync(int id, UpdateSpecializationDTO updateDto)
         {
-            if (id != entity.Id)
-                return Result.Failure<SpecializationDTO>(SpecializationErrors.Conflict(id, entity.Id));
+            if (id != updateDto.Id)
+                return Result.Failure<SpecializationDTO>(SpecializationErrors.Conflict(id, updateDto.Id));
 
-            var validation = await _validationService.ValidateAsync(entity);
+            var validation = await _validationService.ValidateAsync(updateDto);
             if (validation.IsSuccess)
             {
                 var specialization = await _repository.Specialization.GetSpecializationByIdAsync(id);
                 if (specialization == null)
                     return Result.Failure<SpecializationDTO>(SpecializationErrors.NotFound(id));
-                if (specialization.ApplyUpdate(entity.Title))
-                    await _repository.Specialization.Update(specialization);
+                specialization.UpdateFromDto(updateDto);
+                await _repository.Specialization.Update(specialization);
                 return Result.Success();
             }
             return Result.Failure(validation.Error);
