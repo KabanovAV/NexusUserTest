@@ -22,6 +22,6 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id группа пользователя</param>
         /// <returns>Возвращает группу пользователя из набора данных</returns>
         public async Task<GroupUser?> GetGroupUserByIdAsync(int id)
-            => await GetAsync(id);
+            => await GetByIdAsync(id);
     }
 }

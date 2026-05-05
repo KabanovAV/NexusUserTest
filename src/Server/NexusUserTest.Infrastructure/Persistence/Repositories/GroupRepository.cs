@@ -16,7 +16,7 @@ namespace NexusUserTest.Infrastructure
         /// </summary>
         /// <returns>Возвращает список групп из набора данных</returns>
         public async Task<IEnumerable<Group>> GetAllGroupAsync()
-            => await PlainData.ToListAsync();
+            => await PlainData.Include(g => g.Specialization).Include(g => g.GroupUsers).ToListAsync();
 
         /// <summary>
         /// Получение группы из набора данных
@@ -24,7 +24,7 @@ namespace NexusUserTest.Infrastructure
         /// <param name="id">Id группы</param>
         /// <returns>Возвращает группу из набора данных</returns>
         public async Task<Group?> GetGroupByIdAsync(int id)
-            => await GetAsync(id);
+            => await PlainData.Include(g => g.Specialization).Include(g => g.GroupUsers).FirstOrDefaultAsync(g => g.Id == id);
 
         /// <summary>
         /// Получение одной группы из набора данных со связями
