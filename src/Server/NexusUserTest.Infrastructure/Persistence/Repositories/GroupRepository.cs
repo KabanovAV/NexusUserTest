@@ -9,6 +9,8 @@ namespace NexusUserTest.Infrastructure
     /// </summary>
     public class GroupRepository(ApplicationDbContext db) : RepositoryOperations<Group>(db), IGroupRepository
     {
+        public override IQueryable<Group> Data => Context.Groups.Include(g => g.Specialization).Include(g => g.GroupUsers).Include(g => g.Setting);
+
         /// <summary>
         /// Получение всех групп из набора данных
         /// </summary>
@@ -23,5 +25,13 @@ namespace NexusUserTest.Infrastructure
         /// <returns>Возвращает группу из набора данных</returns>
         public async Task<Group?> GetGroupByIdAsync(int id)
             => await GetAsync(id);
+
+        /// <summary>
+        /// Получение одной группы из набора данных со связями
+        /// </summary>
+        /// <param name="id">Id группы</param>
+        /// <returns>Возвращает группу из набора данных</returns>
+        public async Task<Group?> GetGroupByIdWithChildrenAsync(int id)
+            => await Data.FirstAsync(g => g.Id == id);
     }
 }
