@@ -7,5 +7,8 @@
 
         public static Error Conflict(int entityId, int dtoId)
             => Error.Conflict("Group.NotEqualId", $"Несовпадение идентификаторов: ожидался '{entityId}', получен '{dtoId}'");
+
+        public static Error Connection(int id)
+            => Error.Conflict("Group.Connection", $"Группа с идентификатором '{id}' имеет связь с пользователями");
     }
 }
