@@ -90,15 +90,17 @@ namespace SibCCSPETest.WebApi.Controllers
         /// Удаление данных о специализации
         /// </summary>
         /// <param name="id">Id специализации</param>
-        /// <response code="200">Успешное выполнение запроса</response>
+        /// <response code="204">Успешное выполнение запроса</response>
         /// <response code="404">Специализация не найдена</response>
+        /// <response code="409">Специализация имеет связи с таблицами</response>
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<bool>> Delete([FromRoute] int id)
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var result = await service.DeleteSpecializationAsync(id);
-            return HandleOkResult(result);
+            return HandleNoContentResult(result);
         }
     }
 }
