@@ -98,17 +98,16 @@ namespace NexusUserTest.Application.Services
         /// Удалить группу из набора данных
         /// </summary>
         /// <param name="id">Id группы</param>
-        public async Task<Result<bool>> DeleteGroupAsync(int id)
+        public async Task<Result> DeleteGroupAsync(int id)
         {
             var group = await _repository.Group.GetGroupByIdWithChildrenAsync(id);
             if (group == null)
-                return Result.Failure<bool>(GroupErrors.NotFound(id));
+                return Result.Failure(GroupErrors.NotFound(id));
             if (group.GroupUsers != null && group.GroupUsers.Count == 0)
             {
                 await _repository.Group.Remove(id);
-                return true;
             }
-            return false;
+            return Result.Failure(GroupErrors.Connection(id));
         }
     }
 }

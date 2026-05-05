@@ -98,18 +98,17 @@ namespace NexusUserTest.Application.Services
         /// Удалить специализацию из набора данных
         /// </summary>
         /// <param name="id">Id специализации</param>
-        public async Task<Result<bool>> DeleteSpecializationAsync(int id)
+        public async Task<Result> DeleteSpecializationAsync(int id)
         {
             var specialization = await _repository.Specialization.GetSpecializationByIdWithChildrenAsync(id);
             if (specialization == null)
-                return Result.Failure<bool>(SpecializationErrors.NotFound(id));
+                return Result.Failure(SpecializationErrors.NotFound(id));
             if (specialization.Groups != null && specialization.Groups.Count == 0
                 && specialization.Topics != null && specialization.Topics.Count == 0)
             {
                 await _repository.Specialization.Remove(id);
-                return true;
             }
-            return false;
+            return Result.Failure(SpecializationErrors.Connection(id));
         }
     }
 }
