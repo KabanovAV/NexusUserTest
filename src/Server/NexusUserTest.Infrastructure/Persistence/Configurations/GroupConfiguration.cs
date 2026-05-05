@@ -18,7 +18,7 @@ namespace NexusUserTest.Infrastructure
             builder.Property(g => g.End)
                 .IsRequired();
 
-            builder.HasMany(g => g.GroupUser)
+            builder.HasMany(g => g.GroupUsers)
                 .WithOne(gu => gu.Group)
                 .HasForeignKey(gu => gu.GroupId)
                 .OnDelete(DeleteBehavior.Restrict);

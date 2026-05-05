@@ -12,7 +12,7 @@ namespace NexusUserTest.Application.Mappings
         /// <param name="entity">Обьект Group</param>
         /// <returns>GroupDTO</returns>
         public static GroupDTO ToDto(this Group entity)
-            => new(entity.Id, entity.Title, entity.Specialization?.Title ?? "", entity.GroupUser?.Count ?? 0, entity.Begin, entity.End);
+            => new(entity.Id, entity.Title, entity.Specialization?.Title ?? "", entity.GroupUsers?.Count ?? 0, entity.Begin, entity.End);
 
         /// <summary>
         /// Маппинг списка из обьектов Group в список GroupDTO
