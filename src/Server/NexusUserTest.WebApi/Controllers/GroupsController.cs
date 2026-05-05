@@ -11,9 +11,9 @@ namespace SibCCSPETest.WebApi.Controllers
     public class GroupsController(IGroupService service) : ApiController
     {
         /// <summary>
-        /// Получение списка специализаций
+        /// Получение списка групп
         /// </summary>
-        /// <returns>Возвращает список специализаций</returns>
+        /// <returns>Возвращает список групп</returns>
         /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -24,12 +24,12 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         /// <summary>
-        /// Получение специализации по Id
+        /// Получение группы по Id
         /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <returns>Возвращает специализацию</returns>
+        /// <param name="id">Id группы</param>
+        /// <returns>Возвращает группу</returns>
         /// <response code="200">Успешное выполнение запроса</response>
-        /// <response code="404">Специализация не найдена</response>
+        /// <response code="404">Группа не найдена</response>
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,9 +40,9 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         /// <summary>
-        /// Получение выпадающего списка специализаций
+        /// Получение выпадающего списка групп
         /// </summary>
-        /// <returns>Возвращает список специализаций</returns>
+        /// <returns>Возвращает список групп</returns>
         /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet("select")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,10 +53,10 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         /// <summary>
-        /// Добавить новую специализацию
+        /// Добавить новую группу
         /// </summary>
-        /// <param name="cGroup">Специализация</param>
-        /// <returns>Возвращает новую специализацию</returns>
+        /// <param name="cGroup">Группа</param>
+        /// <returns>Возвращает новую группу</returns>
         /// <response code="201">Успешное выполнение запроса</response>
         /// <response code="400">Ошибка валидации данных</response>
         [HttpPost]
@@ -69,13 +69,13 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         /// <summary>
-        /// Обновление данных специализации
+        /// Обновление данных группы
         /// </summary>
-        /// <param name="id">Id специализации</param>
-        /// <param name="uGroup">Измененные данные специализации</param>
+        /// <param name="id">Id группы</param>
+        /// <param name="uGroup">Измененные данные группы</param>
         /// <response code="204">Успешное выполнение запроса</response>
         /// <response code="400">Некорректный запрос</response>
-        /// <response code="404">Специализация не найдена</response>
+        /// <response code="404">Группа не найдена</response>
         [HttpPatch("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -87,11 +87,11 @@ namespace SibCCSPETest.WebApi.Controllers
         }
 
         /// <summary>
-        /// Удаление данных о специализации
+        /// Удаление данных о группе
         /// </summary>
-        /// <param name="id">Id специализации</param>
+        /// <param name="id">Id группы</param>
         /// <response code="200">Успешное выполнение запроса</response>
-        /// <response code="404">Специализация не найдена</response>
+        /// <response code="404">Группа не найдена</response>
         [HttpDelete("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
