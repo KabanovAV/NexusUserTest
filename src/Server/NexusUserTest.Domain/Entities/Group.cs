@@ -9,7 +9,7 @@ namespace NexusUserTest.Domain.Entities
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }
         public Specialization? Specialization { get; set; }
-        public List<GroupUser>? GroupUser { get; set; }
+        public List<GroupUser>? GroupUsers { get; set; }
         public TestSetting? Setting { get; set; }
     }
 }

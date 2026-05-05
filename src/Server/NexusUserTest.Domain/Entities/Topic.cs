@@ -14,6 +14,6 @@ namespace NexusUserTest.Domain.Entities
         [JsonIgnore]
         public Specialization? Specialization { get; set; }
         [JsonIgnore]
-        public List<TopicQuestion>? TopicQuestion { get; set; }
+        public List<TopicQuestion>? TopicQuestions { get; set; }
     }
 }
