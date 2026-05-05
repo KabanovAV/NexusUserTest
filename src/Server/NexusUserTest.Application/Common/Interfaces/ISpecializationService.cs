@@ -45,6 +45,6 @@ namespace NexusUserTest.Application.Common
         /// Удалить специализацию из набора данных
         /// </summary>
         /// <param name="id">Id специализации</param>
-        Task<Result<bool>> DeleteSpecializationAsync(int id);
+        Task<Result> DeleteSpecializationAsync(int id);
     }
 }

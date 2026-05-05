@@ -45,6 +45,6 @@ namespace NexusUserTest.Application.Common
         /// Удалить группу из набора данных
         /// </summary>
         /// <param name="id">Id группы</param>
-        Task<Result<bool>> DeleteGroupAsync(int id);
+        Task<Result> DeleteGroupAsync(int id);
     }
 }
