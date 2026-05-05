@@ -19,5 +19,12 @@ namespace NexusUserTest.Domain.Common
         /// <param name="id">Id группы</param>
         /// <returns>Возвращает одной группы из набора данных</returns>
         Task<Group?> GetGroupByIdAsync(int id);
+
+        /// <summary>
+        /// Получение одной группы из набора данных со связями
+        /// </summary>
+        /// <param name="id">Id группы</param>
+        /// <returns>Возвращает группу из набора данных</returns>
+        Task<Group?> GetGroupByIdWithChildrenAsync(int id);
     }
 }
