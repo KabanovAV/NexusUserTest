@@ -1,4 +1,5 @@
-﻿using NexusUserTest.Domain.Entities;
+﻿using NexusUserTest.Common.DTOs;
+using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.Application.Common
 {
@@ -11,32 +12,33 @@ namespace NexusUserTest.Application.Common
         /// Получение всех пользователей из набора данных
         /// </summary>
         /// <returns>Возвращает список пользователей из набора данных</returns>
-        Task<IEnumerable<User>> GetAllUserAsync();
+        Task<Result<IEnumerable<UserDTO>>> GetAllUserAsync();
 
         /// <summary>
         /// Получение пользователя из набора данных по Id
         /// </summary>
         /// <param name="id">Id пользователя</param>
         /// <returns>Возвращает пользователя из набора данных</returns>
-        Task<User?> GetUserByIdAsync(int id);
+        Task<Result<UserDTO>> GetUserByIdAsync(int id);
 
         /// <summary>
         /// Добавить пользователя в набор данных
         /// </summary>
-        /// <param name="entity">Пользователь</param>
+        /// <param name="createUser">Пользователь</param>
         /// <returns>Возвращает пользователя после добавления в БД</returns>
-        Task<User> AddUserAsync(User entity);
+        Task<Result<UserDTO>> CreateUserAsync(CreateUserDTO createDto);
 
         /// <summary>
         /// Изменить пользователя в наборе данных
         /// </summary>
-        /// <param name="entity">Пользователь</param>
-        Task<User> UpdateUserAsync(User entity);
+        /// <param name="id">Id пользователя</param>
+        /// <param name="updateDto">Пользователь</param>
+        Task<Result> UpdateUserAsync(int id, UpdateUserDTO updateDto);
 
         /// <summary>
         /// Удалить пользователя из набора данных
         /// </summary>
         /// <param name="id">Id пользователя</param>
-        Task DeleteUserAsync(int id);
+        Task<Result> DeleteUserAsync(int id);
     }
 }
