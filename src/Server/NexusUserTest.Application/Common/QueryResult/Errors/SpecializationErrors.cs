@@ -1,4 +1,4 @@
-﻿namespace NexusUserTest.Application.Common
+﻿namespace NexusUserTest.Application.Common.Errors
 {
     public static class SpecializationErrors
     {
