@@ -1,72 +1,90 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NexusUserTest.Application.Common;
-using NexusUserTest.Application.Mappings;
-using NexusUserTest.Common;
-using SibCCSPETest.WebApi.MappingProfiles;
+using NexusUserTest.Common.DTOs;
+using NexusUserTest.WebApi.Controllers;
 
 namespace SibCCSPETest.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController(IUserService service) : ControllerBase
+    public class UsersController(IUserService service) : ApiController
     {
+        /// <summary>
+        /// Получение списка пользователей
+        /// </summary>
+        /// <returns>Возвращает список пользователей</returns>
+        /// <response code="200">Успешное выполнение запроса</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserAdminDTO>>> GetAllUserAdmin([FromQuery] string? include = null)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAll()
         {
             var users = await service.GetAllUserAsync();
-            return Ok(users.ToAdminDto());
+            return HandleOkResult(users);
         }
 
+        /// <summary>
+        /// Получение пользователя по Id
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <returns>Возвращает пользователя</returns>
+        /// <response code="200">Успешное выполнение запроса</response>
+        /// <response code="404">Пользователь не найден</response>
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<UserAdminDTO>> GetUserAdmin(int id, [FromQuery] string? include = null)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserDTO>> GetById([FromRoute] int id)
         {
             var user = await service.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            return Ok(user.ToAdminDto());
+            return HandleOkResult(user);
         }
 
-        [HttpGet("{id:int}/test")]
-        public async Task<ActionResult<UserInfoTestDTO>> GetUserInfoTest(int id, [FromQuery] string? include = null)
-        {
-            var user = await service.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            return Ok(user.ToTestDto());
-        }
-
+        /// <summary>
+        /// Добавить нового пользователя
+        /// </summary>
+        /// <param name="cUser">Пользователь</param>
+        /// <returns>Возвращает нового пользователя</returns>
+        /// <response code="201">Успешное выполнение запроса</response>
+        /// <response code="400">Ошибка валидации данных</response>
         [HttpPost]
-        public async Task<ActionResult<UserAdminDTO>> AddUser(UserAdminDTO userAdminDTO, [FromQuery] string? include = null)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UserDTO>> Create([FromBody] CreateUserDTO cUser)
         {
-            if (userAdminDTO == null)
-                return BadRequest("Данные для добавления пользователя пустые.");
-            var user = userAdminDTO.ToEntity();
-            await service.AddUserAsync(user);
-            var userDTO = user!.ToAdminDto();
-            return CreatedAtAction(nameof(GetUserAdmin), new { id = userDTO!.Id }, userDTO);
+            var result = await service.CreateUserAsync(cUser);
+            return HandleCreatedResult(nameof(GetById), () => new { id = result.Value.Id }, result);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateUser(int id, UserAdminDTO userDTO, [FromQuery] string? include = null)
+        /// <summary>
+        /// Обновление данных пользователя
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <param name="uUSer">Измененные данные пользователя</param>
+        /// <response code="204">Успешное выполнение запроса</response>
+        /// <response code="400">Некорректный запрос</response>
+        /// <response code="404">Пользователь не найден</response>
+        [HttpPatch("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateUserDTO uUSer)
         {
-            if (userDTO == null)
-                return BadRequest("Данные для обновления пользователя пустые.");
-            var user = await service.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound(new { Message = $"Пользователь с id {userDTO.Id} не найден." });
-            user.UpdateFromAdminDto(userDTO);
-            await service.UpdateUserAsync(user);
-            return NoContent();
+            var result = await service.UpdateUserAsync(id, uUSer);
+            return HandleNoContentResult(result);
         }
 
+        /// <summary>
+        /// Удаление данных о пользователе
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <response code="204">Успешное выполнение запроса</response>
+        /// <response code="404">Пользователь не найдена</response>
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(int id)
         {
-            var user = await service.GetUserByIdAsync(id);
-            if (user == null)
-                return NotFound(new { Message = $"Пользователь с id {id} не найден." });
-            await service.DeleteUserAsync(user.Id);
-            return NoContent();
+            var result = await service.DeleteUserAsync(id);
+            return HandleNoContentResult(result);
         }
     }
 }
