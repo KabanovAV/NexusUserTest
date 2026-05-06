@@ -50,10 +50,10 @@ namespace NexusUserTest.WebApi.Controllers
         /// </summary>
         /// <typeparam name="T">Тип</typeparam>
         /// <returns>Возвращает обьект</returns>
-        protected ActionResult<T> HandleCreatedResult<T>(Result<T> result, string actionName, object routeValues)
+        protected ActionResult<T> HandleCreatedResult<T>(string actionName, Func<object> routeValues, Result<T> result)
         {
             if (result.IsSuccess)
-                return CreatedAtAction(actionName, routeValues, result.Value);
+                return CreatedAtAction(actionName, routeValues(), result.Value);
 
             return result.Error.Type switch
             {

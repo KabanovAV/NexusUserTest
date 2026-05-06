@@ -65,7 +65,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<GroupDTO>> Create([FromBody] CreateGroupDTO cGroup)
         {
             var result = await service.CreateGroupAsync(cGroup);
-            return HandleCreatedResult(result, nameof(GetById), new { id = result.Value.Id });
+            return HandleCreatedResult(nameof(GetById), () => new { id = result.Value.Id }, result);
         }
 
         /// <summary>
@@ -90,10 +90,10 @@ namespace SibCCSPETest.WebApi.Controllers
         /// Удаление данных о группе
         /// </summary>
         /// <param name="id">Id группы</param>
-        /// <response code="200">Успешное выполнение запроса</response>
+        /// <response code="204">Успешное выполнение запроса</response>
         /// <response code="404">Группа не найдена</response>
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {

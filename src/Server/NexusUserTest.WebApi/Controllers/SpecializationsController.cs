@@ -65,7 +65,7 @@ namespace SibCCSPETest.WebApi.Controllers
         public async Task<ActionResult<SpecializationDTO>> Create([FromBody] CreateSpecializationDTO cSpecialization)
         {
             var result = await service.CreateSpecializationAsync(cSpecialization);
-            return HandleCreatedResult(result, nameof(GetById), new { id = result.Value.Id });
+            return HandleCreatedResult(nameof(GetById), () => new { id = result.Value.Id }, result);
         }
 
         /// <summary>
