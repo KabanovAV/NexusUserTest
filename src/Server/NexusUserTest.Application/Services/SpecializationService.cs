@@ -1,4 +1,5 @@
 ﻿using NexusUserTest.Application.Common;
+using NexusUserTest.Application.Common.Errors;
 using NexusUserTest.Application.Mappings;
 using NexusUserTest.Common;
 using NexusUserTest.Common.DTOs;
@@ -79,14 +80,14 @@ namespace NexusUserTest.Application.Services
         public async Task<Result> UpdateSpecializationAsync(int id, UpdateSpecializationDTO updateDto)
         {
             if (id != updateDto.Id)
-                return Result.Failure<SpecializationDTO>(SpecializationErrors.Conflict(id, updateDto.Id));
+                return Result.Failure(SpecializationErrors.Conflict(id, updateDto.Id));
 
             var validation = await _validationService.ValidateAsync(updateDto);
             if (validation.IsSuccess)
             {
                 var specialization = await _repository.Specialization.GetSpecializationByIdAsync(id);
                 if (specialization == null)
-                    return Result.Failure<SpecializationDTO>(SpecializationErrors.NotFound(id));
+                    return Result.Failure(SpecializationErrors.NotFound(id));
                 specialization.UpdateFromDto(updateDto);
                 await _repository.Specialization.Update(specialization);
                 return Result.Success();

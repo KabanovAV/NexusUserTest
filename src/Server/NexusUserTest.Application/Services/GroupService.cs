@@ -1,4 +1,5 @@
 ﻿using NexusUserTest.Application.Common;
+using NexusUserTest.Application.Common.Errors;
 using NexusUserTest.Application.Mappings;
 using NexusUserTest.Common;
 using NexusUserTest.Common.DTOs;
@@ -64,7 +65,13 @@ namespace NexusUserTest.Application.Services
             var validation = await _validationService.ValidateAsync(createDto);
             if (validation.IsSuccess)
             {
-                var group = new Group() { Title = createDto.Title, SpecializationId = createDto.SpecializationId, Begin = createDto.Begin, End = createDto.End };
+                var group = new Group()
+                {
+                    Title = createDto.Title,
+                    SpecializationId = createDto.SpecializationId,
+                    Begin = createDto.Begin,
+                    End = createDto.End
+                };
                 await _repository.Group.AddAsync(group);
                 return group.ToDto();
             }
@@ -79,14 +86,14 @@ namespace NexusUserTest.Application.Services
         public async Task<Result> UpdateGroupAsync(int id, UpdateGroupDTO updateDto)
         {
             if (id != updateDto.Id)
-                return Result.Failure<GroupDTO>(GroupErrors.Conflict(id, updateDto.Id));
+                return Result.Failure(GroupErrors.Conflict(id, updateDto.Id));
 
             var validation = await _validationService.ValidateAsync(updateDto);
             if (validation.IsSuccess)
             {
                 var group = await _repository.Group.GetGroupByIdAsync(id);
                 if (group == null)
-                    return Result.Failure<GroupDTO>(GroupErrors.NotFound(id));
+                    return Result.Failure(GroupErrors.NotFound(id));
                 group.UpdateFromDto(updateDto);
                 await _repository.Group.Update(group);
                 return Result.Success();
