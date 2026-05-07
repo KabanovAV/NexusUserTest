@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace NexusUserTest.Application.Common
+namespace NexusUserTest.Application.Common.Interfaces
 {
     /// <summary>
     /// Интерфейс сервиса операциями для валидации объектов

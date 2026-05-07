@@ -1,7 +1,8 @@
 ﻿using NexusUserTest.Common;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common.DTOs.Commands;
+using NexusUserTest.Common.DTOs.Queries;
 
-namespace NexusUserTest.Application.Common
+namespace NexusUserTest.Application.Common.Interfaces
 {
     /// <summary>
     /// Интерфейс сервиса операциями для обьекта группы

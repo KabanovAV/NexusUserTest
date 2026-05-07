@@ -1,6 +1,6 @@
 ﻿using NexusUserTest.Domain.Entities;
 
-namespace NexusUserTest.Domain.Common
+namespace NexusUserTest.Domain.Common.Interfaces
 {
     /// <summary>
     /// Интерфейс с операциями для репозитория специализации

@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
-using NexusUserTest.Application.Common;
+using NexusUserTest.Application.Common.Interfaces;
+using NexusUserTest.Application.Common.Result;
 
 namespace NexusUserTest.Application.Services
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using NexusUserTest.Domain.Common;
+using NexusUserTest.Domain.Common.Interfaces;
 
 namespace NexusUserTest.Infrastructure
 {

@@ -1,4 +1,4 @@
-﻿using NexusUserTest.Domain.Common;
+﻿using NexusUserTest.Domain.Common.Interfaces;
 
 namespace NexusUserTest.Infrastructure
 {

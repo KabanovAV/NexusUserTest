@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common.DTOs.Commands;
 
 namespace NexusUserTest.Application.Validators
 {

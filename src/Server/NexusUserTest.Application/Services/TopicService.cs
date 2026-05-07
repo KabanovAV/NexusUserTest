@@ -1,5 +1,5 @@
-﻿using NexusUserTest.Application.Common;
-using NexusUserTest.Domain.Common;
+﻿using NexusUserTest.Application.Common.Interfaces;
+using NexusUserTest.Domain.Common.Interfaces;
 using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.Application.Services

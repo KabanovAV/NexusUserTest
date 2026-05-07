@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NexusUserTest.Application.Common;
+using NexusUserTest.Application.Common.Interfaces;
 using NexusUserTest.Common;
-using NexusUserTest.Common.DTOs;
+using NexusUserTest.Common.DTOs.Commands;
+using NexusUserTest.Common.DTOs.Queries;
 using NexusUserTest.WebApi.Controllers;
 
 namespace SibCCSPETest.WebApi.Controllers

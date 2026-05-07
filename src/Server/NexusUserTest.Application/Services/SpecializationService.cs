@@ -1,9 +1,11 @@
 ﻿using NexusUserTest.Application.Common;
 using NexusUserTest.Application.Common.Errors;
+using NexusUserTest.Application.Common.Interfaces;
 using NexusUserTest.Application.Mappings;
 using NexusUserTest.Common;
-using NexusUserTest.Common.DTOs;
-using NexusUserTest.Domain.Common;
+using NexusUserTest.Common.DTOs.Commands;
+using NexusUserTest.Common.DTOs.Queries;
+using NexusUserTest.Domain.Common.Interfaces;
 using NexusUserTest.Domain.Entities;
 
 namespace NexusUserTest.Application.Services

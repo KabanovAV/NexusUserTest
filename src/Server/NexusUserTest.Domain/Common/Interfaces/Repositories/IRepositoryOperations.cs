@@ -1,4 +1,4 @@
-﻿namespace NexusUserTest.Domain.Common
+﻿namespace NexusUserTest.Domain.Common.Interfaces
 {
     /// <summary>
     /// Интерфейс к операциям доступным у объектов в репозиториях

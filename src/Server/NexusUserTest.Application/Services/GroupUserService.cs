@@ -1,7 +1,6 @@
-﻿using NexusUserTest.Application.Common;
-using NexusUserTest.Domain.Common;
+﻿using NexusUserTest.Application.Common.Interfaces;
+using NexusUserTest.Domain.Common.Interfaces;
 using NexusUserTest.Domain.Entities;
-using System.Linq.Expressions;
 
 namespace NexusUserTest.Application.Services
 {
